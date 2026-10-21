@@ -1,0 +1,77 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {PGlite} from '@electric-sql/pglite';
+
+const db=new PGlite();
+const a='a0000000-0000-4000-8000-000000000001',b='b0000000-0000-4000-8000-000000000002',c='c0000000-0000-4000-8000-000000000003';
+const mealId='11000000-0000-4000-8000-000000000001';
+let checks=0;
+function ok(actual,expected,label){assert.deepEqual(actual,expected,label);checks++;}
+async function denied(sql,args,code){await assert.rejects(db.query(sql,args),{code});checks++;}
+async function login(id){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role authenticated');}
+try{
+ await db.exec(`create role anon nologin;create role authenticated nologin;create schema auth;create table auth.users(id uuid primary key,email text);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
+ for(const file of ['20261020000100_glucose_records.sql','20261021000200_non_ai_features.sql','20261021000300_reviewed_catalog.sql','20261021000400_meal_stale_conflict.sql'])await db.exec(await readFile(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
+ const functionDefinition=(await db.query("select pg_get_functiondef('public.save_meal_record(uuid,jsonb,timestamptz)'::regprocedure) value")).rows[0].value;
+ ok(functionDefinition.includes("errcode='PT409'")&&!functionDefinition.includes("errcode='40001'"),true,'fresh migration chain uses non-retrying business conflict code');
+ ok((await db.query("select has_function_privilege('authenticated','public.save_meal_record(uuid,jsonb,timestamptz)','EXECUTE') allowed, has_function_privilege('anon','public.save_meal_record(uuid,jsonb,timestamptz)','EXECUTE') anonymous")).rows[0],{allowed:true,anonymous:false},'replacement preserves authenticated-only execution grant');
+ await db.query("insert into auth.users values($1,'a@example.invalid'),($2,'b@example.invalid'),($3,'c@example.invalid')",[a,b,c]);
+ await db.query("insert into public.user_consents(user_id,policy_version) values($1,'demo-v3'),($2,'demo-v3')",[a,b]);
+ const food=(await db.query('select * from public.food_catalog order by id limit 1')).rows[0];
+ const input={meal_at:'2026-10-21T03:00:00Z',meal_type:'lunch',memo:null,items:[{food_id:food.id,free_text:null,amount_value:50,amount_unit:'g'}]};
+ const save='select public.save_meal_record($1,$2::jsonb,$3::timestamptz) value';
+ await login(c);await denied(save,[mealId,JSON.stringify(input),null],'42501');
+ await login(a);
+ const meal=(await db.query(save,[mealId,JSON.stringify(input),null])).rows[0].value;
+ ok(meal.user_id,a,'server owns meal');ok(meal.items.length,1,'item atomically saved');ok(meal.items[0].nutrition_snapshot.food_name,food.food_name,'server captured official name');ok(meal.items[0].nutrition_snapshot.nutrients.kcal,Number(food.kcal),'server captured nutrient');ok(meal.items[0].conversion_state,'verified','same verified unit conversion');
+ await denied(save,[mealId,JSON.stringify(input),null],'23505');
+ await denied(save,['11000000-0000-4000-8000-000000000002',JSON.stringify({...input,items:[{food_id:food.id,nutrition_snapshot:{kcal:999}}]}),null],'23514');
+ for(const meal_at of ['today','2026-10-21T03:00:00','2026-10-21T24:00:00Z'])await denied(save,['11000000-0000-4000-8000-000000000002',JSON.stringify({...input,meal_at}),null],'23514');
+ await denied("insert into public.meal_records(id,user_id,meal_at,meal_type) values(gen_random_uuid(),$1,now(),'lunch')",[a],'42501');
+ await denied('update public.meal_items set nutrition_snapshot=$1::jsonb',['{}'],'42501');
+ await login(b);ok((await db.query('select * from public.meal_records')).rows.length,0,'cross account meal invisible');ok((await db.query('select * from public.meal_items')).rows.length,0,'cross account items invisible');
+ await denied(save,[mealId,JSON.stringify(input),meal.updated_at],'P0002');ok((await db.query('delete from public.meal_records where id=$1 returning id',[mealId])).rows.length,0,'cross account delete blocked');
+ await db.exec('reset role');await db.query('update public.food_catalog set kcal=999 where id=$1',[food.id]);
+ await login(a);
+ const update={...input,memo:'기록 수정',items:meal.items.map(i=>({id:i.id,food_id:i.food_id,free_text:null,amount_value:75,amount_unit:'g'}))};
+ const changed=(await db.query(save,[mealId,JSON.stringify(update),meal.updated_at])).rows[0].value;
+ ok(changed.items[0].nutrition_snapshot.nutrients.kcal,Number(food.kcal),'original snapshot preserved after source update');ok(changed.created_at,meal.created_at,'creation immutable');
+ await denied(save,[mealId,JSON.stringify(update),meal.updated_at],'PT409');
+ const invalid={...update,items:[...update.items,{free_text:null,food_id:null}]};
+ await denied(save,[mealId,JSON.stringify(invalid),changed.updated_at],'23514');
+ ok((await db.query('select count(*)::int n from public.meal_items')).rows[0].n,1,'invalid second item rolls back replacement');
+ ok((await db.query('select updated_at from public.meal_records where id=$1',[mealId])).rows[0].updated_at.toISOString(),new Date(changed.updated_at).toISOString(),'failed update restores timestamp');
+ await db.query("insert into public.user_preferences(user_id,region,age_band,matching_enabled,notice_version) values($1,'서울','40_64',true,'matching-v1')",[a]);
+ const prefs=(await db.query('select * from public.user_preferences')).rows[0];ok(prefs.consented_at!==null,true,'server consent timestamp');
+ await denied('update public.user_preferences set consented_at=now()',[],'42501');
+ await login(b);ok((await db.query('select * from public.user_preferences')).rows.length,0,'preferences own only');
+ await login(a);await db.exec('update public.user_preferences set matching_enabled=false');ok((await db.query('select consented_at from public.user_preferences')).rows[0].consented_at,null,'revocation clears consent timestamp');
+ const preferenceInput={region:'서울',age_band:'40_64',diagnosed:true,insulin_use:null,matching_enabled:true,notice_version:'matching-v1'};
+ const preferenceResult=(await db.query('select public.save_user_preferences($1::jsonb) value',[JSON.stringify(preferenceInput)])).rows[0].value;
+ ok(preferenceResult.user_id,a,'preference RPC sets caller and updates without changing protected owner');ok(preferenceResult.diagnosed,true,'preference RPC updates existing conditions');
+ await denied('select public.save_user_preferences($1::jsonb)',[JSON.stringify({...preferenceInput,user_id:b})],'23514');
+ await login(b);ok((await db.query('select public.save_user_preferences($1::jsonb) value',[JSON.stringify(preferenceInput)])).rows[0].value.user_id,b,'preference RPC creates another own row');await login(a);
+ const rows=[{glucose_mg_dl:110,measured_at:'2026-10-21T03:00:00.000Z',measurement_context:'after_meal',meal_slot:'lunch',meal_memo:null},{glucose_mg_dl:120,measured_at:'2026-10-21T03:00:00.000Z',measurement_context:'after_meal_2h',meal_slot:'lunch',meal_memo:'검사'}];
+ const imp='select public.import_glucose_csv($1,$2,$3::jsonb) value',req='22000000-0000-4000-8000-000000000001',hash='a'.repeat(64);
+ const imported=(await db.query(imp,[req,hash,JSON.stringify(rows)])).rows[0].value;
+ ok(imported.duplicate,false,'new import');ok(imported.batch.row_count,2,'both rows committed');ok(imported.batch.user_id,a,'server import owner');ok(imported.batch.content_sha256.length,64,'database computed fingerprint');
+ ok((await db.query(imp,[req,hash,JSON.stringify(rows)])).rows[0].value.duplicate,true,'same request replay');
+ ok((await db.query(imp,['22000000-0000-4000-8000-000000000002','b'.repeat(64),JSON.stringify(rows)])).rows[0].value.duplicate,true,'normalized content deduplicated');
+ ok((await db.query('select batch_id from public.import_requests where request_id=$1',['22000000-0000-4000-8000-000000000002'])).rows[0].batch_id,imported.batch.id,'duplicate request receipt points to original import');
+ await denied(imp,['22000000-0000-4000-8000-000000000002','b'.repeat(64),JSON.stringify([rows[0]])],'23505');
+ const equivalent=rows.map(row=>({...row,measured_at:'2026-10-21T12:00:00+09:00',meal_memo:row.meal_memo===null?'   ':`  ${row.meal_memo}  `}));
+ ok((await db.query(imp,['22000000-0000-4000-8000-000000000004','d'.repeat(64),JSON.stringify(equivalent)])).rows[0].value.duplicate,true,'database normalizes offset and memo before deduplication');
+ ok((await db.query(imp,['22000000-0000-4000-8000-000000000005','e'.repeat(64),JSON.stringify([...rows].reverse())])).rows[0].value.duplicate,true,'same row multiset in reversed order remains duplicate');
+ ok((await db.query('select glucose_mg_dl from public.glucose_records where import_batch_id=$1 order by source_row_number',[imported.batch.id])).rows.map(row=>row.glucose_mg_dl),[110,120],'source row order is preserved independently of sorted digest');
+ await denied(imp,[req,hash,JSON.stringify([rows[0]])],'23505');
+ await denied(imp,['22000000-0000-4000-8000-000000000003','c'.repeat(64),JSON.stringify([rows[0],{...rows[1],glucose_mg_dl:0}])],'23514');
+ ok((await db.query('select count(*)::int n from public.import_batches')).rows[0].n,1,'invalid import leaves no history');ok((await db.query('select count(*)::int n from public.glucose_records')).rows[0].n,2,'invalid import leaves no partial record');
+ await denied('update public.glucose_records set import_batch_id=null',[],'42501');
+ await denied("insert into public.glucose_records(id,user_id,glucose_mg_dl,measured_at,measurement_context,meal_slot) values(gen_random_uuid(),$1,110,now(),'fasting','lunch')",[a],'23514');
+ await login(b);ok((await db.query('select * from public.import_batches')).rows.length,0,'import history isolated');
+ await db.exec('reset role');await db.query('delete from auth.users where id=$1',[a]);
+ for(const table of ['user_consents','glucose_records','meal_records','meal_items','user_preferences','import_batches','import_requests'])ok((await db.query(`select count(*)::int n from public.${table} where user_id=$1`,[a])).rows[0].n,0,`${table} account deletion cascades`);
+ ok((await db.query('select count(*)::int n from public.food_catalog')).rows[0].n>0,true,'shared food retained');ok((await db.query('select count(*)::int n from public.benefit_rules')).rows[0].n>0,true,'shared policies retained');
+ await db.exec('set role anon');await denied('select * from public.meal_records',[],'42501');await denied(imp,[req,hash,JSON.stringify(rows)],'42501');
+ console.log(`PASS: ${checks} non-AI SQL checks in isolated PGlite; meals, snapshots, stale writes, ownership, preferences, imports and account cascades.`);
+}finally{await db.close();}

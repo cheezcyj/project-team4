@@ -1,0 +1,25 @@
+import type { MeasurementContext, DateRange } from './types';
+
+export const mealSlots = [{value:'breakfast',label:'아침'},{value:'lunch',label:'점심'},{value:'dinner',label:'저녁'},{value:'snack',label:'간식'}] as const;
+export const mealTypes = [...mealSlots,{value:'other',label:'기타'}] as const;
+export type MealSlot = (typeof mealSlots)[number]['value'];
+export type MealType = (typeof mealTypes)[number]['value'];
+export type Nutrients = { kcal:number|null; carbs_g:number|null; sugars_g:number|null; protein_g:number|null; fat_g:number|null; fiber_g:number|null; sodium_mg:number|null };
+export type FoodCatalogItem = Nutrients & { id:string; food_name:string; source_code:string; basis_value:number; basis_unit:string; source:string; source_url:string|null; source_version:string; source_sha256:string; source_type:string; source_weight:string|null; unit_validated:boolean; status:'review'|'approved'|'blocked'; checked_at:string|null };
+export type NutritionSnapshot = {schema_version:1; food_name:string; source_code:string; source:string; source_version:string; source_sha256:string; basis_value:number; basis_unit:string; nutrients:Nutrients; unit_validated:boolean; captured_at:string};
+export type MealItemInput = {id?:string; food_id?:string|null; free_text?:string|null; amount_value?:number|null; amount_unit?:string|null};
+export type MealInput = {meal_at:string; meal_type:MealType; memo:string|null; items:MealItemInput[]};
+export type MealItem = Required<MealItemInput> & {id:string; meal_id:string; user_id:string; nutrition_snapshot:NutritionSnapshot|null; conversion_state:'not_calculated'|'same_basis'|'verified'|'unavailable'; created_at:string; updated_at:string};
+export type MealRecord = Omit<MealInput,'items'> & {id:string;user_id:string;created_at:string;updated_at:string;items:MealItem[]};
+export const PREFERENCES_NOTICE_VERSION = 'matching-v1';
+export type AgeBand = 'under_19'|'19_39'|'40_64'|'65_plus';
+export type PreferencesInput = {region:string|null;age_band:AgeBand|null;diagnosed:boolean|null;insulin_use:boolean|null;matching_enabled:boolean;notice_version:string};
+export type UserPreferences = PreferencesInput & {user_id:string;consented_at:string|null;updated_at:string};
+export type BenefitCriteria = {schema_version:1;min_age?:number;max_age?:number;diagnosed?:boolean;insulin_use?:boolean;additional_requirements:string[]};
+export type BenefitRule = {id:string;name:string;agency:string;region_scope:string[];criteria_json:BenefitCriteria;description:string;source_url:string;source_key:string;version:number;valid_from:string|null;valid_until:string|null;checked_at:string;review_due_at:string;status:'review'|'approved'|'retired'};
+export type BenefitMatch = {state:'match'|'no_match'|'needs_review';reasons:string[];remaining:string[]};
+export type HealthArticle = {id:string;title:string;source:string;published_at:string|null;url:string;fetched_at:string;keywords:string[];checked_at:string;status:'review'|'approved'|'blocked';source_channel:'rss'|'api'|'public_page'};
+export type ImportBatch = {id:string;user_id:string;request_id:string;file_sha256:string;content_sha256:string;row_count:number;imported_at:string;format_version:string};
+export type RangeQuery = {date?:string|null;month?:string|null;days?:string|number|null;start?:string|null;end?:string|null};
+export type ComparisonFilter = {measurement_context:MeasurementContext;meal_slot:MealSlot|null};
+export type Periods = {current:DateRange;previous:DateRange};

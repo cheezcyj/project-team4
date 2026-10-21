@@ -1,0 +1,42 @@
+{
+  "name": "team4-glucose-records",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.9.0"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "dev:demo": "node scripts/run-demo.mjs",
+    "build": "next build",
+    "start": "node --env-file-if-exists=.env.local scripts/start-production.mjs",
+    "start:demo": "node scripts/run-demo.mjs --production",
+    "lint": "eslint src tests scripts next.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "tsx --test tests/unit/*.test.ts",
+    "test:db": "node supabase/tests/run-db-tests.mjs && node supabase/tests/account-deletion.mjs",
+    "test:e2e": "npm run build && playwright test",
+    "test": "npm run test:unit && npm run test:db",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "recharts": "3.10.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@electric-sql/pglite": "0.5.10",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.2",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}
