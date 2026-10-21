@@ -1,0 +1,2205 @@
+{
+  "schema_version": "1.0",
+  "bundle_version": "v5-draft-1",
+  "authored_on": "2026-10-21",
+  "language": "ko-KR",
+  "status": "draft_not_connected_to_app",
+  "description": "v5 요구사항에 맞춘 근거 연결·FAQ·교육용 식단/운동 초안. 개인 기록이나 실제 AI 응답은 포함하지 않음.",
+  "approval": {
+    "team_content_approved": false,
+    "medical_review_completed": false,
+    "source_reuse_review_completed": false,
+    "app_integration_completed": false,
+    "real_response_evaluation_completed": false
+  },
+  "scope": {
+    "included": [
+      "공식 자료 기반 일반 지식",
+      "개인 기록 답변의 조회·계산 계약",
+      "교육용 식단 3개",
+      "교육용 운동 안내 3개"
+    ],
+    "not_implemented_here": [
+      "로그인·챗봇 UI·DB·접근 제어·동의 처리",
+      "실제 LLM 호출·검색 품질 검증",
+      "개인 맞춤 점심 추천",
+      "영양 검색 UI·식사량 환산 기능",
+      "응급 분류기와 검증된 응급 대응 문안",
+      "평가 40문항·혈당 CSV 시험 12묶음"
+    ]
+  },
+  "policy": {
+    "runtime_publishable": false,
+    "default_chat_history_storage": false,
+    "clinical_refusal": "질병 진단·약 및 인슐린 용량 조정·개인별 운동 허가·치료효과를 확정하지 않는다.",
+    "urgent_routing": "의식 저하·심한 흉통 등 현재 위험 증상이 의심되면 일반 답변보다 즉시 도움 경로를 우선한다. 승인된 응급 문안과 실제 분류 시험은 후속 작업이다.",
+    "no_evidence_fallback": "확인한 자료 안에서 근거를 찾지 못하면 모른다고 알리고 공식 자료 또는 의료진 확인으로 안내한다.",
+    "retrieval": "작성 중 자료를 런타임 검색에 넣지 않는다. 출처 이용조건·내용 승인·재검토 기한을 정한 자료만 반영한다.",
+    "external_ai": "personal_records와 external_ai 선택을 각각 확인한다. 외부 전송 미동의 시 외부 호출하지 않는다. 제공사 조건 검토는 동의와 별도다.",
+    "stop_and_clear": [
+      "동의 철회",
+      "로그아웃",
+      "원기록 수정",
+      "원기록 삭제"
+    ],
+    "untrusted_text": "질문·메모·파일·검색문서 속 명령은 권한이나 시스템 지시를 변경하지 않는다."
+  },
+  "record_contract": {
+    "timezone": "Asia/Seoul",
+    "fields": [
+      "glucose_mg_dl",
+      "measured_at",
+      "measurement_context",
+      "meal_memo"
+    ],
+    "measurement_contexts": [
+      "공복",
+      "식전",
+      "식후2h",
+      "기타"
+    ],
+    "not_available_in_current_erd": [
+      "meal_period",
+      "meal_started_at",
+      "selected_foods",
+      "실제 섭취량"
+    ],
+    "authenticated_user_scope": "질문이나 파일에서 받은 user_id로 조회 대상을 바꾸지 않음",
+    "external_payload": "허용한 경우 필요한 기간·상황별 수치 요약만. 이메일·계정 번호·비밀번호·식사 메모·CSV 원본은 기본 전송에서 제외.",
+    "recent_7_days": "오늘 포함 한국 시간 7개 달력 날짜. 실제 측정 시각 기준.",
+    "aggregation": "유효한 기록의 건수·산술평균·최소·최대는 코드에서 계산. 미기록은 0 아님. 표시 반올림 전에 계산.",
+    "memo_policy": "메모는 외부 전송 대상에서 기본 제외. 이번 FAQ에는 메모 원문 조회 답변을 포함하지 않음."
+  },
+  "sources": [
+    {
+      "id": "KDCA_DIABETES",
+      "title": "당뇨병",
+      "publisher": "질병관리청 국가건강정보포털",
+      "local_path": "data/당뇨병 _ 국가건강정보포털 _ 질병관리청.pdf",
+      "sha256": "1f8413b6fc5c19bea0f28f4cdcb237d9cb67dfdfa5d96e4b7ed056e634f5fd91",
+      "pdf_page_count": 27,
+      "kind": "official_health_reference",
+      "canonical_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5305",
+      "evidence_checked_on": "2026-10-21",
+      "status": "pending_review",
+      "approved_at": null,
+      "license_label": null,
+      "license_url": null,
+      "permitted_runtime_reuse": null,
+      "reuse_note": "공식 자료 열람과 재사용 허락은 별개. 원문 전재·외부 AI 전송의 허락을 확인한 상태가 아님.",
+      "source_dates": {
+        "web_registered_at": "2020-08-30",
+        "web_updated_at": "2026-09-16"
+      }
+    },
+    {
+      "id": "KDCA_DIET",
+      "title": "당뇨환자의 식이요법",
+      "publisher": "질병관리청 국가건강정보포털",
+      "local_path": "data/당뇨환자의 식이요법 _ 국가건강정보포털 _ 질병관리청.pdf",
+      "sha256": "6258f56e2bfaf628281b699ad0f8adf676d1256ad8e60d6fba057147596b4413",
+      "pdf_page_count": 11,
+      "kind": "official_health_reference",
+      "canonical_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3388",
+      "evidence_checked_on": "2026-10-21",
+      "status": "pending_review",
+      "approved_at": null,
+      "license_label": null,
+      "license_url": null,
+      "permitted_runtime_reuse": null,
+      "reuse_note": "공식 자료 열람과 재사용 허락은 별개. 원문 전재·외부 AI 전송의 허락을 확인한 상태가 아님.",
+      "source_dates": {
+        "web_registered_at": "2020-04-17",
+        "web_updated_at": "2026-08-04"
+      }
+    },
+    {
+      "id": "KDCA_EXERCISE",
+      "title": "당뇨환자의 운동요법",
+      "publisher": "질병관리청 국가건강정보포털",
+      "local_path": "data/당뇨환자의 운동요법 _ 국가건강정보포털 _ 질병관리청.pdf",
+      "sha256": "591941ecb0e2611e03d79b1228196c8e1181efbe067d1ea51e8c2bb187d07a86",
+      "pdf_page_count": 6,
+      "kind": "official_health_reference",
+      "canonical_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3390",
+      "evidence_checked_on": "2026-10-21",
+      "status": "pending_review",
+      "approved_at": null,
+      "license_label": null,
+      "license_url": null,
+      "permitted_runtime_reuse": null,
+      "reuse_note": "공식 자료 열람과 재사용 허락은 별개. 원문 전재·외부 AI 전송의 허락을 확인한 상태가 아님.",
+      "source_dates": {
+        "web_registered_at": "2020-04-17",
+        "web_updated_at": "2026-07-31"
+      }
+    },
+    {
+      "id": "KDA_GUIDELINE_2025",
+      "title": "2025 당뇨병 진료지침 요약문 수정본(26.2.12)",
+      "publisher": "대한당뇨병학회",
+      "local_path": "data/2025 당뇨병 진료지침_요약문_수정본(26.2.12).pdf",
+      "sha256": "cffefb4142b680088630dbb44d6ce5999175f5ac795a77efbaabc0aac42031c3",
+      "pdf_page_count": 63,
+      "kind": "official_health_reference",
+      "canonical_url": "https://diabetes.or.kr/bbs/?code=guide&mode=view&number=2099",
+      "evidence_checked_on": "2026-10-21",
+      "status": "pending_review",
+      "approved_at": null,
+      "license_label": null,
+      "license_url": null,
+      "permitted_runtime_reuse": null,
+      "reuse_note": "공식 자료 열람과 재사용 허락은 별개. 원문 전재·외부 AI 전송의 허락을 확인한 상태가 아님.",
+      "source_dates": {
+        "edition_year": 2025,
+        "official_posted_at": "2025-09-09",
+        "revision_history": [
+          {
+            "date": "2025-12-01",
+            "scope": "운동 전 혈당 대처 및 항비만약물 표 오기 수정(공식 게시물 안내)"
+          },
+          {
+            "date": "2026-02-12",
+            "scope": "인슐린 펜 교육영상 QR 및 URL 수정(공식 게시물 안내)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "RDA_COMPOSITION_XLSX",
+      "title": "국가표준식품성분 DB 10.4",
+      "publisher": "농촌진흥청",
+      "kind": "structured_food_reference",
+      "canonical_url": "https://koreanfood.rda.go.kr",
+      "original_download_url": null,
+      "local_path": "data/식품성분표(10개정판).xlsx",
+      "sha256": "271cc431f2991b3c0c049ec6e05fb59a040319e984ab71468184530de61dec50",
+      "source_dates": {
+        "edition_year": 2026
+      },
+      "evidence_checked_on": "2026-10-21",
+      "status": "pending_review",
+      "approved_at": null,
+      "license_label": "공공누리 제1유형: 출처표시",
+      "license_url": null,
+      "license_evidence": "원본 DB 설명 시트의 이미지 설명문",
+      "required_attribution": "농촌진흥청, 2026. 국가표준식품성분 DB 10.4. https://koreanfood.rda.go.kr",
+      "permitted_runtime_reuse": null,
+      "reuse_note": "원본 설명문에서 출처표시 조건을 확인. 서비스 반영 승인과 외부 제공사 조건 확인은 별도.",
+      "catalog_path": "data/processed/food_composition_10_4/foods.jsonl",
+      "catalog_id": "rda-10.4-271cc431f2991b3c",
+      "catalog_sha256": "606b55bec5a512d8c0bee9bfa30013d26b6632d95769df690f394d3cddab21ba"
+    },
+    {
+      "id": "SPEC_REQUIREMENTS",
+      "title": "요구사항 정의서 v5",
+      "publisher": "팀 프로젝트 문서",
+      "kind": "product_specification",
+      "canonical_url": "https://docs.google.com/document/d/1eC9kSFoNyv4yT0C0L2YnM1VaEnVJxXba/edit",
+      "local_path": ".tmp/research/document-review-20261021-164710/current_03_1eC9kSFoNyv4yT0C0L2YnM1VaEnVJxXba.txt",
+      "sha256": "968ea4d509bd13d7221ca5f60779633034bcd95067c84eabede096248cc98a8b",
+      "evidence_checked_on": "2026-10-21",
+      "status": "planning_reference",
+      "medical_evidence": false
+    },
+    {
+      "id": "SPEC_ERD",
+      "title": "데이터정의 ERD v5",
+      "publisher": "팀 프로젝트 문서",
+      "kind": "product_specification",
+      "canonical_url": "https://docs.google.com/document/d/1JB4oPm4gIwR_s9o34jz2CF00SrbGTFP-/edit",
+      "local_path": ".tmp/research/document-review-20261021-164710/current_06_1JB4oPm4gIwR_s9o34jz2CF00SrbGTFP-.txt",
+      "sha256": "2d1b924dd2e35b937b780005978aa311b6fdb22a1989b5dbb6196e8df51fe585",
+      "evidence_checked_on": "2026-10-21",
+      "status": "planning_reference",
+      "medical_evidence": false
+    },
+    {
+      "id": "SPEC_DEV",
+      "title": "개발기획서 v5",
+      "publisher": "팀 프로젝트 문서",
+      "kind": "product_specification",
+      "canonical_url": "https://docs.google.com/document/d/1PgDphmAhqK-3-ZWEfmA6xl08-nrFXrS4/edit",
+      "local_path": ".tmp/research/document-review-20261021-164710/current_02_1PgDphmAhqK-3-ZWEfmA6xl08-nrFXrS4.txt",
+      "sha256": "8f561514733b5ad70703ec73a4804345de2e47354ad3c5d2549b98cb836056b6",
+      "evidence_checked_on": "2026-10-21",
+      "status": "planning_reference",
+      "medical_evidence": false
+    }
+  ],
+  "knowledge_entries": [
+    {
+      "id": "B01",
+      "version": 1,
+      "topic": "basic",
+      "language": "ko-KR",
+      "title": "당화혈색소랑 오늘 잰 혈당은 뭐가 달라?",
+      "summary": "직접 잰 혈당은 측정 당시의 값이고, 당화혈색소는 대략 최근 2~3개월의 평균적인 혈당 상태를 반영하는 검사입니다. 앱에 몇 번 적은 혈당의 평균을 당화혈색소 검사 결과로 바꿔 말할 수는 없습니다.",
+      "keywords": [
+        "당화혈색소",
+        "혈당",
+        "평균혈당"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "section": "검사 및 진단: 당화혈색소",
+          "role": "medical_basis",
+          "pdf_pages": [
+            9
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "혈당조절의 모니터링 및 연속혈당측정",
+          "role": "medical_basis",
+          "pdf_pages": [
+            11
+          ],
+          "printed_pages": [
+            20,
+            21
+          ]
+        }
+      ],
+      "conditions": [
+        "일반 개념 설명이며 개인 진단이나 치료 목표를 정하지 않는다.",
+        "수기 기록 평균과 CGM·당화혈색소를 구분한다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "94a01222cc75d0ecec0985d28ad11bd3857fbfee532a420fbf5595460141aa6c"
+    },
+    {
+      "id": "B02",
+      "version": 1,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "식후 2시간은 밥을 다 먹고부터 재는 거야?",
+      "summary": "식후 2시간 혈당은 첫 숟가락을 뜬 시점, 즉 식사를 시작한 때부터 2시간이 지난 시점을 기준으로 설명합니다. 식사를 마친 시각부터 세는 것이 아닙니다. 개인별 측정 계획은 안내받은 방법을 따릅니다.",
+      "keywords": [
+        "식후2h",
+        "식후 2시간",
+        "식사 시작"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "section": "자가혈당측정: 혈당검사 시점",
+          "role": "medical_basis",
+          "pdf_pages": [
+            11,
+            12
+          ]
+        }
+      ],
+      "conditions": [
+        "현재 기록에는 식사 시작 시각이 없으므로 저장된 측정 시각만으로 실제 2시간 경과를 검증하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "bf0d25f8692d4590a7b8f3f83b18c401aa94f3cc1b1fa5d266b76e80611b4e9f"
+    },
+    {
+      "id": "B03",
+      "version": 1,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "혈당 수치 말고 측정 상황이나 메모는 왜 남겨?",
+      "summary": "혈당은 측정 시점과 식사·운동 등 생활 맥락에 따라 달라질 수 있어, 수치와 함께 측정 상황을 남기면 기록을 구분해 살펴보는 데 도움이 됩니다. 메모는 당시 상황을 되짚는 참고이며 변화의 원인을 증명하는 자료는 아닙니다.",
+      "keywords": [
+        "측정 상황",
+        "식사 메모",
+        "기록"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "section": "혈당검사 시점·자가혈당측정 결과 기록하기",
+          "role": "medical_basis",
+          "pdf_pages": [
+            11,
+            12,
+            13
+          ]
+        }
+      ],
+      "conditions": [
+        "측정 상황은 공복·식전·식후2h·기타를 사용한다.",
+        "자유 메모에서 먹은 양·식품코드·원인을 확정하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "9b107c3d37af34289c38d1526a2bb86b6a943fc1cdd6aee19e66017b90588925"
+    },
+    {
+      "id": "B04",
+      "version": 1,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "혈당은 하루에 몇 번 재야 해?",
+      "summary": "자가혈당측정의 시기와 횟수는 당뇨병 유형, 치료 방법과 개인 상태에 따라 달라집니다. 공복·식사 전후·운동 전후 등 여러 시점에 측정할 수 있지만, 모든 이용자에게 같은 횟수를 지정하지 않고 담당 의료진과 정한 측정 계획을 따르도록 안내합니다.",
+      "keywords": [
+        "측정 횟수",
+        "측정 시기",
+        "하루 몇 번"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "자기혈당측정 권고 4",
+          "role": "medical_basis",
+          "pdf_pages": [
+            11
+          ],
+          "printed_pages": [
+            20,
+            21
+          ]
+        }
+      ],
+      "conditions": [
+        "약물·저혈당 위험·임신 등 개인 상태를 모르는 상황에서 고정 횟수를 처방하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "e4f5d53806f8fdea858594c112083f9a610f1ac1da89d8c92336dd2e13f404c1"
+    },
+    {
+      "id": "B05",
+      "version": 1,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "공복이랑 식후 혈당을 같이 평균 내도 돼?",
+      "summary": "공복과 식후 혈당은 서로 다른 측정 상황입니다. 앱에서 비교할 때는 상황별 기록을 따로 보여 주고, 섞인 값으로 건강이 좋아졌는지 판정하지 않습니다. 같은 상황끼리 비교해도 기록 시각이나 식사 등의 차이로 결과가 달라질 수 있습니다.",
+      "keywords": [
+        "공복",
+        "식후",
+        "비교",
+        "평균"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "section": "측정 시점과 기록의 맥락",
+          "role": "medical_basis",
+          "pdf_pages": [
+            11,
+            12,
+            13
+          ]
+        },
+        {
+          "source_id": "SPEC_ERD",
+          "section": "glucose_records·최근 7일",
+          "role": "product_rule"
+        }
+      ],
+      "conditions": [
+        "상황별 집계는 제품 규칙이며 의료 지침이 정한 평균 계산식은 아니다.",
+        "현재 ERD에는 아침·점심·저녁 구분 필드가 없다. 식전 기록끼리도 동일한 식사 조건이라고 단정하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "6629d6f46b17ccf8b4cfcf2fb4c57d9127b2350b7605dc34bc80d6211e111199"
+    },
+    {
+      "id": "N01",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "당뇨 식사는 어떤 원칙으로 구성해?",
+      "summary": "한 가지 음식만 먹기보다 곡류, 단백질 식품, 채소 등 다양한 식품군을 조합하고 규칙적으로 식사하는 방향을 설명합니다. 덜 정제된 곡류와 채소를 활용할 수 있으며, 개인에게 맞는 양은 별도로 정해야 합니다.",
+      "keywords": [
+        "식사 구성",
+        "균형",
+        "현미",
+        "채소"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "개요·식이섬유·식품군·외식 원칙",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "conditions": [
+        "아래 세 가지 조합은 원칙을 바탕으로 만든 교육용 예시이며 공식 기관이 제시한 완성 식단은 아니다.",
+        "칼로리·식사량·혈당 감소 효과를 임의로 정하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "657903c7d07bdc9f0ea54f1d75fe8b5cfab0e2cf74e36d0d295bcbad7b7a1d43"
+    },
+    {
+      "id": "N02",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "탄수화물은 아예 안 먹는 게 좋아?",
+      "summary": "탄수화물을 일괄적으로 끊는 식사로 안내하지 않습니다. 음식의 종류와 양, 전체 식사의 균형을 함께 살피며, 덜 정제된 곡류와 식이섬유를 포함한 선택을 설명합니다. 개인별 비율이나 한 끼 섭취량은 이 답변에서 정하지 않습니다.",
+      "keywords": [
+        "탄수화물",
+        "밥",
+        "곡류",
+        "식사량"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "적절한 영양상태·탄수화물 섭취 조절·식사 방법",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            3
+          ]
+        }
+      ],
+      "conditions": [
+        "원문의 특정 탄수화물 비율을 모든 이용자에게 적용하지 않는다.",
+        "당류 수치만으로 전체 탄수화물이나 음식의 적합성을 판단하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "e953cb6b097006acad45d0491e09d1eee4e75746b84642d097245c9b4d9a50e5"
+    },
+    {
+      "id": "N03",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "무가당이면 당류가 없다는 뜻이야?",
+      "summary": "무가당 표시만으로 당류나 탄수화물이 전혀 없다고 판단하지 않습니다. 원재료에 당류가 들어 있을 수 있으므로 영양정보의 탄수화물·당류, 표시 기준량과 실제 먹는 양을 함께 확인하도록 안내합니다.",
+      "keywords": [
+        "무가당",
+        "영양표시",
+        "당류",
+        "탄수화물"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "가공식품 선택 시 유의할 점",
+          "role": "medical_basis",
+          "pdf_pages": [
+            3
+          ]
+        }
+      ],
+      "conditions": [
+        "일반 영양교육이며 최신 식품표시 법령의 문구 요건을 판정하는 답변은 아니다.",
+        "현재 v5 필수 기능에 제품별 영양 검색이 구현됐다고 표현하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "2334cdbd215645a68dd9745814f4d6264cf155638c04bf3fbaa7f17ee9562ebc"
+    },
+    {
+      "id": "N04",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "과일을 주스로 마셔도 같아?",
+      "summary": "식이섬유를 고려한 일반 식사 안내에서는 주스보다 과일 자체의 형태로 먹는 선택을 설명합니다. 과일에도 탄수화물이 있어 먹는 양을 함께 살펴야 하며, 생과일이라고 무제한 먹어도 된다고 안내하지 않습니다.",
+      "keywords": [
+        "과일",
+        "주스",
+        "식이섬유"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "식이섬유 섭취·식사 방법",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            3
+          ]
+        }
+      ],
+      "conditions": [
+        "주스와 과일의 영양 수치를 종류·양을 확인하지 않고 동일하게 취급하지 않는다.",
+        "특정 과일을 일률적으로 금지하거나 개인 적정 개수를 정하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "412f035cb786a5b74fb7105b40a91ecda892457f2cd92e3ee391f17fcb553ff0"
+    },
+    {
+      "id": "N05",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "식단 예시에 양이나 칼로리가 없는데 그대로 먹으면 돼?",
+      "summary": "음식 조합 예시는 식품군을 이해하기 위한 자료입니다. 개인별 필요량은 체격, 활동량, 치료와 건강 상태 등에 따라 달라지므로 예시를 그대로 한 끼 처방으로 사용하지 않습니다. 재료별 먹는 양과 조리 정보를 모르면 한 끼 영양 합계도 만들지 않습니다.",
+      "keywords": [
+        "식단 예시",
+        "섭취량",
+        "칼로리",
+        "개인화"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "필요 열량의 개인차·식품교환표를 활용한 계획",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            2
+          ]
+        },
+        {
+          "source_id": "SPEC_REQUIREMENTS",
+          "section": "REQ-31",
+          "role": "product_rule"
+        }
+      ],
+      "conditions": [
+        "식재료 DB의 가식부 100g 기준은 권장 섭취량이 아니다.",
+        "알레르기·다른 질환·복약을 모르면 개인에게 적합하다고 보장하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "8c7bada47659f65d2772b3067cc188c9083c1b836afd0677fee9b7c357a0d22f"
+    },
+    {
+      "id": "X01",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "30분 정도 있는데 가볍게 할 운동이 있어?",
+      "summary": "일반적인 활동 선택지로 걷기를 소개할 수 있습니다. 다만 시간이 30분 있다는 사실만으로 30분 내내 운동하라고 정하지는 않습니다. 평소 활동 수준, 현재 몸 상태, 치료와 합병증에 따른 제한을 확인하고 개인에게 안내된 계획 안에서 활동하도록 설명합니다.",
+      "keywords": [
+        "30분",
+        "가벼운 운동",
+        "걷기"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "운동 준비 설문·주의사항·유산소 운동",
+          "role": "medical_basis",
+          "pdf_pages": [
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "운동 예시·합병증별 주의",
+          "role": "medical_basis",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": [
+            98,
+            99
+          ]
+        }
+      ],
+      "conditions": [
+        "운동 종류의 교육용 예시이며 개인별 시간·강도·소모 칼로리 처방이 아니다.",
+        "발 상처·감각 저하·망막병증·심혈관질환 등이 있으면 활동 선택이 달라질 수 있다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "752f1af9a7bc047aff25b95bc7a2b0d221907d9a0a9c69dec5256197c13c6304"
+    },
+    {
+      "id": "X02",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "실내에서 할 수 있는 운동도 있어?",
+      "summary": "공식 자료에는 실내 자전거 같은 유산소 활동과 탄력 밴드를 이용한 저항운동이 예시로 나옵니다. 집 안에서 할 수 있다는 이유로 누구에게나 안전하다고 정하지 않으며, 기구 사용법과 자세, 개인의 운동 제한을 먼저 확인하도록 설명합니다.",
+      "keywords": [
+        "실내",
+        "자전거",
+        "탄력 밴드",
+        "저항운동"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "유산소·근력 운동의 종류",
+          "role": "medical_basis",
+          "pdf_pages": [
+            3
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "유산소·저항운동 예시",
+          "role": "medical_basis",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": [
+            98,
+            99
+          ]
+        }
+      ],
+      "conditions": [
+        "밴드 강도·반복 횟수·운동시간을 확인 없이 정하지 않는다.",
+        "자세가 익숙하지 않으면 운동전문가의 지도를 확인하도록 안내한다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "580ea29c6a29f5a1e14938a4ed0f0af0747625d57b9153b19e9c0528445fcbfb"
+    },
+    {
+      "id": "X03",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "운동 전후 혈당을 확인하는 이유가 뭐야?",
+      "summary": "운동 중이나 이후에는 혈당이 달라질 수 있고, 특히 인슐린이나 일부 혈당강하제를 사용하는 경우 저혈당 위험을 고려해야 합니다. 개인별로 교육받은 측정·대처 계획을 확인하도록 설명하며, 약이나 인슐린 용량을 챗봇이 조정하지 않습니다.",
+      "keywords": [
+        "운동 전후",
+        "저혈당",
+        "인슐린"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "운동 시 주의사항",
+          "role": "medical_basis",
+          "pdf_pages": [
+            2
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "자기혈당측정·운동 전 혈당 확인",
+          "role": "medical_basis",
+          "pdf_pages": [
+            11,
+            14
+          ],
+          "printed_pages": [
+            20,
+            21,
+            26,
+            27
+          ]
+        }
+      ],
+      "conditions": [
+        "운동 전 혈당 수치별 표를 자동으로 약물·간식 처방에 전환하지 않는다.",
+        "복약을 모른 상태에서 저혈당 위험이 없다고 말하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "2a4d419f6a2cb5c7c7ea679eed303bfca5cdd9bb47853dcbae5d2d835a9e6088"
+    },
+    {
+      "id": "X04",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "새 운동을 시작하기 전에 뭘 확인해야 해?",
+      "summary": "현재 몸 상태와 평소 운동 수준, 심장·눈·신장·신경 합병증, 발의 상처나 감각 저하, 사용 중인 치료와 기존 운동 제한을 확인하는 방향으로 안내합니다. 흉통이나 심한 어지럼 같은 증상, 이미 안내받은 제한이 있다면 운동 계획에 앞서 의료진의 평가가 필요합니다.",
+      "keywords": [
+        "운동 시작",
+        "합병증",
+        "발 상처",
+        "흉통"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "운동 전 검사·준비 설문·주의사항",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            2
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "합병증에 따른 권장·주의 운동",
+          "role": "medical_basis",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": [
+            98,
+            99
+          ]
+        }
+      ],
+      "conditions": [
+        "자가 확인 문항에 답했다고 운동 가능 확인서가 되는 것은 아니다.",
+        "모든 이용자에게 동일한 운동 검사를 의무로 요구하지 않는다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "02f108487ebe7e0805b0cdf7a553a547e51ce5bb483d5dfa0faf3755dae6ba46"
+    },
+    {
+      "id": "X05",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "혈당 수치 하나로 지금 운동해도 되는지 알려줄 수 있어?",
+      "summary": "혈당 수치 하나만으로 운동 가능 여부를 확정하지 않습니다. 증상, 사용 중인 치료, 케톤 여부, 합병증, 계획한 운동의 종류와 강도 등 조건을 함께 살펴야 합니다. 이 챗봇은 개인별 운동 허가나 인슐린 조정을 대신하지 않습니다.",
+      "keywords": [
+        "운동 가능",
+        "혈당 수치",
+        "케톤",
+        "운동 허가"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "운동 전 혈당수준에 따른 대처·합병증별 주의",
+          "role": "medical_basis",
+          "pdf_pages": [
+            14,
+            50,
+            51
+          ],
+          "printed_pages": [
+            26,
+            27,
+            98,
+            99,
+            100,
+            101
+          ]
+        }
+      ],
+      "conditions": [
+        "전문 지침의 수치표에는 조건부 행동·약물 조정이 포함돼 있어 자동 처방 규칙으로 가져오지 않는다.",
+        "응급 의심 표현은 일반 운동 답변보다 우선 처리해야 한다."
+      ],
+      "evidence_checked_on": "2026-10-21",
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "64ca8b62cd4ae0c34ca3546bf83fc2e21b968323a56aab59b794fc88c9f5550e"
+    }
+  ],
+  "faqs": [
+    {
+      "id": "FAQ-B01",
+      "category": "basic",
+      "question": "당화혈색소랑 오늘 잰 혈당은 뭐가 달라?",
+      "answer_template": "직접 잰 혈당은 측정 당시의 값이고, 당화혈색소는 대략 최근 2~3개월의 평균적인 혈당 상태를 반영하는 검사입니다. 앱에 몇 번 적은 혈당의 평균을 당화혈색소 검사 결과로 바꿔 말할 수는 없습니다.",
+      "knowledge_ids": [
+        "B01"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "일반 개념 설명이며 개인 진단이나 치료 목표를 정하지 않는다.",
+        "수기 기록 평균과 CGM·당화혈색소를 구분한다."
+      ],
+      "fallback": "개인 검사 결과의 해석·약 변경을 요청하면 수치만으로 판단하지 않고 담당 의료진에게 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-B02",
+      "category": "measurement",
+      "question": "식후 2시간은 밥을 다 먹고부터 재는 거야?",
+      "answer_template": "식후 2시간 혈당은 첫 숟가락을 뜬 시점, 즉 식사를 시작한 때부터 2시간이 지난 시점을 기준으로 설명합니다. 식사를 마친 시각부터 세는 것이 아닙니다. 개인별 측정 계획은 안내받은 방법을 따릅니다.",
+      "knowledge_ids": [
+        "B02"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "현재 기록에는 식사 시작 시각이 없으므로 저장된 측정 시각만으로 실제 2시간 경과를 검증하지 않는다."
+      ],
+      "fallback": "식사 시작 시각을 모르면 정확히 2시간 뒤에 측정했는지 확정하지 않는다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-B03",
+      "category": "measurement",
+      "question": "혈당 수치 말고 측정 상황이나 메모는 왜 남겨?",
+      "answer_template": "혈당은 측정 시점과 식사·운동 등 생활 맥락에 따라 달라질 수 있어, 수치와 함께 측정 상황을 남기면 기록을 구분해 살펴보는 데 도움이 됩니다. 메모는 당시 상황을 되짚는 참고이며 변화의 원인을 증명하는 자료는 아닙니다.",
+      "knowledge_ids": [
+        "B03"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "측정 상황은 공복·식전·식후2h·기타를 사용한다.",
+        "자유 메모에서 먹은 양·식품코드·원인을 확정하지 않는다."
+      ],
+      "fallback": "메모가 없어도 기록값과 측정 상황은 구분해 보여 준다. 원인을 묻는 질문에는 현재 기록으로 확정할 수 없다고 답한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-B04",
+      "category": "measurement",
+      "question": "혈당은 하루에 몇 번 재야 해?",
+      "answer_template": "자가혈당측정의 시기와 횟수는 당뇨병 유형, 치료 방법과 개인 상태에 따라 달라집니다. 공복·식사 전후·운동 전후 등 여러 시점에 측정할 수 있지만, 모든 이용자에게 같은 횟수를 지정하지 않고 담당 의료진과 정한 측정 계획을 따르도록 안내합니다.",
+      "knowledge_ids": [
+        "B04"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "약물·저혈당 위험·임신 등 개인 상태를 모르는 상황에서 고정 횟수를 처방하지 않는다."
+      ],
+      "fallback": "개인별 측정 횟수나 약 복용 전후 조정을 정해 달라고 하면 담당 의료진에게 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-B05",
+      "category": "measurement",
+      "question": "공복이랑 식후 혈당을 같이 평균 내도 돼?",
+      "answer_template": "공복과 식후 혈당은 서로 다른 측정 상황입니다. 앱에서 비교할 때는 상황별 기록을 따로 보여 주고, 섞인 값으로 건강이 좋아졌는지 판정하지 않습니다. 같은 상황끼리 비교해도 기록 시각이나 식사 등의 차이로 결과가 달라질 수 있습니다.",
+      "knowledge_ids": [
+        "B05"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "상황별 집계는 제품 규칙이며 의료 지침이 정한 평균 계산식은 아니다.",
+        "현재 ERD에는 아침·점심·저녁 구분 필드가 없다. 식전 기록끼리도 동일한 식사 조건이라고 단정하지 않는다."
+      ],
+      "fallback": "상황이 기타이거나 불명확하면 비교 한계를 표시하고 식후·공복을 추정해 채우지 않는다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-N01",
+      "category": "meal",
+      "question": "당뇨 식사는 어떤 원칙으로 구성해?",
+      "answer_template": "참고할 음식 조합으로 현미밥·삶은 달걀·토마토, 현미밥·두부·데친 브로콜리, 현미밥·구운 고등어·오이를 준비했습니다. 곡류·단백질 식품·채소를 조합한 교육용 예시입니다. 개인에게 맞는 양과 알레르기·동반질환에 따른 조정은 별도 확인이 필요합니다.",
+      "knowledge_ids": [
+        "N01"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "아래 세 가지 조합은 원칙을 바탕으로 만든 교육용 예시이며 공식 기관이 제시한 완성 식단은 아니다.",
+        "칼로리·식사량·혈당 감소 효과를 임의로 정하지 않는다."
+      ],
+      "fallback": "개인에게 맞는 식단인지 묻는 경우 알레르기·동반질환·치료 상황을 모른 채 적합하다고 보장하지 않는다.",
+      "mode": "general_education",
+      "example_ids": [
+        "MEAL-01",
+        "MEAL-02",
+        "MEAL-03"
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-N02",
+      "category": "meal",
+      "question": "탄수화물은 아예 안 먹는 게 좋아?",
+      "answer_template": "탄수화물을 일괄적으로 끊는 식사로 안내하지 않습니다. 음식의 종류와 양, 전체 식사의 균형을 함께 살피며, 덜 정제된 곡류와 식이섬유를 포함한 선택을 설명합니다. 개인별 비율이나 한 끼 섭취량은 이 답변에서 정하지 않습니다.",
+      "knowledge_ids": [
+        "N02"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "원문의 특정 탄수화물 비율을 모든 이용자에게 적용하지 않는다.",
+        "당류 수치만으로 전체 탄수화물이나 음식의 적합성을 판단하지 않는다."
+      ],
+      "fallback": "몇 g을 먹어야 하는지 요청하면 치료·영양 상태에 맞는 식사 계획을 의료진 또는 영양사와 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-N03",
+      "category": "meal",
+      "question": "무가당이면 당류가 없다는 뜻이야?",
+      "answer_template": "무가당 표시만으로 당류나 탄수화물이 전혀 없다고 판단하지 않습니다. 원재료에 당류가 들어 있을 수 있으므로 영양정보의 탄수화물·당류, 표시 기준량과 실제 먹는 양을 함께 확인하도록 안내합니다.",
+      "knowledge_ids": [
+        "N03"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "일반 영양교육이며 최신 식품표시 법령의 문구 요건을 판정하는 답변은 아니다.",
+        "현재 v5 필수 기능에 제품별 영양 검색이 구현됐다고 표현하지 않는다."
+      ],
+      "fallback": "제품 영양정보를 모르면 수치를 추측하지 않고 표시사항을 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-N04",
+      "category": "meal",
+      "question": "과일을 주스로 마셔도 같아?",
+      "answer_template": "식이섬유를 고려한 일반 식사 안내에서는 주스보다 과일 자체의 형태로 먹는 선택을 설명합니다. 과일에도 탄수화물이 있어 먹는 양을 함께 살펴야 하며, 생과일이라고 무제한 먹어도 된다고 안내하지 않습니다.",
+      "knowledge_ids": [
+        "N04"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "주스와 과일의 영양 수치를 종류·양을 확인하지 않고 동일하게 취급하지 않는다.",
+        "특정 과일을 일률적으로 금지하거나 개인 적정 개수를 정하지 않는다."
+      ],
+      "fallback": "특정 과일의 허용량을 물으면 개인 식사 계획을 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-N05",
+      "category": "meal",
+      "question": "식단 예시에 양이나 칼로리가 없는데 그대로 먹으면 돼?",
+      "answer_template": "음식 조합 예시는 식품군을 이해하기 위한 자료입니다. 개인별 필요량은 체격, 활동량, 치료와 건강 상태 등에 따라 달라지므로 예시를 그대로 한 끼 처방으로 사용하지 않습니다. 재료별 먹는 양과 조리 정보를 모르면 한 끼 영양 합계도 만들지 않습니다.",
+      "knowledge_ids": [
+        "N05"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "식재료 DB의 가식부 100g 기준은 권장 섭취량이 아니다.",
+        "알레르기·다른 질환·복약을 모르면 개인에게 적합하다고 보장하지 않는다."
+      ],
+      "fallback": "분량 또는 영양소 목표를 요구하면 개인 식사 계획을 확인하도록 안내한다. 양이 없는 상태에서 숫자를 만들어 주지 않는다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-X01",
+      "category": "exercise",
+      "question": "30분 정도 있는데 가볍게 할 운동이 있어?",
+      "answer_template": "일반적인 활동 선택지로 걷기를 소개할 수 있습니다. 다만 시간이 30분 있다는 사실만으로 30분 내내 운동하라고 정하지는 않습니다. 평소 활동 수준, 현재 몸 상태, 치료와 합병증에 따른 제한을 확인하고 개인에게 안내된 계획 안에서 활동하도록 설명합니다.",
+      "knowledge_ids": [
+        "X01"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "운동 종류의 교육용 예시이며 개인별 시간·강도·소모 칼로리 처방이 아니다.",
+        "발 상처·감각 저하·망막병증·심혈관질환 등이 있으면 활동 선택이 달라질 수 있다."
+      ],
+      "fallback": "현재 흉통·심한 어지럼 등 증상이나 운동 제한이 있으면 운동을 권하지 않고 진료·도움이 필요한 상태인지 먼저 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [
+        "EXERCISE-01"
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-X02",
+      "category": "exercise",
+      "question": "실내에서 할 수 있는 운동도 있어?",
+      "answer_template": "공식 자료에는 실내 자전거 같은 유산소 활동과 탄력 밴드를 이용한 저항운동이 예시로 나옵니다. 집 안에서 할 수 있다는 이유로 누구에게나 안전하다고 정하지 않으며, 기구 사용법과 자세, 개인의 운동 제한을 먼저 확인하도록 설명합니다.",
+      "knowledge_ids": [
+        "X02"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "밴드 강도·반복 횟수·운동시간을 확인 없이 정하지 않는다.",
+        "자세가 익숙하지 않으면 운동전문가의 지도를 확인하도록 안내한다."
+      ],
+      "fallback": "통증·균형 문제·합병증 등으로 적합성을 알 수 없으면 다른 활동으로 임의 대체 처방하지 않는다.",
+      "mode": "general_education",
+      "example_ids": [
+        "EXERCISE-02",
+        "EXERCISE-03"
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-X03",
+      "category": "exercise",
+      "question": "운동 전후 혈당을 확인하는 이유가 뭐야?",
+      "answer_template": "운동 중이나 이후에는 혈당이 달라질 수 있고, 특히 인슐린이나 일부 혈당강하제를 사용하는 경우 저혈당 위험을 고려해야 합니다. 개인별로 교육받은 측정·대처 계획을 확인하도록 설명하며, 약이나 인슐린 용량을 챗봇이 조정하지 않습니다.",
+      "knowledge_ids": [
+        "X03"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "운동 전 혈당 수치별 표를 자동으로 약물·간식 처방에 전환하지 않는다.",
+        "복약을 모른 상태에서 저혈당 위험이 없다고 말하지 않는다."
+      ],
+      "fallback": "약이나 인슐린을 얼마나 줄일지 요청하면 용량을 답하지 않고 담당 의료진과 정한 계획을 확인하도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-X04",
+      "category": "exercise",
+      "question": "새 운동을 시작하기 전에 뭘 확인해야 해?",
+      "answer_template": "현재 몸 상태와 평소 운동 수준, 심장·눈·신장·신경 합병증, 발의 상처나 감각 저하, 사용 중인 치료와 기존 운동 제한을 확인하는 방향으로 안내합니다. 흉통이나 심한 어지럼 같은 증상, 이미 안내받은 제한이 있다면 운동 계획에 앞서 의료진의 평가가 필요합니다.",
+      "knowledge_ids": [
+        "X04"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "자가 확인 문항에 답했다고 운동 가능 확인서가 되는 것은 아니다.",
+        "모든 이용자에게 동일한 운동 검사를 의무로 요구하지 않는다."
+      ],
+      "fallback": "현재 증상이 있거나 제한을 잘 모르면 운동 실행 안내를 보류하고 적절한 진료·도움을 받도록 안내한다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-X05",
+      "category": "exercise",
+      "question": "혈당 수치 하나로 지금 운동해도 되는지 알려줄 수 있어?",
+      "answer_template": "혈당 수치 하나만으로 운동 가능 여부를 확정하지 않습니다. 증상, 사용 중인 치료, 케톤 여부, 합병증, 계획한 운동의 종류와 강도 등 조건을 함께 살펴야 합니다. 이 챗봇은 개인별 운동 허가나 인슐린 조정을 대신하지 않습니다.",
+      "knowledge_ids": [
+        "X05"
+      ],
+      "evidence": [],
+      "required_inputs": [],
+      "conditions": [
+        "전문 지침의 수치표에는 조건부 행동·약물 조정이 포함돼 있어 자동 처방 규칙으로 가져오지 않는다.",
+        "응급 의심 표현은 일반 운동 답변보다 우선 처리해야 한다."
+      ],
+      "fallback": "현재 위험 증상이 의심되면 일반 활동 예시 제공을 중단하고 즉시 도움받는 경로로 전환한다. 실제 응급 대응 문안·분류는 별도 검토·시험 대상이다.",
+      "mode": "general_education",
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-P01",
+      "category": "personal_records",
+      "question": "어제랑 오늘 혈당 변화 어때?",
+      "answer_template": "{measurement_context} 기록으로 비교했습니다. 어제 {yesterday_date} {yesterday_count}건의 평균은 {yesterday_mean_mg_dl} mg/dL, 오늘 {today_date} 현재까지 {today_count}건의 평균은 {today_mean_mg_dl} mg/dL입니다. 오늘 평균에서 어제 평균을 뺀 차이는 {delta_mg_dl} mg/dL입니다. 기록의 수치 차이이며 좋아졌는지나 변화 원인을 판정한 결과는 아닙니다.",
+      "knowledge_ids": [],
+      "evidence": [
+        {
+          "source_id": "SPEC_REQUIREMENTS",
+          "section": "REQ-30·32~35: 본인 기록·선택 동의·중지",
+          "role": "product_rule"
+        },
+        {
+          "source_id": "SPEC_ERD",
+          "section": "glucose_records·ai_consents·본인 계정 접근",
+          "role": "product_rule"
+        }
+      ],
+      "required_inputs": [
+        "서버가 인증한 본인 계정",
+        "personal_records 선택 동의",
+        "measured_at",
+        "glucose_mg_dl",
+        "measurement_context"
+      ],
+      "conditions": [
+        "Asia/Seoul 실제 측정 날짜를 사용한다. 저장 날짜로 바꾸지 않는다.",
+        "요청한 같은 상황끼리 비교한다. 상황을 지정하지 않으면 공통 상황별로 나누거나 선택을 요청한다.",
+        "양쪽 각 1건이면 평균 추세 대신 두 측정값의 차이로 표현한다.",
+        "반올림 전 평균으로 차이를 계산하고 표시만 소수점 1자리로 맞춘다.",
+        "식사·운동·약의 인과관계나 치료 효과를 추론하지 않는다."
+      ],
+      "fallback": "한쪽 날짜에 같은 상황의 기록이 없으면 평균 차이를 계산하지 않고 기록이 있는 날짜와 없는 날짜를 구분해 알린다.",
+      "mode": "application_rule_or_record_template",
+      "operation": "compare_yesterday_today_same_context",
+      "output_fields": [
+        "measurement_context",
+        "yesterday_date",
+        "yesterday_count",
+        "yesterday_mean_mg_dl",
+        "today_date",
+        "today_count",
+        "today_mean_mg_dl",
+        "delta_mg_dl"
+      ],
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-P02",
+      "category": "personal_records",
+      "question": "최근 7일 공복 혈당 요약해 줘.",
+      "answer_template": "{start_date}부터 {end_date} 현재까지 공복 기록은 {record_count}건, 기록한 날짜는 {recorded_day_count}일입니다. 기록값의 평균 {mean_mg_dl}, 최솟값 {min_mg_dl}, 최댓값 {max_mg_dl} mg/dL입니다. 미기록 날짜는 {missing_dates}이며 0으로 채우지 않았습니다.",
+      "knowledge_ids": [],
+      "evidence": [
+        {
+          "source_id": "SPEC_REQUIREMENTS",
+          "section": "REQ-30·32~35: 본인 기록·선택 동의·중지",
+          "role": "product_rule"
+        },
+        {
+          "source_id": "SPEC_ERD",
+          "section": "glucose_records·ai_consents·본인 계정 접근",
+          "role": "product_rule"
+        }
+      ],
+      "required_inputs": [
+        "서버가 인증한 본인 계정",
+        "personal_records 선택 동의",
+        "measured_at",
+        "glucose_mg_dl",
+        "measurement_context=공복"
+      ],
+      "conditions": [
+        "한국 시간 오늘과 앞선 6개 날짜, 첫날 0시 이상·내일 0시 미만이다.",
+        "현재보다 미래인 측정 시각은 입력 검증에서 제외해야 하며 집계는 현재까지 저장된 유효 기록이다.",
+        "평균의 분모는 날짜 수가 아니라 기록 건수다.",
+        "연속혈당 평균·TIR·GMI·당화혈색소 추정으로 표시하지 않는다."
+      ],
+      "fallback": "공복 기록이 0건이면 평균·최소·최대는 값 없음으로 처리한다. 0 mg/dL로 출력하지 않는다.",
+      "mode": "application_rule_or_record_template",
+      "operation": "summarize_recent_7_calendar_days_fasting",
+      "output_fields": [
+        "start_date",
+        "end_date",
+        "record_count",
+        "recorded_day_count",
+        "mean_mg_dl",
+        "min_mg_dl",
+        "max_mg_dl",
+        "missing_dates"
+      ],
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-P03",
+      "category": "personal_records",
+      "question": "기록을 안 한 날은 혈당 0으로 계산되는 거야?",
+      "answer_template": "아니요. 기록이 없는 날은 미기록으로 구분합니다. 평균은 실제 저장된 유효 기록만으로 계산하고 건수와 기록한 날짜 수를 함께 표시하도록 설계합니다. 미기록을 정상 혈당이나 혈당 0으로 해석하지 않습니다.",
+      "knowledge_ids": [],
+      "evidence": [
+        {
+          "source_id": "SPEC_REQUIREMENTS",
+          "section": "REQ-30·32~35: 본인 기록·선택 동의·중지",
+          "role": "product_rule"
+        },
+        {
+          "source_id": "SPEC_ERD",
+          "section": "glucose_records·ai_consents·본인 계정 접근",
+          "role": "product_rule"
+        }
+      ],
+      "required_inputs": [],
+      "conditions": [
+        "이 질문은 계산 방식 설명이므로 개인 기록 동의 없이 일반 답변할 수 있다."
+      ],
+      "fallback": "본인의 누락 날짜 조회까지 요청하면 개인 기록 동의를 확인한 뒤 해당 기간만 조회한다.",
+      "mode": "application_rule_or_record_template",
+      "operation": "explain_missing_data_policy",
+      "output_fields": [],
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-P04",
+      "category": "personal_records",
+      "question": "내 기록 사용을 꺼도 챗봇은 쓸 수 있어?",
+      "answer_template": "설계상 내 기록 참고를 끄면 일반 당뇨 지식 질문은 가능하고, 본인 혈당 조회·비교에는 기록을 사용하지 않습니다. 외부 AI 전송 허용은 별도 선택입니다. 질문 글 자체도 민감정보를 포함할 수 있어, 외부 전송을 허용하지 않으면 외부 AI를 호출하지 않도록 구현해야 합니다.",
+      "knowledge_ids": [],
+      "evidence": [
+        {
+          "source_id": "SPEC_REQUIREMENTS",
+          "section": "REQ-30·32~35: 본인 기록·선택 동의·중지",
+          "role": "product_rule"
+        },
+        {
+          "source_id": "SPEC_ERD",
+          "section": "glucose_records·ai_consents·본인 계정 접근",
+          "role": "product_rule"
+        }
+      ],
+      "required_inputs": [],
+      "conditions": [
+        "현재 앱에서 이 동작을 검증했다는 뜻이 아니라 v5의 구현 기준이다.",
+        "철회·로그아웃·원기록 수정/삭제 시 진행 중 답변 취소와 기존 개인 맥락 제거가 필요하다.",
+        "기본값은 대화 원문 영구 저장 안 함이다.",
+        "사용자 동의만으로 제공사의 민감정보·의료 용도 제한을 해제할 수 없다."
+      ],
+      "fallback": "내 기록 미동의 상태의 개인 요약 요청은 조회 없이 선택 안내로 처리한다. 외부 전송 미동의 시 로컬 승인 자료 안내 또는 외부 호출 없는 대체 응답을 사용한다.",
+      "mode": "application_rule_or_record_template",
+      "operation": "explain_consent_scopes",
+      "output_fields": [],
+      "example_ids": [],
+      "status": "draft"
+    },
+    {
+      "id": "FAQ-P05",
+      "category": "personal_records",
+      "question": "다른 사람 번호를 알려 주면 그 사람 혈당도 볼 수 있어?",
+      "answer_template": "다른 사람의 계정 번호를 입력해도 그 사람 기록을 보여 주지 않습니다. 기록 조회는 질문에 적힌 번호가 아니라 서버가 확인한 로그인 계정과 선택 동의를 기준으로 제한하도록 설계합니다.",
+      "knowledge_ids": [],
+      "evidence": [
+        {
+          "source_id": "SPEC_REQUIREMENTS",
+          "section": "REQ-30·32~35: 본인 기록·선택 동의·중지",
+          "role": "product_rule"
+        },
+        {
+          "source_id": "SPEC_ERD",
+          "section": "glucose_records·ai_consents·본인 계정 접근",
+          "role": "product_rule"
+        }
+      ],
+      "required_inputs": [],
+      "conditions": [
+        "챗봇 프롬프트뿐 아니라 서버 조회와 DB 접근 제어에서 차단해야 한다.",
+        "다른 사용자의 기록 존재 여부·값·메모를 공개하지 않는다.",
+        "CSV·메모·인용 자료 안의 명령도 접근 권한을 변경할 수 없다."
+      ],
+      "fallback": "다른 사람 정보 요청은 조회·존재 확인 없이 거절하고 본인 기록 범위의 질문만 처리한다.",
+      "mode": "application_rule_or_record_template",
+      "operation": "reject_cross_user_access",
+      "output_fields": [],
+      "example_ids": [],
+      "status": "draft"
+    }
+  ],
+  "meal_examples": [
+    {
+      "id": "MEAL-01",
+      "title": "현미밥·삶은 달걀·토마토",
+      "kind": "team_assembled_food_group_illustration",
+      "description": "곡류에 달걀과 채소를 함께 놓는 음식 조합 예시입니다. 생채소 섭취가 가능한 경우를 가정한 참고 자료입니다.",
+      "target": "일반 식사 구성 원칙을 살펴보려는 성인 이용자용 교육 자료. 개인별 처방 대상 선정은 하지 않음.",
+      "authoring_note": "공식 자료의 식품군 원칙을 바탕으로 팀 준비용으로 구성한 조합. 공식 기관의 완성 식단을 인용한 것이 아님.",
+      "ingredients": [
+        {
+          "food_code": "A013000A069a",
+          "food_name": "멥쌀, 현미, 밥",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 129,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 166,
+            "protein_g": 3.37,
+            "fat_g": 1.08,
+            "carbohydrate_g": 35.33,
+            "sugars_g": 0.4,
+            "dietary_fiber_g": 1.3,
+            "sodium_mg": 1
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "166",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F129"
+            },
+            "protein_g": {
+              "raw": "3.37",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H129"
+            },
+            "fat_g": {
+              "raw": "1.08",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I129"
+            },
+            "carbohydrate_g": {
+              "raw": "35.33",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K129"
+            },
+            "sugars_g": {
+              "raw": "0.4",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L129"
+            },
+            "dietary_fiber_g": {
+              "raw": "1.3",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S129"
+            },
+            "sodium_mg": {
+              "raw": "1",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA129"
+            }
+          }
+        },
+        {
+          "food_code": "J0030000009b",
+          "food_name": "달걀, 삶은것",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 2162,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 145,
+            "protein_g": 13.49,
+            "fat_g": 8.69,
+            "carbohydrate_g": 1.37,
+            "sugars_g": 0.13,
+            "dietary_fiber_g": 0,
+            "sodium_mg": 128
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "145",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F2162"
+            },
+            "protein_g": {
+              "raw": "13.49",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H2162"
+            },
+            "fat_g": {
+              "raw": "8.69",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I2162"
+            },
+            "carbohydrate_g": {
+              "raw": "1.37",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K2162"
+            },
+            "sugars_g": {
+              "raw": "0.13",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L2162"
+            },
+            "dietary_fiber_g": {
+              "raw": "0",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S2162"
+            },
+            "sodium_mg": {
+              "raw": "128",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA2162"
+            }
+          }
+        },
+        {
+          "food_code": "F1860000000a",
+          "food_name": "토마토, 생것",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 1291,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 19,
+            "protein_g": 0.77,
+            "fat_g": 0.19,
+            "carbohydrate_g": 4.27,
+            "sugars_g": 2.68,
+            "dietary_fiber_g": 1,
+            "sodium_mg": 2
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "19",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F1291"
+            },
+            "protein_g": {
+              "raw": "0.77",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H1291"
+            },
+            "fat_g": {
+              "raw": "0.19",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I1291"
+            },
+            "carbohydrate_g": {
+              "raw": "4.2699999999999996",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K1291"
+            },
+            "sugars_g": {
+              "raw": "2.68",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L1291"
+            },
+            "dietary_fiber_g": {
+              "raw": "1",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S1291"
+            },
+            "sodium_mg": {
+              "raw": "2",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA1291"
+            }
+          }
+        }
+      ],
+      "known_allergen_ingredients": [
+        "달걀"
+      ],
+      "allergen_note": "기재한 원재료 외에 제품·양념·교차접촉 여부는 별도 확인 필요. 알레르기 없는 식단임을 보장하지 않음.",
+      "portion_prescription": null,
+      "total_nutrition": null,
+      "expected_glucose_change": null,
+      "cautions": [
+        "달걀 알레르기가 있거나 별도 식사 제한을 안내받았다면 그대로 적용하지 않습니다.",
+        "알레르기·동반질환·복약과 기존 식사 계획을 모르는 상태에서 개인에게 맞는다고 보장하지 않는다.",
+        "한 끼의 영양적 완전성·개인 적정량을 검증한 식단이 아니다. 간식·다른 끼니를 포함한 전체 계획은 별도다.",
+        "재료의 실제 섭취량·양념·조리유가 정해지지 않아 총 열량과 영양 합계는 제공하지 않는다.",
+        "식품성분표의 100g은 자료 기준량이며 권장 섭취량이 아니다. 미측정·미량을 0으로 바꾸지 않는다."
+      ],
+      "knowledge_ids": [
+        "N01",
+        "N02",
+        "N05"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "다양한 식품군·필요량 개인화·식이섬유·조리법",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "section": "10.4 자료의 식품명·식품코드·가식부 100g 값",
+          "role": "structured_reference"
+        }
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "MEAL-02",
+      "title": "현미밥·두부·데친 브로콜리",
+      "kind": "team_assembled_food_group_illustration",
+      "description": "곡류에 콩으로 만든 단백질 식품과 익힌 채소를 조합하는 예시입니다. 두부 조림의 양념이나 기름까지 포함한 영양값은 아닙니다.",
+      "target": "일반 식사 구성 원칙을 살펴보려는 성인 이용자용 교육 자료. 개인별 처방 대상 선정은 하지 않음.",
+      "authoring_note": "공식 자료의 식품군 원칙을 바탕으로 팀 준비용으로 구성한 조합. 공식 기관의 완성 식단을 인용한 것이 아님.",
+      "ingredients": [
+        {
+          "food_code": "A013000A069a",
+          "food_name": "멥쌀, 현미, 밥",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 129,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 166,
+            "protein_g": 3.37,
+            "fat_g": 1.08,
+            "carbohydrate_g": 35.33,
+            "sugars_g": 0.4,
+            "dietary_fiber_g": 1.3,
+            "sodium_mg": 1
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "166",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F129"
+            },
+            "protein_g": {
+              "raw": "3.37",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H129"
+            },
+            "fat_g": {
+              "raw": "1.08",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I129"
+            },
+            "carbohydrate_g": {
+              "raw": "35.33",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K129"
+            },
+            "sugars_g": {
+              "raw": "0.4",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L129"
+            },
+            "dietary_fiber_g": {
+              "raw": "1.3",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S129"
+            },
+            "sodium_mg": {
+              "raw": "1",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA129"
+            }
+          }
+        },
+        {
+          "food_code": "D0150000009a",
+          "food_name": "두부",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 608,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 97,
+            "protein_g": 9.62,
+            "fat_g": 4.63,
+            "carbohydrate_g": 3.75,
+            "sugars_g": 0,
+            "dietary_fiber_g": 2.9,
+            "sodium_mg": 1
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "97",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F608"
+            },
+            "protein_g": {
+              "raw": "9.6199999999999992",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H608"
+            },
+            "fat_g": {
+              "raw": "4.63",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I608"
+            },
+            "carbohydrate_g": {
+              "raw": "3.75",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K608"
+            },
+            "sugars_g": {
+              "raw": "0",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L608"
+            },
+            "dietary_fiber_g": {
+              "raw": "2.9",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S608"
+            },
+            "sodium_mg": {
+              "raw": "1",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA608"
+            }
+          }
+        },
+        {
+          "food_code": "F0920000009c",
+          "food_name": "브로콜리, 데친것",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 1043,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 26,
+            "protein_g": 3.2,
+            "fat_g": 0.24,
+            "carbohydrate_g": 4.45,
+            "sugars_g": 1.37,
+            "dietary_fiber_g": 2.5,
+            "sodium_mg": 4
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "26",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F1043"
+            },
+            "protein_g": {
+              "raw": "3.2",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H1043"
+            },
+            "fat_g": {
+              "raw": "0.24",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I1043"
+            },
+            "carbohydrate_g": {
+              "raw": "4.45",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K1043"
+            },
+            "sugars_g": {
+              "raw": "1.37",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L1043"
+            },
+            "dietary_fiber_g": {
+              "raw": "2.5",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S1043"
+            },
+            "sodium_mg": {
+              "raw": "4",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA1043"
+            }
+          }
+        }
+      ],
+      "known_allergen_ingredients": [
+        "대두"
+      ],
+      "allergen_note": "기재한 원재료 외에 제품·양념·교차접촉 여부는 별도 확인 필요. 알레르기 없는 식단임을 보장하지 않음.",
+      "portion_prescription": null,
+      "total_nutrition": null,
+      "expected_glucose_change": null,
+      "cautions": [
+        "대두 알레르기나 신장질환 등으로 별도 영양 관리를 받는 경우에는 식사 계획을 먼저 확인합니다.",
+        "알레르기·동반질환·복약과 기존 식사 계획을 모르는 상태에서 개인에게 맞는다고 보장하지 않는다.",
+        "한 끼의 영양적 완전성·개인 적정량을 검증한 식단이 아니다. 간식·다른 끼니를 포함한 전체 계획은 별도다.",
+        "재료의 실제 섭취량·양념·조리유가 정해지지 않아 총 열량과 영양 합계는 제공하지 않는다.",
+        "식품성분표의 100g은 자료 기준량이며 권장 섭취량이 아니다. 미측정·미량을 0으로 바꾸지 않는다."
+      ],
+      "knowledge_ids": [
+        "N01",
+        "N02",
+        "N05"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "다양한 식품군·필요량 개인화·식이섬유·조리법",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "section": "10.4 자료의 식품명·식품코드·가식부 100g 값",
+          "role": "structured_reference"
+        }
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "MEAL-03",
+      "title": "현미밥·구운 고등어·오이",
+      "kind": "team_assembled_food_group_illustration",
+      "description": "곡류·생선·채소를 조합한 예시입니다. 실제 생선의 염장 여부와 소금·소스 사용에 따라 영양 구성이 달라질 수 있습니다.",
+      "target": "일반 식사 구성 원칙을 살펴보려는 성인 이용자용 교육 자료. 개인별 처방 대상 선정은 하지 않음.",
+      "authoring_note": "공식 자료의 식품군 원칙을 바탕으로 팀 준비용으로 구성한 조합. 공식 기관의 완성 식단을 인용한 것이 아님.",
+      "ingredients": [
+        {
+          "food_code": "A013000A069a",
+          "food_name": "멥쌀, 현미, 밥",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 129,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 166,
+            "protein_g": 3.37,
+            "fat_g": 1.08,
+            "carbohydrate_g": 35.33,
+            "sugars_g": 0.4,
+            "dietary_fiber_g": 1.3,
+            "sodium_mg": 1
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "166",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F129"
+            },
+            "protein_g": {
+              "raw": "3.37",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H129"
+            },
+            "fat_g": {
+              "raw": "1.08",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I129"
+            },
+            "carbohydrate_g": {
+              "raw": "35.33",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K129"
+            },
+            "sugars_g": {
+              "raw": "0.4",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L129"
+            },
+            "dietary_fiber_g": {
+              "raw": "1.3",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S129"
+            },
+            "sodium_mg": {
+              "raw": "1",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA129"
+            }
+          }
+        },
+        {
+          "food_code": "K0150000009f",
+          "food_name": "고등어, 구운것",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 2224,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 264,
+            "protein_g": 25.2,
+            "fat_g": 22.4,
+            "carbohydrate_g": 0.4,
+            "sugars_g": null,
+            "dietary_fiber_g": 0,
+            "sodium_mg": 120
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "264",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F2224"
+            },
+            "protein_g": {
+              "raw": "25.2",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H2224"
+            },
+            "fat_g": {
+              "raw": "22.4",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I2224"
+            },
+            "carbohydrate_g": {
+              "raw": "0.4",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K2224"
+            },
+            "sugars_g": {
+              "raw": "-",
+              "status": "unmeasured",
+              "qualifier": null,
+              "source_cell": "L2224"
+            },
+            "dietary_fiber_g": {
+              "raw": "(0)",
+              "status": "numeric",
+              "qualifier": "referenced_or_calculated",
+              "source_cell": "S2224"
+            },
+            "sodium_mg": {
+              "raw": "120",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA2224"
+            }
+          }
+        },
+        {
+          "food_code": "F1480010000a",
+          "food_name": "오이, 다다기, 생것",
+          "basis_amount": 100,
+          "basis_unit": "g",
+          "basis_note": "가식부 100g 당 (per 100g Edible Portion)",
+          "edible_portion_only": true,
+          "source_row": 1208,
+          "source_sheet": "국가표준식품성분 Database 10.4",
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "amount_g": null,
+          "reference_nutrients_per_100g": {
+            "energy_kcal": 13,
+            "protein_g": 1.06,
+            "fat_g": 0.05,
+            "carbohydrate_g": 2.79,
+            "sugars_g": 1.51,
+            "dietary_fiber_g": 0.6,
+            "sodium_mg": 3
+          },
+          "nutrient_metadata": {
+            "energy_kcal": {
+              "raw": "13",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "F1208"
+            },
+            "protein_g": {
+              "raw": "1.06",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "H1208"
+            },
+            "fat_g": {
+              "raw": "0.05",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "I1208"
+            },
+            "carbohydrate_g": {
+              "raw": "2.79",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "K1208"
+            },
+            "sugars_g": {
+              "raw": "1.51",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "L1208"
+            },
+            "dietary_fiber_g": {
+              "raw": "0.6",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "S1208"
+            },
+            "sodium_mg": {
+              "raw": "3",
+              "status": "numeric",
+              "qualifier": null,
+              "source_cell": "AA1208"
+            }
+          }
+        }
+      ],
+      "known_allergen_ingredients": [
+        "고등어"
+      ],
+      "allergen_note": "기재한 원재료 외에 제품·양념·교차접촉 여부는 별도 확인 필요. 알레르기 없는 식단임을 보장하지 않음.",
+      "portion_prescription": null,
+      "total_nutrition": null,
+      "expected_glucose_change": null,
+      "cautions": [
+        "생선 알레르기와 별도 식사 제한을 확인합니다. DB의 구운 고등어 값을 모든 제품이나 조리법에 그대로 적용하지 않습니다.",
+        "알레르기·동반질환·복약과 기존 식사 계획을 모르는 상태에서 개인에게 맞는다고 보장하지 않는다.",
+        "한 끼의 영양적 완전성·개인 적정량을 검증한 식단이 아니다. 간식·다른 끼니를 포함한 전체 계획은 별도다.",
+        "재료의 실제 섭취량·양념·조리유가 정해지지 않아 총 열량과 영양 합계는 제공하지 않는다.",
+        "식품성분표의 100g은 자료 기준량이며 권장 섭취량이 아니다. 미측정·미량을 0으로 바꾸지 않는다."
+      ],
+      "knowledge_ids": [
+        "N01",
+        "N02",
+        "N05"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "section": "다양한 식품군·필요량 개인화·식이섬유·조리법",
+          "role": "medical_basis",
+          "pdf_pages": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "RDA_COMPOSITION_XLSX",
+          "section": "10.4 자료의 식품명·식품코드·가식부 100g 값",
+          "role": "structured_reference"
+        }
+      ],
+      "status": "draft"
+    }
+  ],
+  "exercise_examples": [
+    {
+      "id": "EXERCISE-01",
+      "title": "걷기",
+      "activity_type": "aerobic",
+      "description": "일상에서 선택할 수 있는 유산소 활동의 예시입니다.",
+      "target": "걷기 제한을 안내받지 않았고 평소 보행이 가능한 성인이 일반 활동 선택지를 살펴볼 때.",
+      "guide": [
+        "평소 보행 가능 여부와 발 상태, 현재 증상을 확인합니다.",
+        "기존에 안내받은 운동 계획 안에서 걷기 활동을 선택합니다.",
+        "몸 상태가 달라지거나 불편하면 계속하도록 권하지 않습니다."
+      ],
+      "cautions": [
+        "발의 상처·심한 감각 저하가 있으면 체중을 싣는 걷기가 적합하지 않을 수 있습니다. 장시간 걷기를 일괄 권장하지 않습니다.",
+        "현재 증상·평소 운동 수준·약물 및 합병증·기존 운동 제한에 따라 적합성이 달라진다.",
+        "인슐린이나 일부 혈당강하제 사용 시 운동 관련 저혈당 위험을 고려하고 교육받은 측정·대처 계획을 확인한다.",
+        "현재 흉통·심한 어지럼 등 증상이 있으면 활동을 권하지 않고 의료 도움을 먼저 안내한다.",
+        "운동시간·강도·반복 횟수·소모 칼로리·약물 조정량은 이 예시에서 정하지 않는다."
+      ],
+      "duration_minutes": null,
+      "intensity_prescription": null,
+      "repetitions": null,
+      "calories_burned": null,
+      "knowledge_ids": [
+        "X01",
+        "X02",
+        "X03",
+        "X04",
+        "X05"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "운동 전 확인·활동 종류",
+          "role": "medical_basis",
+          "pdf_pages": [
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "활동 예시·합병증별 주의",
+          "role": "medical_basis",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": [
+            98,
+            99
+          ]
+        }
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "EXERCISE-02",
+      "title": "실내 고정식 자전거",
+      "activity_type": "aerobic",
+      "description": "실내에서 기구를 이용하는 유산소 활동의 예시입니다.",
+      "target": "기구 사용법을 알고 실내 활동 선택지를 살펴보는 성인. 보행 대신 자동으로 처방하는 자료가 아님.",
+      "guide": [
+        "개인 운동 제한과 기구를 안전하게 사용할 수 있는지 확인합니다.",
+        "승하차·안장 등 기구 사용법을 확인하고 안내받은 범위에서 이용합니다.",
+        "불편함이나 증상이 생기면 활동을 지속하도록 권하지 않습니다."
+      ],
+      "cautions": [
+        "기구에서의 균형·승하차와 개인 상태를 확인해야 합니다. 합병증이 있는 사람에게 자전거가 항상 안전하다고 판단하지 않습니다.",
+        "현재 증상·평소 운동 수준·약물 및 합병증·기존 운동 제한에 따라 적합성이 달라진다.",
+        "인슐린이나 일부 혈당강하제 사용 시 운동 관련 저혈당 위험을 고려하고 교육받은 측정·대처 계획을 확인한다.",
+        "현재 흉통·심한 어지럼 등 증상이 있으면 활동을 권하지 않고 의료 도움을 먼저 안내한다.",
+        "운동시간·강도·반복 횟수·소모 칼로리·약물 조정량은 이 예시에서 정하지 않는다."
+      ],
+      "duration_minutes": null,
+      "intensity_prescription": null,
+      "repetitions": null,
+      "calories_burned": null,
+      "knowledge_ids": [
+        "X01",
+        "X02",
+        "X03",
+        "X04",
+        "X05"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "운동 전 확인·활동 종류",
+          "role": "medical_basis",
+          "pdf_pages": [
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "활동 예시·합병증별 주의",
+          "role": "medical_basis",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": [
+            98,
+            99
+          ]
+        }
+      ],
+      "status": "draft"
+    },
+    {
+      "id": "EXERCISE-03",
+      "title": "탄력 밴드를 이용한 저항운동",
+      "activity_type": "resistance",
+      "description": "탄력 밴드는 공식 자료에 제시된 저항운동 도구의 하나입니다.",
+      "target": "밴드 사용 자세를 배웠거나 운동전문가의 안내를 받을 수 있는 성인이 활동 종류를 알아볼 때.",
+      "guide": [
+        "기존 운동 제한과 관절·눈·심혈관 상태에 따른 주의사항을 확인합니다.",
+        "자세와 밴드 사용법은 운동전문가 등에게 확인합니다.",
+        "임의의 밴드 강도나 반복 횟수 대신 안내받은 계획을 따릅니다."
+      ],
+      "cautions": [
+        "심한 망막병증 등에서는 고강도 저항운동에 제한이 있을 수 있습니다. 기구 종류만 보고 개인에게 적합하다고 정하지 않습니다.",
+        "현재 증상·평소 운동 수준·약물 및 합병증·기존 운동 제한에 따라 적합성이 달라진다.",
+        "인슐린이나 일부 혈당강하제 사용 시 운동 관련 저혈당 위험을 고려하고 교육받은 측정·대처 계획을 확인한다.",
+        "현재 흉통·심한 어지럼 등 증상이 있으면 활동을 권하지 않고 의료 도움을 먼저 안내한다.",
+        "운동시간·강도·반복 횟수·소모 칼로리·약물 조정량은 이 예시에서 정하지 않는다."
+      ],
+      "duration_minutes": null,
+      "intensity_prescription": null,
+      "repetitions": null,
+      "calories_burned": null,
+      "knowledge_ids": [
+        "X01",
+        "X02",
+        "X03",
+        "X04",
+        "X05"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "section": "운동 전 확인·활동 종류",
+          "role": "medical_basis",
+          "pdf_pages": [
+            2,
+            3
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "section": "활동 예시·합병증별 주의",
+          "role": "medical_basis",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": [
+            98,
+            99
+          ]
+        }
+      ],
+      "status": "draft"
+    }
+  ],
+  "provenance": {
+    "product_spec_revision": "5.0",
+    "health_pdf_count": 4,
+    "food_catalog_id": "rda-10.4-271cc431f2991b3c",
+    "retained_legacy_files": [
+      "docs/research/CHATBOT_QUESTIONS.md",
+      "docs/research/chatbot_knowledge.json"
+    ],
+    "further_work": [
+      "내용·사용권 검토와 승인",
+      "평가 40문항의 기대 결과",
+      "혈당 CSV 시험 12묶음",
+      "앱 연결과 실제 응답 평가"
+    ]
+  }
+}

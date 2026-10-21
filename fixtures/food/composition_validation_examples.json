@@ -1,0 +1,31 @@
+{
+  "description": "RDA 10.4 원본 셀을 직접 확인한 값·표시와 산술 기대값. 실제 섭취 권고가 아님.",
+  "source_cells": {
+    "banana": "국가표준식품성분 Database 10.4!D1551:AA1551",
+    "rice": "국가표준식품성분 Database 10.4!D68:AA68",
+    "milk": "국가표준식품성분 Database 10.4!D2959:AA2959",
+    "oats": "국가표준식품성분 Database 10.4!D12:AA12",
+    "rice_gruel": "국가표준식품성분 Database 10.4!D85:AA85",
+    "fructose": "국가표준식품성분 Database 10.4!D527:AA527"
+  },
+  "cases": [
+    {"id":"C01","operation":"nutrition","input":{"food_code":"H0370000000a"},"expected":{"food_name":"바나나, 생것","nutrients.energy_kcal":77,"nutrients.carbohydrate_g":20,"nutrients.sugars_g":14.18,"nutrients.dietary_fiber_g":2.2,"nutrients.sodium_mg":0,"reference_basis.unit":"g"}},
+    {"id":"C02","operation":"nutrition","input":{"food_code":"H0370000000a","amount":150,"unit":"g"},"expected":{"nutrients.energy_kcal":115.5,"nutrients.carbohydrate_g":30,"nutrients.sugars_g":21.27,"nutrients.dietary_fiber_g":3.3,"nutrients.sodium_mg":0}},
+    {"id":"C03","operation":"nutrition","input":{"food_code":"A013000A039a","amount":200,"unit":"g"},"expected":{"food_name":"멥쌀, 백미, 밥","nutrients.energy_kcal":304,"nutrients.carbohydrate_g":65.72}},
+    {"id":"C04","operation":"nutrition","input":{"food_code":"M0090000009a"},"expected":{"food_name":"우유","reference_basis.unit":"g","nutrients.energy_kcal":67,"nutrients.carbohydrate_g":4.86,"nutrients.sugars_g":4.81}},
+    {"id":"C05","operation":"nutrition","input":{"food_code":"M0090000009a","amount":200,"unit":"ml"},"expected_error":"unit_mismatch"},
+    {"id":"C06","operation":"nutrition","input":{"food_code":"A0020000009a"},"expected":{"nutrients.sugars_g":null,"nutrient_metadata.sugars_g.status":"unmeasured","nutrient_metadata.sugars_g.raw":"-","nutrients.dietary_fiber_g":18.8}},
+    {"id":"C07","operation":"nutrition","input":{"food_code":"C0010000009a","amount":200,"unit":"g"},"expected":{"nutrients.sodium_mg":null,"nutrient_metadata.sodium_mg.status":"trace","nutrient_metadata.sodium_mg.raw":"Tr","nutrients.protein_g":0,"nutrient_metadata.protein_g.qualifier":"referenced_or_calculated"}},
+    {"id":"C08","operation":"nutrition","input":{"food_code":"A012000A039a","amount":200,"unit":"g"},"expected":{"food_name":"멥쌀, 백미, 미음","nutrients.protein_g":0.6,"nutrients.carbohydrate_g":9.4,"nutrients.sugars_g":0,"nutrient_metadata.sugars_g.qualifier":"referenced_or_calculated","nutrients.dietary_fiber_g":null,"nutrient_metadata.dietary_fiber_g.status":"trace","nutrient_metadata.dietary_fiber_g.qualifier":"referenced_or_calculated"}},
+    {"id":"C09","operation":"search","input":{"query":"우 유","limit":5},"expected":{"exact_name_matches":1,"candidates.0.food_code":"M0090000009a","candidates.0.food_name":"우유","requires_food_code_selection":true}},
+    {"id":"C10","operation":"search","input":{"query":"바나나, 생것"},"expected":{"exact_name_matches":1,"candidates.0.food_code":"H0370000000a"}},
+    {"id":"C11","operation":"search","input":{"query":"없는식품_검증용_zzzz"},"expected":{"total_matches":0,"requires_food_code_selection":false}},
+    {"id":"C12","operation":"search","input":{"query":"  "},"expected_error":"query_required"},
+    {"id":"C13","operation":"nutrition","input":{"food_code":"H0370000000a","amount":0,"unit":"g"},"expected_error":"invalid_amount"},
+    {"id":"C14","operation":"nutrition","input":{"food_code":"H0370000000a","amount":100},"expected_error":"unit_required"},
+    {"id":"C15","operation":"nutrition","input":{"food_code":"H0370000000a","unit":"g"},"expected_error":"amount_required"},
+    {"id":"C16","operation":"nutrition","input":{"food_code":"H0370000000a","amount":"NaN","unit":"g"},"expected_error":"invalid_number"},
+    {"id":"C17","operation":"nutrition","input":{"food_code":"없는코드"},"expected_error":"food_not_found"},
+    {"id":"C18","operation":"nutrition","input":{"food_code":"H0370000000a","amount":1,"unit":"개"},"expected_error":"unsupported_unit"}
+  ]
+}

@@ -1,0 +1,201 @@
+{
+  "schema_version": "1.0",
+  "is_synthetic": true,
+  "dataset_id": "project-team4-synthetic-glucose-v1",
+  "reference_as_of": "2026-10-21T12:00:00+09:00",
+  "scenarios": [
+    {
+      "id": "D01",
+      "question_id": "R01",
+      "description": "같은 조건의 어제·오늘 공복 비교",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "days": [
+          "2026-10-20",
+          "2026-10-21"
+        ],
+        "context": "fasting"
+      },
+      "expected": {
+        "counts": [
+          1,
+          1
+        ],
+        "means_mg_dl": [
+          120,
+          110
+        ],
+        "delta_mg_dl": -10
+      },
+      "expected_answer": "어제 공복 1건 120, 오늘 공복 1건 110 mg/dL. 두 측정값의 차이는 -10 mg/dL. 오늘 기록은 현재까지이며 개선·원인을 단정하지 않음."
+    },
+    {
+      "id": "D02",
+      "question_id": "R01",
+      "description": "한쪽 날짜에 같은 조건의 기록이 없음",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "days": [
+          "2026-10-15",
+          "2026-10-16"
+        ],
+        "context": "fasting"
+      },
+      "expected": {
+        "counts": [
+          1,
+          0
+        ],
+        "means_mg_dl": [
+          127,
+          null
+        ],
+        "delta_mg_dl": null
+      },
+      "expected_answer": "10월 16일 공복 기록이 없어 변화량 비교 보류. 기록이 없는 날을 0으로 채우지 않음."
+    },
+    {
+      "id": "D03",
+      "question_id": "R02",
+      "description": "오늘 포함 최근 7개 달력 날짜의 공복 기록",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "start_date": "2026-10-15",
+        "end_date": "2026-10-21",
+        "context": "fasting"
+      },
+      "expected": {
+        "record_count": 6,
+        "record_days": 6,
+        "mean_mg_dl_1dp": 118.3,
+        "missing_dates": [
+          "2026-10-16"
+        ]
+      },
+      "expected_answer": "최근 7개 날짜 중 6일·6건의 공복 기록 평균 118.3 mg/dL. 10월 16일 공복 기록 없음. 오늘은 현재까지 집계."
+    },
+    {
+      "id": "D04",
+      "question_id": "R01",
+      "description": "본인 데이터 범위를 유지하는 조회 사례",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "days": [
+          "2026-10-20",
+          "2026-10-21"
+        ],
+        "context": "fasting"
+      },
+      "expected": {
+        "allowed_user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "counts": [
+          1,
+          1
+        ],
+        "means_mg_dl": [
+          120,
+          110
+        ]
+      },
+      "expected_answer": "같은 날짜의 다른 사용자 기록을 결과나 설명에 포함하지 않음. 실제 접근 제어 검증은 앱에서 별도로 수행."
+    },
+    {
+      "id": "D05",
+      "question_id": "R03",
+      "description": "실제 측정 시각과 나중에 저장·수정한 시각 구분",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "date": "2026-10-20",
+        "context": "fasting"
+      },
+      "expected": {
+        "measured_date_kst": "2026-10-20",
+        "created_date_kst": "2026-10-21",
+        "glucose_mg_dl": 120
+      },
+      "expected_answer": "10월 21일 입력·수정했어도 10월 20일 공복 기록으로 분류. 수정 이력 전체가 있다고 표현하지 않음."
+    },
+    {
+      "id": "D06",
+      "question_id": "R03",
+      "description": "UTC 저장 시각을 한국 날짜로 조회",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "date": "2026-10-21"
+      },
+      "expected": {
+        "record_count": 3,
+        "midnight_value_mg_dl": 144,
+        "midnight_utc_date": "2026-10-20",
+        "midnight_kst_date": "2026-10-21"
+      },
+      "expected_answer": "UTC 10월 20일 15:05의 기록은 한국 시각 10월 21일 00:05 기록으로 조회."
+    },
+    {
+      "id": "D07",
+      "question_id": "R03",
+      "description": "식사 메모·선택 음식이 없는 기록",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "date": "2026-10-12",
+        "context": "after_meal_2h",
+        "meal_period": "breakfast"
+      },
+      "expected": {
+        "record_count": 1,
+        "meal_memo": null,
+        "selected_foods": []
+      },
+      "expected_answer": "메모 없음으로 안내. 음식·양·영양정보를 추측하지 않음."
+    },
+    {
+      "id": "D08",
+      "question_id": "R02",
+      "description": "같은 시각·수치라도 서로 다른 기록 ID가 존재하는 사례",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "date": "2026-10-10",
+        "context": "fasting"
+      },
+      "expected": {
+        "record_count": 2,
+        "distinct_record_ids": 2,
+        "value_mg_dl": 128
+      },
+      "expected_answer": "서로 다른 저장 기록 2건으로 표시하고 중복 의심 여부를 확인할 수 있게 함. 임의 삭제하지 않음."
+    },
+    {
+      "id": "D09",
+      "question_id": "R01",
+      "description": "식사 구분이 다른 식후 기록을 구분",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "date": "2026-10-20",
+        "context": "after_meal_2h"
+      },
+      "expected": {
+        "breakfast": [
+          174
+        ],
+        "dinner": [
+          172
+        ]
+      },
+      "expected_answer": "아침·저녁 식후 2시간 기록을 식사 구분별로 보존. 다른 식사의 값을 같은 조건으로 자동 합치지 않음."
+    },
+    {
+      "id": "D10",
+      "question_id": "R01",
+      "description": "해당 날짜에 혈당 기록 전체가 없음",
+      "query": {
+        "user_id": "362fcc27-3a72-50d7-aa43-6eacc37c0a9b",
+        "date": "2026-10-14"
+      },
+      "expected": {
+        "record_count": 0
+      },
+      "expected_answer": "기록 없음으로 안내하고 값을 보간·생성하거나 0으로 표시하지 않음."
+    }
+  ],
+  "validation_scope": "생성한 가상 자료와 수작업 기대값의 일관성 확인. 앱·인증·DB 접근 제어·챗봇 실제 응답의 테스트 결과가 아님."
+}

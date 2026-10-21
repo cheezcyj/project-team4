@@ -1,0 +1,29 @@
+{
+  "dataset_id": "project-team4-synthetic-glucose-v1",
+  "is_synthetic": true,
+  "generator": "scripts/prepare_demo_data.py",
+  "reference_as_of": "2026-10-21T12:00:00+09:00",
+  "validation": {
+    "result": "PASS",
+    "records": 67,
+    "users": 2,
+    "scenario_count": 10,
+    "records_per_user": {
+      "a": 40,
+      "b": 27
+    },
+    "validation_scope": "생성한 가상 자료와 수작업 기대값의 일관성 확인. 앱·인증·DB 접근 제어·챗봇 실제 응답의 테스트 결과가 아님."
+  },
+  "files": [
+    {
+      "name": "glucose_records.json",
+      "bytes": 41234,
+      "sha256": "73c8e5f1ff7c1c05d344a47c355e3ef76a8dee549ceb1160797e7a0ea9d433c3"
+    },
+    {
+      "name": "scenarios.json",
+      "bytes": 6496,
+      "sha256": "5ee2af6ed1fb6ff10310518eae991c5da31458d536fec173a19d01880a6378d3"
+    }
+  ]
+}

@@ -1,0 +1,494 @@
+{
+  "review_date": "2026-10-21",
+  "review_type": "project_focused_selected_literature_review",
+  "language": "ko",
+  "selection_scope": "Official clinical/patient education and representative 2021-2025 studies on diabetes app usability, recording burden, and engagement. Not an exhaustive systematic search.",
+  "retrieval_note": "Publisher/PMC content checked. Public XML for six sources retrieved from Europe PMC; G02 is official HTML. L02 has indexed full-text excerpts and bibliographic metadata only.",
+  "sources": [
+    {
+      "id": "G01",
+      "category": "clinical_guideline",
+      "title": "2025 Clinical Practice Guidelines for Diabetes Management in Korea: Recommendation of the Korean Diabetes Association",
+      "authors": [
+        "Shinae Kang",
+        "Seon Mee Kang",
+        "Jong Han Choi",
+        "Seung-Hyun Ko",
+        "Bo Kyung Koo",
+        "Hyuk-Sang Kwon",
+        "Mi Kyung Kim",
+        "Sang Yong Kim",
+        "Soo-Kyung Kim",
+        "Young-eun Kim",
+        "Eun Sook Kim",
+        "Jae Hyeon Kim",
+        "Chong Hwa Kim",
+        "Ji Min Kim",
+        "Hae Jin Kim",
+        "Min Kyong Moon",
+        "Sun Joon Moon",
+        "Jun Sung Moon",
+        "Joon Ho Moon",
+        "Se Hee Min",
+        "Jung Hwan Park",
+        "Jaehyun Bae",
+        "Keeho Song",
+        "Ji Yoon Ahn",
+        "Jae-Seung Yun",
+        "Woo Je Lee",
+        "You-Bin Lee",
+        "Suk Chon",
+        "Eonju Jeon",
+        "Sang-Man Jin",
+        "Eugene Han",
+        "You-Cheol Hwang",
+        "Jae Hyun Bae",
+        "YoonJu Song",
+        "Jeong Hyun Lim",
+        "Jae Won Cho",
+        "Ji Yeon Choi",
+        "Yong Hee Hong",
+        "Jieun Lee",
+        "Sung Eun Kim",
+        "Ji Yun Noh",
+        "Bong-Soo Cha",
+        "Byung-Wan Lee"
+      ],
+      "journal": "Diabetes & Metabolism Journal",
+      "year": 2025,
+      "publication_dates": [
+        {
+          "kind": "ppub",
+          "date": "2025-07"
+        },
+        {
+          "kind": "epub",
+          "date": "2025-07-01"
+        }
+      ],
+      "volume": "49",
+      "issue": "4",
+      "doi": "10.4093/dmj.2025.0469",
+      "pmid": "40631460",
+      "pmcid": "PMC12270580",
+      "url": "https://doi.org/10.4093/dmj.2025.0469",
+      "full_text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12270580/",
+      "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12270580/fullTextXML",
+      "accessed": "2026-10-21",
+      "verification": "full_text_selected_sections",
+      "checked_sections": "Glucose monitoring; diabetes self-management education recommendations and discussion",
+      "local_snapshot": "data/references/diabetes/G01_PMC12270580.xml",
+      "snapshot_sha256": "8041b4caf87ad3b53138fb6b82ed6719e32b1b278613855b20a093f151394ac5",
+      "local_text": "data/references/diabetes/G01_PMC12270580.txt"
+    },
+    {
+      "id": "G02",
+      "category": "official_patient_education",
+      "title": "당뇨병",
+      "authoring_organization": "질병관리청 국가건강정보포털",
+      "original_publication_date": "2020-08-30",
+      "page_updated": "2026-09-16",
+      "url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5305",
+      "accessed": "2026-10-21",
+      "verification": "official_web_page_selected_sections",
+      "checked_sections": "자가 관리: 혈당검사 시기, 자가혈당측정 및 기록 방법; page revision date",
+      "local_snapshot": "data/references/diabetes/G02_kdca_diabetes.html",
+      "snapshot_sha256": "101787c88ca1c3d5151618778c6b0061e0808b5ee8b0d3ab2710d1eed88ff17f"
+    },
+    {
+      "id": "L01",
+      "category": "systematic_review",
+      "title": "What are the perceptions and experiences of adults using mobile applications for self-management in diabetes? A systematic review",
+      "authors": [
+        "Kalthum Patail",
+        "Hui Hsuan Pai",
+        "Geva Greenfield",
+        "Benedict Hayhoe",
+        "Azeem Majeed",
+        "Ana Luisa Neves",
+        "Henock B Taddese"
+      ],
+      "journal": "BMJ Open",
+      "year": 2025,
+      "publication_dates": [
+        {
+          "kind": "unspecified",
+          "date": "2025-01-20"
+        }
+      ],
+      "volume": "15",
+      "issue": "1",
+      "doi": "10.1136/bmjopen-2024-086671",
+      "pmid": "39833008",
+      "pmcid": "PMC11751966",
+      "url": "https://bmjopen.bmj.com/content/15/1/e086671",
+      "full_text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11751966/",
+      "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11751966/fullTextXML",
+      "accessed": "2026-10-21",
+      "verification": "full_text_selected_sections",
+      "checked_sections": "Abstract; Results (Effort expectancy); Discussion",
+      "local_snapshot": "data/references/diabetes/L01_PMC11751966.xml",
+      "snapshot_sha256": "06276b0a3a07030b6dd1ec10de4fc49173b307ce7bdcd0afdab25c7fb01884f7",
+      "local_text": "data/references/diabetes/L01_PMC11751966.txt"
+    },
+    {
+      "id": "L02",
+      "category": "primary_research",
+      "title": "Content Analysis: First-Time Patient User Challenges with Top-Rated Commercial Diabetes Apps",
+      "authors": [
+        "HNC Fu",
+        "D Jin",
+        "TJ Adam"
+      ],
+      "authors_as_indexed": "Fu HNC, Jin D, Adam TJ.",
+      "journal": "Telemed J E Health",
+      "year": 2021,
+      "online_first_date": "2020-08-13",
+      "volume": "27",
+      "issue": "6",
+      "pages": "663-669",
+      "doi": "10.1089/tmj.2020.0128",
+      "pmid": "32795144",
+      "pmcid": "PMC8349717",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8349717/",
+      "accessed": "2026-10-21",
+      "verification": "bibliography_and_indexed_full_text_excerpts",
+      "checked_sections": "PMC indexed Methods, Results, Table 3; bibliographic metadata via Europe PMC",
+      "local_snapshot": null,
+      "snapshot_note": "Europe PMC fullTextXML returned HTTP 500; no full-text copy saved. The index lists isOpenAccess=N.",
+      "bibliographic_snapshot": "data/references/diabetes/L02_search_metadata.json"
+    },
+    {
+      "id": "L03",
+      "category": "primary_research",
+      "title": "Effect of an Integrative Mobile Health Intervention in Patients With Hypertension and Diabetes: Crossover Study",
+      "authors": [
+        "Sang Woo Oh",
+        "Kyoung-Kon Kim",
+        "Sung Soo Kim",
+        "Su Kyung Park",
+        "Sangshin Park"
+      ],
+      "journal": "JMIR mHealth and uHealth",
+      "year": 2022,
+      "publication_dates": [
+        {
+          "kind": "collection",
+          "date": "2022-01"
+        },
+        {
+          "kind": "epub",
+          "date": "2022-01-11"
+        }
+      ],
+      "volume": "10",
+      "issue": "1",
+      "doi": "10.2196/27192",
+      "pmid": "35014961",
+      "pmcid": "PMC8790692",
+      "url": "https://mhealth.jmir.org/2022/1/e27192/",
+      "full_text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8790692/",
+      "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8790692/fullTextXML",
+      "accessed": "2026-10-21",
+      "verification": "full_text_selected_sections",
+      "checked_sections": "Methods (Study Design); Results (Table 2 and input rates); Discussion",
+      "local_snapshot": "data/references/diabetes/L03_PMC8790692.xml",
+      "snapshot_sha256": "488c51531bbcb3f9a9573ad5ccc9108106daf1c8cc88f2584b9270e4990d7044",
+      "local_text": "data/references/diabetes/L03_PMC8790692.txt"
+    },
+    {
+      "id": "L04",
+      "category": "primary_research",
+      "title": "Barriers and Enablers to the Adoption of a Healthier Diet Using an App: Qualitative Interview Study With Patients With Type 2 Diabetes Mellitus",
+      "authors": [
+        "Jonas Montilva-Monsalve",
+        "Bruna Dimantas",
+        "Olga Perski",
+        "Leslie Morrison Gutman"
+      ],
+      "journal": "JMIR Diabetes",
+      "year": 2023,
+      "publication_dates": [
+        {
+          "kind": "collection",
+          "date": "2023"
+        },
+        {
+          "kind": "epub",
+          "date": "2023-12-19"
+        }
+      ],
+      "volume": "8",
+      "issue": null,
+      "doi": "10.2196/49097",
+      "pmid": "38113087",
+      "pmcid": "PMC10762608",
+      "url": "https://diabetes.jmir.org/2023/1/e49097/",
+      "full_text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10762608/",
+      "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10762608/fullTextXML",
+      "accessed": "2026-10-21",
+      "verification": "full_text_selected_sections",
+      "checked_sections": "Abstract; Methods (two interview studies); Results (skills and behavioral regulation)",
+      "local_snapshot": "data/references/diabetes/L04_PMC10762608.xml",
+      "snapshot_sha256": "3ab3539b5d79b4244f4f66bda84135944e071f0bf32135b41be47a73b8ef61b6",
+      "local_text": "data/references/diabetes/L04_PMC10762608.txt"
+    },
+    {
+      "id": "L05",
+      "category": "primary_research",
+      "title": "Understanding Device Integrations Within Diabetes Apps: Mixed Methods Analysis of App Features and User Reviews",
+      "authors": [
+        "Jessica Turner",
+        "Katarzyna Stawarz"
+      ],
+      "journal": "JMIR Diabetes",
+      "year": 2025,
+      "publication_dates": [
+        {
+          "kind": "unspecified",
+          "date": "2025-05-27"
+        }
+      ],
+      "volume": "10",
+      "issue": null,
+      "doi": "10.2196/62926",
+      "pmid": "40424579",
+      "pmcid": "PMC12133075",
+      "url": "https://diabetes.jmir.org/2025/1/e62926/",
+      "full_text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12133075/",
+      "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12133075/fullTextXML",
+      "accessed": "2026-10-21",
+      "verification": "full_text_selected_sections",
+      "checked_sections": "Methods (User Reviews); Results (Overview and Device Integration Issues)",
+      "local_snapshot": "data/references/diabetes/L05_PMC12133075.xml",
+      "snapshot_sha256": "a2937898ea18a4cce3bfb5ce8114d3328188a70b298b3b28d59dd4b831ede6a4",
+      "local_text": "data/references/diabetes/L05_PMC12133075.txt"
+    },
+    {
+      "id": "L06",
+      "category": "primary_research",
+      "title": "Adherence-based experiences with a personalized self-care program for type 2 diabetes in South Korea: a mixed-methods study",
+      "authors": [
+        "Haejung Lee",
+        "DaeEun Lee",
+        "Mihwan Kim"
+      ],
+      "journal": "Journal of Korean Biological Nursing Science",
+      "year": 2025,
+      "publication_dates": [
+        {
+          "kind": "unspecified",
+          "date": "2025-11-26"
+        }
+      ],
+      "volume": "27",
+      "issue": "4",
+      "doi": "10.7586/jkbns.25.067",
+      "pmid": "42563825",
+      "pmcid": "PMC13268335",
+      "url": "https://doi.org/10.7586/jkbns.25.067",
+      "full_text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13268335/",
+      "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13268335/fullTextXML",
+      "accessed": "2026-10-21",
+      "verification": "full_text_selected_sections",
+      "checked_sections": "Methods (Participants); Results; Table 1; Discussion",
+      "local_snapshot": "data/references/diabetes/L06_PMC13268335.xml",
+      "snapshot_sha256": "15c192a1e130adb7b215356f18b2178885773db509be339f631db9e44a192513",
+      "local_text": "data/references/diabetes/L06_PMC13268335.txt"
+    }
+  ],
+  "pending_claims": [
+    {
+      "id": "U01",
+      "claim": "단국대학교 2022년 학위논문, 당뇨 환자 634명의 앱·진료기록 분석",
+      "status": "unidentified",
+      "origin": "스크린샷 2026-10-21 092413.png",
+      "needed": [
+        "title",
+        "author",
+        "thesis_record_url",
+        "full_text"
+      ],
+      "use_as_evidence": false
+    },
+    {
+      "claim": "스크린샷의 JMIR Diabetes 2023 식사 입력·검색·레시피 연구",
+      "status": "exact_citation_unconfirmed",
+      "related_candidate": "L04",
+      "note": "Cite only the independently confirmed findings of L04; do not assert it is the original screenshot citation."
+    }
+  ],
+  "local_data_documents": [
+    {
+      "type": "raw_data_manual",
+      "path": "data/국민건강영양조사+제9기(2022-2024)+원시자료+이용지침서 (1).pdf",
+      "coverage_years": [
+        2022,
+        2023,
+        2024
+      ],
+      "first_release": "2025-12",
+      "updated": "2026-07",
+      "pdf_pages": 255,
+      "sha256": "921818c62267bd2949dd08e7d0143ef8cd30eb3086722e696481aa162ba42ce3",
+      "visual_checks_pdf_pages": [
+        1,
+        188
+      ],
+      "reference_pdf_pages": [
+        1,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        188,
+        235,
+        236,
+        237
+      ],
+      "verification_scope": "Cover and relevant text/table sections checked; reference_pdf_pages is a reading-location index, not a full page-by-page audit."
+    },
+    {
+      "type": "raw_data_manual",
+      "path": "data/국민건강영양조사+제9기(2022-2024)+원시자료+이용지침서 (2).pdf",
+      "coverage_years": [
+        2022,
+        2023,
+        2024
+      ],
+      "first_release": "2025-12",
+      "updated": "2026-07",
+      "pdf_pages": 255,
+      "sha256": "921818c62267bd2949dd08e7d0143ef8cd30eb3086722e696481aa162ba42ce3",
+      "visual_checks_pdf_pages": [
+        1,
+        188
+      ],
+      "reference_pdf_pages": [
+        1,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        188,
+        235,
+        236,
+        237
+      ],
+      "verification_scope": "Cover and relevant text/table sections checked; reference_pdf_pages is a reading-location index, not a full page-by-page audit."
+    },
+    {
+      "type": "raw_data_manual",
+      "path": "data/국민건강영양조사+제9기(2022-2024)+원시자료+이용지침서.pdf",
+      "coverage_years": [
+        2022,
+        2023,
+        2024
+      ],
+      "first_release": "2025-12",
+      "updated": "2026-07",
+      "pdf_pages": 255,
+      "sha256": "921818c62267bd2949dd08e7d0143ef8cd30eb3086722e696481aa162ba42ce3",
+      "visual_checks_pdf_pages": [
+        1,
+        188
+      ],
+      "reference_pdf_pages": [
+        1,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        188,
+        235,
+        236,
+        237
+      ],
+      "verification_scope": "Cover and relevant text/table sections checked; reference_pdf_pages is a reading-location index, not a full page-by-page audit."
+    },
+    {
+      "type": "nutrition_codebook",
+      "path": "data/제9기+1차년도(2022)+영양조사+코드자료집.xlsx",
+      "year": 2022,
+      "sheets": [
+        "식품코드설명",
+        "식품코드",
+        "음식코드설명",
+        "음식코드"
+      ],
+      "sha256": "d59e3853a07099a83c07f6313c89dc3cf977a0bca8ee06cda9b85e6b28eb3f7e",
+      "verification": "file_hash_and_workbook_sheet_names_only"
+    },
+    {
+      "type": "nutrition_codebook",
+      "path": "data/제9기+2차년도(2023)+영양조사+코드자료집.xlsx",
+      "year": 2023,
+      "sheets": [
+        "식품코드설명",
+        "식품코드",
+        "음식코드설명",
+        "음식코드"
+      ],
+      "sha256": "4de191f03f95bb2c00d1abe0c86faab16b570c8bdd186f51c2b43dfc8859c647",
+      "verification": "file_hash_and_workbook_sheet_names_only"
+    },
+    {
+      "type": "nutrition_codebook",
+      "path": "data/제9기+3차년도(2024)+영양조사+코드자료집.xlsx",
+      "year": 2024,
+      "sheets": [
+        "식품코드설명",
+        "식품코드",
+        "음식코드설명",
+        "음식코드"
+      ],
+      "sha256": "64848ea5fe1cc196e00f89b19a22d2dda4d00097043d010b43a3a9fbf342bb45",
+      "verification": "file_hash_and_workbook_sheet_names_only"
+    }
+  ],
+  "codebook_2024_comparison": {
+    "archive": "data/csv.zip",
+    "member": "2024_영양조사_코드자료집.xlsx",
+    "archived_member_sha256": "64848ea5fe1cc196e00f89b19a22d2dda4d00097043d010b43a3a9fbf342bb45",
+    "new_file": "data/제9기+3차년도(2024)+영양조사+코드자료집.xlsx",
+    "new_file_sha256": "64848ea5fe1cc196e00f89b19a22d2dda4d00097043d010b43a3a9fbf342bb45",
+    "identical": true
+  },
+  "preservation": "Original downloads retained. No deletions, moves, commits, pushes, or remote document edits."
+}

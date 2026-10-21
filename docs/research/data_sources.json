@@ -1,0 +1,1217 @@
+{
+  "schema_version": "1.1",
+  "local_observed_at": "2026-10-21T16:43:33+09:00",
+  "website_metadata_reviewed_at": "2026-10-21",
+  "scope": "로컬 data 최상위 원본 23개와 csv.zip 내부 파일, 별도 CGMacros 다운로드. 기존 문헌 XML·논문 서지는 references.json을 참조.",
+  "date_policy": "실제 입수일이 확인되지 않으면 null. 파일 수정 시각·브라우저 인쇄일·파일명 날짜·웹 수정일을 입수일로 대체하지 않음.",
+  "url_policy": "공식 관련 URL과 이 로컬 파일의 실제 다운로드 URL을 구분. 브라우저의 조회 가능한 다운로드 기록에서는 파일별 입수 경로를 복원하지 못함.",
+  "license_policy": "공개 페이지 열람과 특정 파일의 재사용 허락은 구분. 관련 API 조건을 원출처 미확정 CSV에 자동 적용하지 않음.",
+  "food_source_policy": {
+    "updated_at": "2026-10-21",
+    "primary_source_ids": [
+      "MFDS_FOOD_XLSX",
+      "MFDS_PROCESSED_XLSX"
+    ],
+    "ingredient_complement_source_id": "RDA_COMPOSITION_XLSX",
+    "csv_role": "기존 검색·환산 검증용 참고본. CSV 추출 경로 복원이 공식 엑셀 전처리의 선행 조건은 아님.",
+    "prepared_basic_food_dataset": {
+      "manifest": "data/processed/food_composition_10_4/manifest.json",
+      "catalog_id": "rda-10.4-271cc431f2991b3c",
+      "rows": 3366,
+      "core_nutrient_count": 7,
+      "status": "prepared_outputs_hash_checked"
+    },
+    "processing_status": "기존 5만 행 가공본은 FOOD_CSV 기반으로 보존. 식약처 음식·가공식품 엑셀 전처리는 대기. 별도 RDA 가공본 상태는 prepared_basic_food_dataset 참조."
+  },
+  "related_official_sources": [
+    {
+      "id": "MFDS_API_REFERENCE",
+      "url": "https://www.data.go.kr/data/15127578/openapi.do",
+      "title": "식품의약품안전처_식품영양성분DB정보",
+      "page_updated_at": "2026-09-16",
+      "license_label_on_page": "이용허락범위 제한 없음",
+      "applies_to_local_food_csv": "원본 동일성 미확정으로 자동 적용하지 않음",
+      "checked_at": "2026-10-21"
+    },
+    {
+      "id": "FOOD_STANDARD_REFERENCE",
+      "url": "https://www.data.go.kr/data/15100064/standard.do",
+      "title": "전국통합식품영양성분정보표준데이터",
+      "page_updated_at": "2026-10-06",
+      "role": "관련 제공기관·통합 항목 확인. 특정 로컬 파일의 출처 확정 근거는 아님.",
+      "checked_at": "2026-10-21"
+    }
+  ],
+  "related_registries": [
+    "docs/research/chatbot_knowledge.json",
+    "docs/research/references.json",
+    "docs/data_profile.json",
+    "data/metadata/knhanes/inventory.json"
+  ],
+  "sources": [
+    {
+      "id": "CSV_BUNDLE",
+      "title": "사용자 제공 CSV 묶음",
+      "publisher": "원자료별로 구분",
+      "purpose": "최초 참고 데이터 보존",
+      "identity_status": "user_provided_bundle",
+      "official_reference_urls": [],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/csv.zip",
+          "bytes": 16700536,
+          "sha256": "d6d23d9c557150ed054c1f0951671e12525f9817b146459f0794aa1bd7df43d2",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "최초 전달자·원본 다운로드 주소·열 선택 및 행 필터를 기록해야 함."
+      ],
+      "archive_members": [
+        {
+          "path": "data/csv.zip",
+          "archive_member": "2024_건강검진_개인별.csv",
+          "bytes": 885746,
+          "sha256": "265140ff10e5f6b7ae737652925cbb42594599336bf6661000b424638332e79b",
+          "hash_scope": "uncompressed_archive_member"
+        },
+        {
+          "path": "data/csv.zip",
+          "archive_member": "2024_식품섭취_기록별.csv",
+          "bytes": 51589373,
+          "sha256": "11caa2827c20b6a7ed23ecc0e83848977e7b9f76102da98d2d8363d64c7877e7",
+          "hash_scope": "uncompressed_archive_member"
+        },
+        {
+          "path": "data/csv.zip",
+          "archive_member": "2024_영양조사_코드자료집.xlsx",
+          "bytes": 164991,
+          "sha256": "64848ea5fe1cc196e00f89b19a22d2dda4d00097043d010b43a3a9fbf342bb45",
+          "hash_scope": "uncompressed_archive_member"
+        },
+        {
+          "path": "data/csv.zip",
+          "archive_member": "식품영양성분_핵심컬럼.csv",
+          "bytes": 6290302,
+          "sha256": "f88a0e1dcd4f60751ee1ad5cf9b0f7a9c832316311ee1f1eabac307a3df40670",
+          "hash_scope": "uncompressed_archive_member"
+        }
+      ]
+    },
+    {
+      "id": "KNHANES_HEALTH_CSV_2024",
+      "title": "2024_건강검진_개인별.csv",
+      "publisher": "질병관리청(사용자 전달)",
+      "purpose": "집단 검진 지표 탐색",
+      "identity_status": "provider_or_format_checked_origin_unresolved",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/csv.zip",
+          "archive_member": "2024_건강검진_개인별.csv",
+          "bytes": 885746,
+          "sha256": "265140ff10e5f6b7ae737652925cbb42594599336bf6661000b424638332e79b",
+          "hash_scope": "uncompressed_archive_member"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 URL",
+        "실제 입수일",
+        "추출 시점·필터·열 선택 과정",
+        "해당 추출본에 적용되는 이용조건"
+      ],
+      "acquisition_channel": "질병관리청 자료(사용자 전달)",
+      "rows": 6997,
+      "columns": [
+        "ID",
+        "YEAR",
+        "SEX",
+        "AGE",
+        "HE_BMI",
+        "HE_GLU",
+        "HE_HBA1C",
+        "HE_DM_HB",
+        "HE_WT",
+        "HE_HT",
+        "HE_WC",
+        "N_CHO",
+        "N_SUGAR",
+        "N_EN",
+        "N_PROT",
+        "N_FAT",
+        "N_TDF"
+      ],
+      "profile_path": "docs/data_profile.json"
+    },
+    {
+      "id": "KNHANES_INTAKE_CSV_2024",
+      "title": "2024_식품섭취_기록별.csv",
+      "publisher": "질병관리청(사용자 전달)",
+      "purpose": "집단 식품 섭취 현황 탐색",
+      "identity_status": "provider_or_format_checked_origin_unresolved",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/csv.zip",
+          "archive_member": "2024_식품섭취_기록별.csv",
+          "bytes": 51589373,
+          "sha256": "11caa2827c20b6a7ed23ecc0e83848977e7b9f76102da98d2d8363d64c7877e7",
+          "hash_scope": "uncompressed_archive_member"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 URL",
+        "실제 입수일",
+        "추출 시점·필터·열 선택 과정",
+        "해당 추출본에 적용되는 이용조건"
+      ],
+      "acquisition_channel": "질병관리청 자료(사용자 전달)",
+      "rows": 543782,
+      "columns": [
+        "ID",
+        "N_FCODE",
+        "N_FNAME",
+        "N_MEAL_T",
+        "N_TD_WT",
+        "NF_CHO",
+        "NF_SUGAR",
+        "NF_EN",
+        "NF_PROT",
+        "NF_FAT"
+      ],
+      "profile_path": "docs/data_profile.json"
+    },
+    {
+      "id": "FOOD_CSV",
+      "title": "식품영양성분_핵심컬럼.csv",
+      "publisher": "식품의약품안전처(제공기관명 칼럼 확인)",
+      "purpose": "기존 검색·환산 검증용 참고본; 주 데이터는 공식 XLSX로 전환 예정",
+      "identity_status": "provider_or_format_checked_origin_unresolved",
+      "official_reference_urls": [
+        "https://www.data.go.kr/data/15127578/openapi.do",
+        "https://www.data.go.kr/data/15100064/standard.do",
+        "https://various.foodsafetykorea.go.kr/nutrient/"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/csv.zip",
+          "archive_member": "식품영양성분_핵심컬럼.csv",
+          "bytes": 6290302,
+          "sha256": "f88a0e1dcd4f60751ee1ad5cf9b0f7a9c832316311ee1f1eabac307a3df40670",
+          "hash_scope": "uncompressed_archive_member"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 URL",
+        "실제 입수일",
+        "추출 시점·필터·열 선택 과정",
+        "해당 추출본에 적용되는 이용조건"
+      ],
+      "acquisition_channel": "공공데이터포털(사용자 전달)",
+      "rows": 50000,
+      "columns": [
+        "식품코드",
+        "식품명",
+        "데이터구분명",
+        "에너지(kcal)",
+        "영양성분함량기준량",
+        "단백질(g)",
+        "지방(g)",
+        "탄수화물(g)",
+        "당류(g)",
+        "식이섬유(g)",
+        "나트륨(mg)",
+        "식품중량",
+        "제공기관명"
+      ],
+      "profile_path": "docs/data_profile.json"
+    },
+    {
+      "id": "KNHANES_2022_24RC",
+      "title": "국민건강영양조사 2022 24RC SAS",
+      "publisher": "질병관리청(사용자 전달·자료 형식 확인)",
+      "purpose": "통합·식품섭취 원시자료와 변수 해석",
+      "identity_status": "user_reported_and_sas_metadata_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/HN22_24RC(SAS).zip",
+          "bytes": 123839195,
+          "sha256": "0d5e7f2b207edec1fca544f1ce2446e2b5f6da6d05bf54a473bf922c45b570ce",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "원본 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용약관 확인"
+      ],
+      "survey_year": 2022,
+      "rows": 447623,
+      "columns_count": 110,
+      "extracted_metadata_inventory": "data/metadata/knhanes/inventory.json",
+      "extracted_dataset_path": "data/raw/knhanes/2022/hn22_24rc.sas7bdat",
+      "scope": "압축 원본 해시는 재확인. SAS 변수·추출 파일 해시는 기존 inventory의 점검 결과를 참조."
+    },
+    {
+      "id": "KNHANES_2022_ALL",
+      "title": "국민건강영양조사 2022 ALL SAS",
+      "publisher": "질병관리청(사용자 전달·자료 형식 확인)",
+      "purpose": "통합·식품섭취 원시자료와 변수 해석",
+      "identity_status": "user_reported_and_sas_metadata_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/HN22_ALL(SAS).zip",
+          "bytes": 5804716,
+          "sha256": "4cc96ca1190bbf6fef9c9c0da7fe23577080b9a46dab4ddf8a27bca1de06559c",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "원본 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용약관 확인"
+      ],
+      "survey_year": 2022,
+      "rows": 6265,
+      "columns_count": 700,
+      "extracted_metadata_inventory": "data/metadata/knhanes/inventory.json",
+      "extracted_dataset_path": "data/raw/knhanes/2022/hn22_all.sas7bdat",
+      "scope": "압축 원본 해시는 재확인. SAS 변수·추출 파일 해시는 기존 inventory의 점검 결과를 참조."
+    },
+    {
+      "id": "KNHANES_2023_24RC",
+      "title": "국민건강영양조사 2023 24RC SAS",
+      "publisher": "질병관리청(사용자 전달·자료 형식 확인)",
+      "purpose": "통합·식품섭취 원시자료와 변수 해석",
+      "identity_status": "user_reported_and_sas_metadata_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/HN23_24RC(SAS).zip",
+          "bytes": 161726863,
+          "sha256": "1ca3e2d0010a63a6762b66edf41974506de73ef322f9c6f59e8ee410189d2b27",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "원본 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용약관 확인"
+      ],
+      "survey_year": 2023,
+      "rows": 531581,
+      "columns_count": 112,
+      "extracted_metadata_inventory": "data/metadata/knhanes/inventory.json",
+      "extracted_dataset_path": "data/raw/knhanes/2023/hn23_24rc.sas7bdat",
+      "scope": "압축 원본 해시는 재확인. SAS 변수·추출 파일 해시는 기존 inventory의 점검 결과를 참조."
+    },
+    {
+      "id": "KNHANES_2023_ALL",
+      "title": "국민건강영양조사 2023 ALL SAS",
+      "publisher": "질병관리청(사용자 전달·자료 형식 확인)",
+      "purpose": "통합·식품섭취 원시자료와 변수 해석",
+      "identity_status": "user_reported_and_sas_metadata_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/HN23_ALL(SAS).zip",
+          "bytes": 6374317,
+          "sha256": "37d0a053e08fdf9cedc3a23d5c0308b64cc7df73bda5b673a79f60ca52d998c8",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "원본 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용약관 확인"
+      ],
+      "survey_year": 2023,
+      "rows": 6929,
+      "columns_count": 647,
+      "extracted_metadata_inventory": "data/metadata/knhanes/inventory.json",
+      "extracted_dataset_path": "data/raw/knhanes/2023/hn23_all.sas7bdat",
+      "scope": "압축 원본 해시는 재확인. SAS 변수·추출 파일 해시는 기존 inventory의 점검 결과를 참조."
+    },
+    {
+      "id": "KNHANES_2024_24RC",
+      "title": "국민건강영양조사 2024 24RC SAS",
+      "publisher": "질병관리청(사용자 전달·자료 형식 확인)",
+      "purpose": "통합·식품섭취 원시자료와 변수 해석",
+      "identity_status": "user_reported_and_sas_metadata_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/HN24_24RC(SAS).zip",
+          "bytes": 163271402,
+          "sha256": "c228ea682cd1c3aa16b30be3fe3ae9621af6bc1a9828a99f8ea67a848aeba542",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "원본 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용약관 확인"
+      ],
+      "survey_year": 2024,
+      "rows": 543782,
+      "columns_count": 110,
+      "extracted_metadata_inventory": "data/metadata/knhanes/inventory.json",
+      "extracted_dataset_path": "data/raw/knhanes/2024/hn24_24rc.sas7bdat",
+      "scope": "압축 원본 해시는 재확인. SAS 변수·추출 파일 해시는 기존 inventory의 점검 결과를 참조."
+    },
+    {
+      "id": "KNHANES_2024_ALL",
+      "title": "국민건강영양조사 2024 ALL SAS",
+      "publisher": "질병관리청(사용자 전달·자료 형식 확인)",
+      "purpose": "통합·식품섭취 원시자료와 변수 해석",
+      "identity_status": "user_reported_and_sas_metadata_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/HN24_ALL(SAS).zip",
+          "bytes": 9890201,
+          "sha256": "2dd8a945c96a66b7de9c86884f9a4fd5999e969a15eefccf6cc50501b60c0900",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "원본 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용약관 확인"
+      ],
+      "survey_year": 2024,
+      "rows": 6997,
+      "columns_count": 813,
+      "extracted_metadata_inventory": "data/metadata/knhanes/inventory.json",
+      "extracted_dataset_path": "data/raw/knhanes/2024/hn24_all.sas7bdat",
+      "scope": "압축 원본 해시는 재확인. SAS 변수·추출 파일 해시는 기존 inventory의 점검 결과를 참조."
+    },
+    {
+      "id": "KNHANES_MANUAL_9",
+      "title": "국민건강영양조사 제9기(2022-2024) 원시자료 이용지침서",
+      "publisher": "질병관리청",
+      "purpose": "변수 정의·복합표본 설계·가중치 해석",
+      "identity_status": "document_cover_and_selected_sections_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/국민건강영양조사+제9기(2022-2024)+원시자료+이용지침서 (1).pdf",
+          "bytes": 11602406,
+          "sha256": "921818c62267bd2949dd08e7d0143ef8cd30eb3086722e696481aa162ba42ce3",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        },
+        {
+          "path": "data/국민건강영양조사+제9기(2022-2024)+원시자료+이용지침서 (2).pdf",
+          "bytes": 11602406,
+          "sha256": "921818c62267bd2949dd08e7d0143ef8cd30eb3086722e696481aa162ba42ce3",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        },
+        {
+          "path": "data/국민건강영양조사+제9기(2022-2024)+원시자료+이용지침서.pdf",
+          "bytes": 11602406,
+          "sha256": "921818c62267bd2949dd08e7d0143ef8cd30eb3086722e696481aa162ba42ce3",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 상세 페이지·실제 입수일",
+        "서비스 재배포 조건"
+      ],
+      "first_release": "2025-12",
+      "updated": "2026-07",
+      "pdf_page_count": 255,
+      "duplicate_note": "3개 파일의 해시가 같음. 원본을 모두 보존."
+    },
+    {
+      "id": "KNHANES_CODEBOOK_2022",
+      "title": "2022 영양조사 코드자료집",
+      "publisher": "질병관리청",
+      "purpose": "해당 연도 조사 식품·음식코드 해석",
+      "identity_status": "workbook_sheets_and_hash_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/제9기+1차년도(2022)+영양조사+코드자료집.xlsx",
+          "bytes": 154625,
+          "sha256": "d59e3853a07099a83c07f6313c89dc3cf977a0bca8ee06cda9b85e6b28eb3f7e",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용조건"
+      ],
+      "survey_year": 2022,
+      "sheet_names": [
+        "식품코드설명",
+        "식품코드",
+        "음식코드설명",
+        "음식코드"
+      ]
+    },
+    {
+      "id": "KNHANES_CODEBOOK_2023",
+      "title": "2023 영양조사 코드자료집",
+      "publisher": "질병관리청",
+      "purpose": "해당 연도 조사 식품·음식코드 해석",
+      "identity_status": "workbook_sheets_and_hash_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/제9기+2차년도(2023)+영양조사+코드자료집.xlsx",
+          "bytes": 167623,
+          "sha256": "4de191f03f95bb2c00d1abe0c86faab16b570c8bdd186f51c2b43dfc8859c647",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용조건"
+      ],
+      "survey_year": 2023,
+      "sheet_names": [
+        "식품코드설명",
+        "식품코드",
+        "음식코드설명",
+        "음식코드"
+      ]
+    },
+    {
+      "id": "KNHANES_CODEBOOK_2024",
+      "title": "2024 영양조사 코드자료집",
+      "publisher": "질병관리청",
+      "purpose": "해당 연도 조사 식품·음식코드 해석",
+      "identity_status": "workbook_sheets_and_hash_checked",
+      "official_reference_urls": [
+        "https://knhanes.kdca.go.kr/knhanes/main.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/제9기+3차년도(2024)+영양조사+코드자료집.xlsx",
+          "bytes": 164991,
+          "sha256": "64848ea5fe1cc196e00f89b19a22d2dda4d00097043d010b43a3a9fbf342bb45",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        },
+        {
+          "path": "data/csv.zip",
+          "archive_member": "2024_영양조사_코드자료집.xlsx",
+          "bytes": 164991,
+          "sha256": "64848ea5fe1cc196e00f89b19a22d2dda4d00097043d010b43a3a9fbf342bb45",
+          "hash_scope": "uncompressed_archive_member"
+        }
+      ],
+      "pending": [
+        "정확한 다운로드 상세 페이지·실제 입수일",
+        "해당 배포본 이용조건"
+      ],
+      "survey_year": 2024,
+      "sheet_names": [
+        "식품코드설명",
+        "식품코드",
+        "음식코드설명",
+        "음식코드"
+      ]
+    },
+    {
+      "id": "KDCA_DIABETES",
+      "title": "당뇨병",
+      "publisher": "질병관리청 국가건강정보포털",
+      "purpose": "측정 시점·기록 이유·기본 지식",
+      "identity_status": "official_document_identified_selected_sections_checked",
+      "official_reference_urls": [
+        "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5305"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/당뇨병 _ 국가건강정보포털 _ 질병관리청.pdf",
+          "bytes": 3693566,
+          "sha256": "1f8413b6fc5c19bea0f28f4cdcb237d9cb67dfdfa5d96e4b7ed056e634f5fd91",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "실제 입수일·원문 및 표·이미지의 서비스 재사용 조건"
+      ],
+      "source_page_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5305",
+      "website_metadata_reviewed_at": "2026-10-21",
+      "reference_metadata": {
+        "pdf_page_count": 27,
+        "web_registered_at": "2020-08-30",
+        "web_updated_at": "2026-09-16",
+        "browser_printed_at": "2026-10-21",
+        "priority_pdf_pages": [
+          9,
+          11,
+          12,
+          13
+        ],
+        "header_footer_only_pdf_pages": [
+          24,
+          25,
+          26,
+          27
+        ],
+        "limits": [
+          "본문에 이전 연도 지침을 인용한 수치가 있음. 웹 업데이트일을 모든 권고의 개정일로 해석하지 않음.",
+          "인쇄일은 발행일이 아님. 개인 목표값을 일률적으로 부여하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "KDCA_EXERCISE",
+      "title": "당뇨환자의 운동요법",
+      "publisher": "질병관리청 국가건강정보포털",
+      "purpose": "일반 운동 선택지·운동 전 확인 사항·합병증별 주의",
+      "identity_status": "official_document_identified_selected_sections_checked",
+      "official_reference_urls": [
+        "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3390"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/당뇨환자의 운동요법 _ 국가건강정보포털 _ 질병관리청.pdf",
+          "bytes": 759222,
+          "sha256": "591941ecb0e2611e03d79b1228196c8e1181efbe067d1ea51e8c2bb187d07a86",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "실제 입수일·원문 및 표·이미지의 서비스 재사용 조건"
+      ],
+      "source_page_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3390",
+      "website_metadata_reviewed_at": "2026-10-21",
+      "reference_metadata": {
+        "pdf_page_count": 6,
+        "web_registered_at": "2020-04-17",
+        "web_updated_at": "2026-07-31",
+        "browser_printed_at": "2026-10-21",
+        "priority_pdf_pages": [
+          2,
+          3,
+          4
+        ],
+        "header_footer_only_pdf_pages": [
+          6
+        ],
+        "limits": [
+          "개인 상태 확인 없이 30분 운동 가능 여부를 판정하지 않음.",
+          "운동 전 혈당 수치별 행동·약물 조정 표를 자동 규칙으로 만들지 않음. 학회 수정본과 대상 조건의 대조가 먼저임."
+        ]
+      }
+    },
+    {
+      "id": "KDCA_DIET",
+      "title": "당뇨환자의 식이요법",
+      "publisher": "질병관리청 국가건강정보포털",
+      "purpose": "일반 영양교육·가공식품 표시 확인",
+      "identity_status": "official_document_identified_selected_sections_checked",
+      "official_reference_urls": [
+        "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3388"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/당뇨환자의 식이요법 _ 국가건강정보포털 _ 질병관리청.pdf",
+          "bytes": 521727,
+          "sha256": "6258f56e2bfaf628281b699ad0f8adf676d1256ad8e60d6fba057147596b4413",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "실제 입수일·원문 및 표·이미지의 서비스 재사용 조건"
+      ],
+      "source_page_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3388",
+      "website_metadata_reviewed_at": "2026-10-21",
+      "reference_metadata": {
+        "pdf_page_count": 11,
+        "web_registered_at": "2020-04-17",
+        "web_updated_at": "2026-08-04",
+        "browser_printed_at": "2026-10-21",
+        "priority_pdf_pages": [
+          1,
+          2,
+          3
+        ],
+        "header_footer_only_pdf_pages": [
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "limits": [
+          "점심 식단 추천은 현재 후순위.",
+          "식이요법 자료 속 운동·저혈당 수치 설명을 다른 지침과 무조건 병합하지 않음.",
+          "무가당 관련 답변은 영양교육이며 최신 식품표시 법령 해석이 아님."
+        ]
+      }
+    },
+    {
+      "id": "KDA_GUIDELINE_2025",
+      "title": "2025 당뇨병 진료지침 요약문 수정본(26.2.12)",
+      "publisher": "대한당뇨병학회",
+      "purpose": "측정·자기관리·운동 교육의 교차 확인",
+      "identity_status": "official_document_identified_selected_sections_checked",
+      "official_reference_urls": [
+        "https://diabetes.or.kr/bbs/?code=guide&mode=view&number=2099"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/2025 당뇨병 진료지침_요약문_수정본(26.2.12).pdf",
+          "bytes": 14466518,
+          "sha256": "cffefb4142b680088630dbb44d6ce5999175f5ac795a77efbaabc0aac42031c3",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "실제 입수일·원문 및 표·이미지의 서비스 재사용 조건"
+      ],
+      "source_page_url": "https://diabetes.or.kr/bbs/?code=guide&mode=view&number=2099",
+      "website_metadata_reviewed_at": "2026-10-21",
+      "reference_metadata": {
+        "pdf_page_count": 63,
+        "edition_year": 2025,
+        "official_posted_at": "2025-09-09",
+        "revision_history": [
+          {
+            "date": "2025-12-01",
+            "scope": "운동 전 혈당 대처 및 항비만약물 표 오기 수정(공식 게시물 안내)"
+          },
+          {
+            "date": "2026-02-12",
+            "scope": "인슐린 펜 교육영상 QR 및 URL 수정(공식 게시물 안내)"
+          }
+        ],
+        "priority_pdf_pages": [
+          11,
+          13,
+          14,
+          50,
+          51
+        ],
+        "header_footer_only_pdf_pages": [],
+        "layout_note": "본문 대부분 한 PDF 페이지에 책자 두 쪽. PDF 11=책자 20-21, PDF 50=98-99, PDF 51=100-101.",
+        "limits": [
+          "CGM 전용 지표를 산발적 수기 기록에 적용하지 않음.",
+          "전문 지침을 개인 진단·운동 허가·인슐린 용량 자동 조정으로 전환하지 않음.",
+          "2026-02-12 파일 수정이 전체 임상 권고의 2026년 개정을 뜻하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "KDA_FACT_2026",
+      "title": "Diabetes Fact Sheet in Korea 2026",
+      "publisher": "대한당뇨병학회",
+      "purpose": "프로젝트 필요성·집단 통계 질문",
+      "identity_status": "official_document_identified_selected_sections_checked",
+      "official_reference_urls": [
+        "https://www.diabetes.or.kr/bbs/?code=fact_sheet&mode=view&number=3220&page=1"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/최종) Diabetes Fact Sheet in Korea 2026_웹용.pdf",
+          "bytes": 9769180,
+          "sha256": "3e0710ba40e17eeb12ff426fcecdf555ef6b36c0926b548677a735448cf50a94",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "실제 입수일·원문 및 표·이미지의 서비스 재사용 조건"
+      ],
+      "source_page_url": "https://www.diabetes.or.kr/bbs/?code=fact_sheet&mode=view&number=3220&page=1",
+      "website_metadata_reviewed_at": "2026-10-21",
+      "reference_metadata": {
+        "pdf_page_count": 19,
+        "publication_year": 2026,
+        "official_posted_at": "2026-10-06",
+        "main_statistics_years": [
+          2023,
+          2024
+        ],
+        "longitudinal_statistics_years": {
+          "start": 2012,
+          "end": 2024
+        },
+        "priority_pdf_pages": [
+          4,
+          6,
+          10
+        ],
+        "header_footer_only_pdf_pages": [],
+        "layout_note": "본문은 두 쪽 펼침. PDF 4=책자 4-5, PDF 6의 유병률 도표=책자 9, PDF 10=책자 16-17. PDF 19는 텍스트가 없는 뒤표지 이미지.",
+        "limits": [
+          "2026년 발간과 조사연도 2023-2024를 구분.",
+          "연령·분모·정의가 다른 비율을 혼합하지 않음.",
+          "집단 조절률의 HbA1c 기준을 모든 개인의 치료 목표로 적용하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "MFDS_FOOD_XLSX",
+      "title": "20260828_음식DB_19617건.xlsx",
+      "publisher": "식품의약품안전처",
+      "purpose": "음식 검색·영양정보의 주 전처리 원본",
+      "identity_status": "official_distribution_user_confirmed_content_review_pending",
+      "official_reference_urls": [
+        "https://various.foodsafetykorea.go.kr/nutrient/general/down/list.do",
+        "https://www.data.go.kr/data/15100064/standard.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/20260828_음식DB_19617건.xlsx",
+          "bytes": 12071982,
+          "sha256": "1ef3551f9a1d0ee87891d6306fa22bbd6a7ffcc90f2c70a4a184dbfe3fce6ea6",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "파일별 상세 배포 URL·실제 입수일·이용조건 기록",
+        "머리글 대응·단위·결측·중복·코드 호환성 점검"
+      ],
+      "adoption_status": "primary_preprocessing_source_planned",
+      "file_metadata": {
+        "sheet_names": [
+          "음식(19,617건)"
+        ],
+        "embedded_created_at": "2026-08-28T01:14:37Z",
+        "embedded_modified_at": "2026-08-28T01:49:30Z",
+        "scope": "Workbook metadata only; row counts, cell values, units and completeness not audited."
+      },
+      "origin_evidence": {
+        "type": "user_confirmation",
+        "confirmed_at": "2026-10-21",
+        "scope": "이미 제공한 식약처 공식 배포 엑셀이라는 사용자 확인. 실제 입수일을 뜻하지 않음."
+      }
+    },
+    {
+      "id": "MFDS_PROCESSED_XLSX",
+      "title": "20260929_가공식품DB_323197건.xlsx",
+      "publisher": "식품의약품안전처",
+      "purpose": "가공식품·제품 검색의 주 전처리 원본",
+      "identity_status": "official_distribution_user_confirmed_content_review_pending",
+      "official_reference_urls": [
+        "https://various.foodsafetykorea.go.kr/nutrient/general/down/list.do",
+        "https://www.data.go.kr/data/15100064/standard.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/20260929_가공식품DB_323197건.xlsx",
+          "bytes": 205627011,
+          "sha256": "04f8fb4e82220a911aa4d583539da1b412138a430d76482a1e7a80f7b930dd93",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "파일별 상세 배포 URL·실제 입수일·이용조건 기록",
+        "머리글 대응·단위·결측·중복·코드 호환성 점검"
+      ],
+      "adoption_status": "primary_preprocessing_source_planned",
+      "file_metadata": {
+        "sheet_names": [
+          "가공식품(323,197건)"
+        ],
+        "embedded_created_at": "2026-09-30T07:04:17Z",
+        "embedded_modified_at": "2026-10-01T05:11:35Z",
+        "scope": "Workbook metadata only; row counts, cell values, units and completeness not audited."
+      },
+      "origin_evidence": {
+        "type": "user_confirmation",
+        "confirmed_at": "2026-10-21",
+        "scope": "이미 제공한 식약처 공식 배포 엑셀이라는 사용자 확인. 실제 입수일을 뜻하지 않음."
+      }
+    },
+    {
+      "id": "MFDS_SUPPLEMENT_XLSX",
+      "title": "20260623_건강기능식품DB_5556건 (3).xlsx",
+      "publisher": "식품의약품안전처",
+      "purpose": "건강기능식품 별도 보관; 초기 음식 검색 범위에서 제외",
+      "identity_status": "official_distribution_user_confirmed_content_review_pending",
+      "official_reference_urls": [
+        "https://various.foodsafetykorea.go.kr/nutrient/general/down/list.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/20260623_건강기능식품DB_5556건 (3).xlsx",
+          "bytes": 3374666,
+          "sha256": "082873eea2e2d55e79dd4e21763b82204df77b8f3f8e8147e32b3354810aed7d",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "파일별 상세 배포 URL·실제 입수일·이용조건 기록",
+        "머리글 대응·단위·결측·중복·코드 호환성 점검"
+      ],
+      "adoption_status": "optional_separate_source",
+      "file_metadata": {
+        "sheet_names": [
+          "20260622_건강기능식품_5,556건"
+        ],
+        "embedded_created_at": "2026-06-22T08:47:57Z",
+        "embedded_modified_at": "2026-06-29T02:10:29Z",
+        "scope": "Workbook metadata only; row counts, cell values, units and completeness not audited."
+      },
+      "origin_evidence": {
+        "type": "user_confirmation",
+        "confirmed_at": "2026-10-21",
+        "scope": "이미 제공한 식약처 공식 배포 엑셀이라는 사용자 확인. 실제 입수일을 뜻하지 않음."
+      }
+    },
+    {
+      "id": "RDA_COMPOSITION_XLSX",
+      "title": "식품성분표(10개정판).xlsx",
+      "publisher": "농촌진흥청",
+      "purpose": "기본 식품·원재료의 영양정보 조회; 10.4판 사용",
+      "identity_status": "official_workbook_description_identified",
+      "official_reference_urls": [
+        "https://koreanfood.rda.go.kr",
+        "https://www.data.go.kr/data/15100064/standard.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "identified_in_local_workbook_description",
+        "label": "공공누리 제1유형: 출처표시",
+        "locator": "DB 설명 시트 설명문 하단",
+        "attribution": "농촌진흥청, 2026. 국가표준식품성분 DB 10.4. https://koreanfood.rda.go.kr"
+      },
+      "files": [
+        {
+          "path": "data/식품성분표(10개정판).xlsx",
+          "bytes": 13348408,
+          "sha256": "271cc431f2991b3c0c049ec6e05fb59a040319e984ab71468184530de61dec50",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "파일별 상세 배포 URL·실제 입수일 기록",
+        "다른 식품 DB와 연결할 때 코드·범위 별도 검증",
+        "핵심 7개 외 성분의 정규화는 별도 작업"
+      ],
+      "adoption_status": "basic_food_nutrition_source",
+      "file_metadata": {
+        "sheet_names": [
+          "DB 설명",
+          "국가표준식품성분 Database 10.0",
+          "국가표준식품성분 Database 10.1",
+          "국가표준식품성분 Database 10.2",
+          "국가표준식품성분 Database 10.3",
+          "국가표준식품성분 Database 10.4",
+          "DB 10.4 신규,교체,삭제 식품목록",
+          "부록1)식품코드 연계표",
+          "부록2)식품코드,국문명,영문명,학명 정보 ",
+          "부록3)영양성분표기및단위"
+        ],
+        "embedded_created_at": "2022-04-22T01:18:17Z",
+        "embedded_modified_at": "2026-04-07T04:18:01Z",
+        "scope": "Workbook metadata only; row counts, cell values, units and completeness not audited."
+      },
+      "version": "10.4",
+      "year_in_description": 2026,
+      "origin_evidence": {
+        "type": "local_workbook_description",
+        "checked_at": "2026-10-21",
+        "locator": "DB 설명 시트의 국가표준식품성분 DB 10.4 설명문 이미지"
+      },
+      "processed_dataset": {
+        "manifest": "data/processed/food_composition_10_4/manifest.json",
+        "catalog_id": "rda-10.4-271cc431f2991b3c",
+        "rows": 3366,
+        "core_nutrient_count": 7,
+        "status": "prepared_outputs_hash_checked"
+      }
+    },
+    {
+      "id": "NIFS_FISH_PDF",
+      "title": "표준수산식품DB.pdf",
+      "publisher": "국립수산과학원 관련 자료",
+      "purpose": "수산식품 참고 자료; 초기 엑셀 전처리의 필수 입력 아님",
+      "identity_status": "local_file_identified_origin_and_quality_pending",
+      "official_reference_urls": [
+        "https://www.data.go.kr/data/15100064/standard.do"
+      ],
+      "original_download_url": null,
+      "acquired_at": null,
+      "license": {
+        "status": "not_verified_for_this_local_artifact",
+        "label": null
+      },
+      "files": [
+        {
+          "path": "data/표준수산식품DB.pdf",
+          "bytes": 139944802,
+          "sha256": "e3fdeddece66a44eb24974dd06feda220503d6d2b1320a38bea07006889f837f",
+          "hash_status": "local_file_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00"
+        }
+      ],
+      "pending": [
+        "파일별 상세 배포 URL·실제 입수일·이용조건 기록",
+        "머리글 대응·단위·결측·중복·코드 호환성 점검"
+      ],
+      "adoption_status": "reference_only_planned"
+    },
+    {
+      "id": "CGMACROS_1_0_0",
+      "title": "CGMacros: a scientific dataset for personalized nutrition and diet monitoring",
+      "publisher": "Gutierrez-Osuna, Kerr, Mortazavi, Das / PhysioNet",
+      "purpose": "연속혈당·식사 반응 분석의 선택 확장 자료",
+      "identity_status": "official_distribution_and_license_identified",
+      "official_reference_urls": [
+        "https://physionet.org/content/cgmacros/1.0.0/",
+        "https://physionet.org/files/cgmacros/1.0.0/SHA256SUMS.txt"
+      ],
+      "original_download_url": "https://physionet.org/files/cgmacros/1.0.0/",
+      "acquired_at": null,
+      "license": {
+        "status": "identified_on_official_dataset_page",
+        "label": "CC-BY-NC-SA-4.0",
+        "url": "https://physionet.org/content/cgmacros/1.0.0/",
+        "note": "공식 웹페이지의 라이선스 표시를 기준으로 기록. LICENSE.txt가 빈 파일인 점은 공개 체크섬과도 일치."
+      },
+      "files": [
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip",
+          "bytes_at_observation": 151135334,
+          "expected_sha256": "05c8b0e6f1a2757050aced55ce4bf6ab2ac9b30f2fd8ca193056812d9c621d4d",
+          "hash_status": "download_incomplete_not_hashed",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/CGMacros_dateshifted365.zip"
+        },
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/DataDictionary.pdf",
+          "bytes": 967993,
+          "sha256": "f161ff8df4bd95efa79d3daa8aba5eab754df287ab0f4dfc74bce156f6862c1a",
+          "hash_status": "matches_official_sha256",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "expected_sha256": "f161ff8df4bd95efa79d3daa8aba5eab754df287ab0f4dfc74bce156f6862c1a",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary.pdf"
+        },
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/DataDictionary_Bio.csv",
+          "bytes": 2079,
+          "sha256": "2d5b4c27873284ddbf218df51172b69ffa9caf6e97a3a122977b7a2761da4c61",
+          "hash_status": "matches_official_sha256",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "expected_sha256": "2d5b4c27873284ddbf218df51172b69ffa9caf6e97a3a122977b7a2761da4c61",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_Bio.csv"
+        },
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/DataDictionary_CGMacros-00X.csv",
+          "bytes": 1604,
+          "sha256": "db7bf114d61b90fc5de43fed5e5cd6ba33af37e900a706e1b5747d7b0ffac3f8",
+          "hash_status": "matches_official_sha256",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "expected_sha256": "db7bf114d61b90fc5de43fed5e5cd6ba33af37e900a706e1b5747d7b0ffac3f8",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_CGMacros-00X.csv"
+        },
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/DataDictionary_Gut_Health_Test.csv",
+          "bytes": 4427,
+          "sha256": "fbc7555aacb93b2fb107b65db8d4a3d88d3546e7818fe5378fd2840cdceeb1b0",
+          "hash_status": "matches_official_sha256",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "expected_sha256": "fbc7555aacb93b2fb107b65db8d4a3d88d3546e7818fe5378fd2840cdceeb1b0",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_Gut_Health_Test.csv"
+        },
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/DataDictionary_Microbes.csv",
+          "bytes": 240387,
+          "sha256": "eb75be859489f59f6b81c3f8d29c307f078498655b4ae0878e1aa49a57d61f76",
+          "hash_status": "matches_official_sha256",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "expected_sha256": "eb75be859489f59f6b81c3f8d29c307f078498655b4ae0878e1aa49a57d61f76",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/DataDictionary_Microbes.csv"
+        },
+        {
+          "path": "physionet.org/files/cgmacros/1.0.0/LICENSE.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "hash_status": "matches_official_sha256",
+          "observed_at": "2026-10-21T16:43:33+09:00",
+          "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "download_url": "https://physionet.org/files/cgmacros/1.0.0/LICENSE.txt"
+        }
+      ],
+      "pending": [
+        "ZIP 다운로드 완료 후 공식 체크섬 재확인",
+        "실제 데이터의 단위·시간·결측 점검"
+      ],
+      "version": "1.0.0",
+      "published_at": "2025-01-28",
+      "website_metadata_reviewed_at": "2026-10-21",
+      "doi": "10.13026/3z8q-x658",
+      "dates_shifted": true,
+      "acquisition_method": "wget -r -N -c -np https://physionet.org/files/cgmacros/1.0.0/"
+    }
+  ]
+}

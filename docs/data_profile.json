@@ -1,0 +1,202 @@
+{
+  "archive": "csv.zip",
+  "archive_sha256": "d6d23d9c557150ed054c1f0951671e12525f9817b146459f0794aa1bd7df43d2",
+  "csv_profiles": {
+    "2024_건강검진_개인별.csv": {
+      "rows": 6997,
+      "columns": [
+        "ID",
+        "YEAR",
+        "SEX",
+        "AGE",
+        "HE_BMI",
+        "HE_GLU",
+        "HE_HBA1C",
+        "HE_DM_HB",
+        "HE_WT",
+        "HE_HT",
+        "HE_WC",
+        "N_CHO",
+        "N_SUGAR",
+        "N_EN",
+        "N_PROT",
+        "N_FAT",
+        "N_TDF"
+      ],
+      "blank_counts": {
+        "ID": 0,
+        "YEAR": 0,
+        "SEX": 0,
+        "AGE": 0,
+        "HE_BMI": 116,
+        "HE_GLU": 702,
+        "HE_HBA1C": 700,
+        "HE_DM_HB": 1381,
+        "HE_WT": 41,
+        "HE_HT": 116,
+        "HE_WC": 370,
+        "N_CHO": 195,
+        "N_SUGAR": 195,
+        "N_EN": 195,
+        "N_PROT": 195,
+        "N_FAT": 195,
+        "N_TDF": 195
+      },
+      "exact_duplicate_rows": 0,
+      "unique_IDs": 6997,
+      "YEAR_counts": {
+        "2024": 6997
+      },
+      "SEX_counts": {
+        "1": 3070,
+        "2": 3927
+      },
+      "HE_DM_HB_counts": {
+        "2": 1844,
+        "1": 2813,
+        "": 1381,
+        "3": 959
+      },
+      "AGE_range": {
+        "min": 1.0,
+        "max": 80.0,
+        "median": 52.0
+      },
+      "HE_BMI_range": {
+        "min": 11.5640619,
+        "max": 48.68387445,
+        "median": 23.27061416
+      },
+      "HE_GLU_range": {
+        "min": 57.0,
+        "max": 349.0,
+        "median": 96.0
+      },
+      "HE_HBA1C_range": {
+        "min": 3.5,
+        "max": 14.4,
+        "median": 5.5
+      }
+    },
+    "2024_식품섭취_기록별.csv": {
+      "rows": 543782,
+      "columns": [
+        "ID",
+        "N_FCODE",
+        "N_FNAME",
+        "N_MEAL_T",
+        "N_TD_WT",
+        "NF_CHO",
+        "NF_SUGAR",
+        "NF_EN",
+        "NF_PROT",
+        "NF_FAT"
+      ],
+      "blank_counts": {
+        "ID": 0,
+        "N_FCODE": 0,
+        "N_FNAME": 0,
+        "N_MEAL_T": 0,
+        "N_TD_WT": 492773,
+        "NF_CHO": 0,
+        "NF_SUGAR": 0,
+        "NF_EN": 0,
+        "NF_PROT": 0,
+        "NF_FAT": 0
+      },
+      "exact_duplicate_rows": 10055,
+      "unique_IDs": 6802,
+      "unique_food_codes": 2301
+    },
+    "식품영양성분_핵심컬럼.csv": {
+      "rows": 50000,
+      "columns": [
+        "식품코드",
+        "식품명",
+        "데이터구분명",
+        "에너지(kcal)",
+        "영양성분함량기준량",
+        "단백질(g)",
+        "지방(g)",
+        "탄수화물(g)",
+        "당류(g)",
+        "식이섬유(g)",
+        "나트륨(mg)",
+        "식품중량",
+        "제공기관명"
+      ],
+      "blank_counts": {
+        "식품코드": 0,
+        "식품명": 0,
+        "데이터구분명": 0,
+        "에너지(kcal)": 0,
+        "영양성분함량기준량": 0,
+        "단백질(g)": 0,
+        "지방(g)": 11684,
+        "탄수화물(g)": 11158,
+        "당류(g)": 123,
+        "식이섬유(g)": 44793,
+        "나트륨(mg)": 63,
+        "식품중량": 1895,
+        "제공기관명": 0
+      },
+      "exact_duplicate_rows": 0,
+      "영양성분함량기준량_counts": {
+        "100ml": 9347,
+        "100g": 40653
+      },
+      "데이터구분명_counts": {
+        "음식": 17732,
+        "가공식품": 32268
+      },
+      "제공기관명_counts": {
+        "식품의약품안전처": 50000
+      },
+      "unique_food_codes": 50000
+    }
+  },
+  "joins": {
+    "health_IDs": 6997,
+    "intake_IDs": 6802,
+    "intersection": 6802,
+    "health_only": 195,
+    "intake_only": 0,
+    "food_catalog_exact_code_overlap": 0,
+    "codebook_food_codes": 2301,
+    "codebook_matches_after_zfill_5": 2301,
+    "codebook_unmatched_after_zfill_5": 0
+  },
+  "codebook_sheets": [
+    "식품코드설명",
+    "식품코드",
+    "음식코드설명",
+    "음식코드"
+  ],
+  "nutrient_reconciliation": {
+    "N_CHO vs sum(NF_CHO)": {
+      "compared": 6802,
+      "within_0.01": 6802,
+      "max_abs_difference": 2.8400000928741065e-07
+    },
+    "N_SUGAR vs sum(NF_SUGAR)": {
+      "compared": 6802,
+      "within_0.01": 6802,
+      "max_abs_difference": 2.8700000065384756e-07
+    },
+    "N_EN vs sum(NF_EN)": {
+      "compared": 6802,
+      "within_0.01": 6802,
+      "max_abs_difference": 9.32001512410352e-07
+    },
+    "N_PROT vs sum(NF_PROT)": {
+      "compared": 6802,
+      "within_0.01": 6802,
+      "max_abs_difference": 3.1800001210058326e-07
+    },
+    "N_FAT vs sum(NF_FAT)": {
+      "compared": 6802,
+      "within_0.01": 6802,
+      "max_abs_difference": 3.823999961127811e-07
+    }
+  }
+}
