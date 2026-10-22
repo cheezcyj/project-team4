@@ -8,6 +8,21 @@ import type { RequestContext } from "../../src/lib/server/session";
 const context: RequestContext = { session: { user: { id: "safety-test", email: "synthetic@example.test" }, mode: "demo", consent: "current" } };
 const env = { ASSISTANT_ENABLED: "1", ASSISTANT_ALLOW_DRAFT_PREVIEW: "1", ASSISTANT_MODEL: "test-model", ASSISTANT_MODEL_BASE_URL: "http://127.0.0.1:9999/v1" };
 
+test("quoted or negated clauses do not hide a following real urgent report", () => {
+  for (const text of [
+    "안내문의 '가슴이 아파요'는 예문이지만 지금 아버지는 의식이 없어요",
+    "가슴은 아프지 않지만 지금 숨을 못 쉬겠어요",
+    "'의식이 없다'는 용어가 궁금해요. 그런데 지금 어머니는 깨워도 반응이 없어요",
+  ]) assert.match(medicalBoundary(text)?.answer ?? "", /^지금 바로 119/);
+  assert.equal(medicalBoundary("안내문의 '가슴이 아파요'는 예문입니다. 지금은 괜찮아요"), null);
+});
+
+test("blood glucose number paraphrases retrieve exercise limits only in an activity context", () => {
+  const candidates = eligibleKnowledge(true);
+  assert.equal(retrieveKnowledge("혈당 숫자 하나만 보면 지금 운동을 해도 되는지 결정할 수 있어?", candidates)[0]?.entry.id, "X05");
+  assert.ok(!retrieveKnowledge("혈당 숫자 설명", candidates).some(match => match.entry.topic === "exercise"));
+});
+
 test("current urgent reports lead with 119 before personal values, medication or model generation", async () => {
   let calls = 0;
   const never: typeof fetch = async () => { calls++; throw new Error("No model request is allowed for these cases"); };

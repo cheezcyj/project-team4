@@ -14,7 +14,7 @@ const deniedTail = /^(?:지는?않|진않|는(?:건|것은|것이)아니|(?:은|
 const conditionalTail = /^(?:(?:이|가|을|를|은|는)?(?:있|없|생기|나타나|발생하))?(?:었|았)?(?:으?면|을때|는경우)/u;
 
 function reportedUrgency(question: string): boolean {
-  for (const sentence of question.split(/[.!?。！？;\n]+/u)) {
+  for (const sentence of question.split(/[.!?。！？;\n]+|하지만|그런데|(?<=지만)/u)) {
     const clause = sentence.replace(/\s+/gu, "");
     // 용어·가정 설명과 이미 끝난 증상을 현재의 신고 요청으로 바꾸지 않아요.
     if (/안내문|예문|문구|(?:단어|용어|표현)(?:의)?(?:뜻|의미)|(?:흉통|호흡곤란|의식소실)(?:이란|이뭐|은뭐)/u.test(clause)) continue;

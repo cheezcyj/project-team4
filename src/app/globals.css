@@ -444,6 +444,9 @@ h1 { font-weight: 750; }
 .assistant-composer > p { color: var(--color-muted); font-size: 12px; margin-top: 5px; }
 .assistant-composer .assistant-consent { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; font-size: 12px; font-weight: 400; }
 .assistant-consent input { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 2px; }
+.assistant-record-tool { margin: 12px 0; padding: 12px; border: 1px solid var(--color-line); border-radius: 10px; }
+.assistant-record-tool .assistant-consent { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+.assistant-record-tool p { margin: 8px 0; font-size: 12px; color: var(--color-muted); }
 .assistant-body > [role="status"] { margin-top: 12px; font-size: 13px; color: var(--color-muted); }
 .assistant-preview { margin-top: 12px; padding: 8px; border: 1px solid var(--color-line); border-radius: 8px; font-size: 12px; }
 .assistant-error { margin-top: 12px; color: #9d2929; }

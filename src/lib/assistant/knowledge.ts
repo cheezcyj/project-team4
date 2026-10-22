@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import bundle from "../../../docs/research/chatbot_v5/knowledge.json";
+import bundle from "../../../docs/research/chatbot_replacement_v1/knowledge.json";
 import type { AssistantCitation } from "./types";
 
 export type KnowledgeEntry = {
@@ -13,7 +13,8 @@ export type KnowledgeBundle = {
   approval: { team_content_approved: boolean; medical_review_completed: boolean; source_reuse_review_completed: boolean };
   knowledge_entries: KnowledgeEntry[];
   sources: { id: string; kind: string; title: string; publisher: string; canonical_url: string;
-    pdf_page_count?: number; status: string; approved_at?: string | null; permitted_runtime_reuse?: boolean | null }[];
+    document_type?: string; pdf_page_count?: number; status: string; approved_at?: string | null; permitted_runtime_reuse?: boolean | null;
+    reuse_label?: string; reuse_url?: string; attribution?: string; adaptation_notice?: string }[];
 };
 export type KnowledgeMatch = { entry: KnowledgeEntry; citations: AssistantCitation[]; score: number };
 
@@ -52,16 +53,25 @@ export function eligibleKnowledge(preview: boolean, now = Date.now(), data: Know
     const citations: AssistantCitation[] = [];
     for (const evidence of entry.evidence) {
       const source = data.sources.find(item => item.id === evidence.source_id);
-      if (!source || source.kind !== "official_health_reference" || !("pdf_page_count" in source)) return [];
+      if (!source || !["official_health_reference", "open_health_reference", "official_food_label_reference"].includes(source.kind)) return [];
       if (!preview && (source.status !== "approved" || !("approved_at" in source)
         || !validApproval(source.approved_at, now) || !("permitted_runtime_reuse" in source)
         || source.permitted_runtime_reuse !== true)) return [];
       try {
         if (new URL(source.canonical_url).protocol !== "https:") return [];
+        if (source.reuse_url && new URL(source.reuse_url).protocol !== "https:") return [];
       } catch { return []; }
-      if (!evidence.pdf_pages?.length || evidence.pdf_pages.some(page => !Number.isInteger(page) || page < 1 || page > source.pdf_page_count!)) return [];
+      if (!evidence.section.trim()) return [];
+      const documentType = source.document_type ?? "pdf";
+      if (documentType === "pdf") {
+        if (!source.pdf_page_count || !evidence.pdf_pages?.length
+          || evidence.pdf_pages.some(page => !Number.isInteger(page) || page < 1 || page > source.pdf_page_count!)) return [];
+      } else if (!["web", "notice"].includes(documentType) || evidence.pdf_pages?.length
+        || !source.reuse_label || !source.reuse_url || !source.attribution || !source.adaptation_notice) return [];
       citations.push({ id: `${entry.id}:${source.id}`, title: source.title, publisher: source.publisher,
-        url: source.canonical_url, pdfPages: evidence.pdf_pages });
+        url: source.canonical_url, pdfPages: evidence.pdf_pages ?? [], section: evidence.section, evidenceRole: evidence.role,
+        ...(source.reuse_label ? { reuseLabel: source.reuse_label, reuseUrl: source.reuse_url,
+          attribution: source.attribution, adaptationNotice: source.adaptation_notice } : {}) });
     }
     return citations.length ? [{ entry, citations, score: 0 }] : [];
   });
@@ -72,7 +82,7 @@ function normalize(value: string): string {
 }
 
 const broadKeywords = new Set(["혈당", "기록", "비교", "평균", "밥", "곡류", "현미", "채소", "인슐린", "저혈당"]);
-const exerciseContext = /운동|걷기|걷는|걸어|산책|자전거|탄력밴드|스트레칭|유산소|근력|달리기|신체활동/u;
+const exerciseContext = /운동|걷기|걷는|걸어|산책|벽밀기|팔들기|자전거|탄력밴드|스트레칭|유산소|근력|달리기|신체활동/u;
 
 function queryWithAliases(question: string): string {
   let query = normalize(question);
@@ -80,6 +90,7 @@ function queryWithAliases(question: string): string {
   if (/(?:설탕|당)(?:을|를)?(?:따로|별도로)?(?:넣지않|추가하지않|첨가하지않|무첨가)|(?:설탕|당)(?:을|를)?(?:따로|별도로)?안넣/u.test(query)) query += "무가당";
   if (/영양성분/u.test(query) || (/성분표/u.test(query) && /식품|음식|음료|우유|요거트|주스|설탕|당류|탄수화물/u.test(query))) query += "영양표시";
   if (/집안|집에서/u.test(query)) query += "실내";
+  if (/혈당(?:의)?숫자/u.test(query)) query += "혈당수치";
   return query;
 }
 
@@ -89,6 +100,8 @@ export function retrieveKnowledge(question: string, candidates: KnowledgeMatch[]
   return candidates.map(match => {
     // 운동 자료에 함께 등장하는 합병증·혈당 수치·30분만으로 운동 질문이라고 추정하지 않아요.
     if (match.entry.topic === "exercise" && !exerciseContext.test(query)) return { ...match, score: 0 };
+    // 새 실내 예시는 벽밀기·팔 들기예요. 이전 기구의 사용법 근거로 검색하지 않아요.
+    if (match.entry.id === "X02" && /자전거|탄력밴드/u.test(query)) return { ...match, score: 0 };
     const matched = match.entry.keywords.filter(keyword => query.includes(normalize(keyword)));
     if (!matched.some(keyword => !broadKeywords.has(normalize(keyword)))) return { ...match, score: 0 };
     const score = matched.reduce((total, keyword) => {

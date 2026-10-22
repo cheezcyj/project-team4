@@ -1,4 +1,4 @@
-"""Frozen 40-case local demo evaluation; no model load, tuning, or app mutation.
+"""Frozen local demo evaluation; no model load, tuning, or app mutation.
 
 Default: offline schema validation. --run explicitly sends requests to the app.
 Only synthetic demo accounts are accepted. App responses, not provider internals,
@@ -24,8 +24,9 @@ import urllib.request
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITE = ROOT / "docs/research/assistant_eval_v1/cases.json"
-KNOWLEDGE = ROOT / "docs/research/chatbot_v5/knowledge.json"
+FROZEN_SUITE = ROOT / "docs/research/assistant_eval_v1/cases.json"
+SUITE = ROOT / "docs/research/assistant-eval-replacement40/cases.json"
+KNOWLEDGE = ROOT / "docs/research/chatbot_replacement_v1/knowledge.json"
 CATEGORIES = {"basic": 6, "nutrition": 6, "exercise": 6, "personal": 8, "medical_risk": 8, "access": 6}
 LABELS = dict(zip(CATEGORIES, ["기본 지식", "식사", "운동", "개인 기록", "의료 위험", "접근 제한"]))
 KINDS = {"answer", "no_evidence", "unsupported", "safety"}
@@ -33,9 +34,15 @@ SOURCE_PATHS = [
     "src/lib/assistant/model.ts", "src/lib/assistant/service.ts",
     "src/lib/assistant/knowledge.ts", "src/lib/assistant/types.ts",
     "src/lib/assistant/safety.ts",
+    "src/lib/assistant/answer-conditions.ts",
+    "src/lib/assistant/record-summary.ts", "src/app/api/assistant/records-summary/route.ts",
+    "src/components/assistant/assistant-widget.tsx", "src/lib/client/api.ts",
+    "src/lib/server/records.ts", "src/lib/domain/analytics.ts", "src/lib/domain/dates.ts",
     "src/app/api/assistant/route.ts", "src/lib/server/http.ts",
     "src/lib/server/session.ts", "src/lib/server/session/demo.ts",
-    "docs/research/chatbot_v5/knowledge.json",
+    "docs/research/chatbot_replacement_v1/knowledge.json",
+    "docs/research/chatbot_replacement_v1/FAQ_13.md",
+    "docs/research/chatbot_replacement_v1/SOURCES.json", "scripts/prepare_assistant_replacement.py",
 ]
 
 
@@ -54,9 +61,12 @@ def save(path: Path, value: object) -> None:
 def load_suite(path: Path = SUITE) -> dict:
     suite = json.loads(path.read_text(encoding="utf-8"))
     cases = suite["cases"]
-    if suite["schema_version"] != 1 or suite["category_counts"] != CATEGORIES or len(cases) != 40:
-        raise ValueError("Expected schema v1 and exactly 6/6/6/8/8/6 cases.")
-    if Counter(c["category"] for c in cases) != CATEGORIES or len({c["id"] for c in cases}) != 40:
+    counts = suite["category_counts"]
+    if suite["schema_version"] != 1 or set(counts) != set(CATEGORIES) or any(type(n) is not int or n < 1 for n in counts.values()):
+        raise ValueError("Expected schema v1 with positive counts for each known category.")
+    if path.resolve() in {SUITE.resolve(), FROZEN_SUITE.resolve()} and (counts != CATEGORIES or len(cases) != 40):
+        raise ValueError("The original 40-case distribution is frozen.")
+    if Counter(c["category"] for c in cases) != counts or len({c["id"] for c in cases}) != sum(counts.values()):
         raise ValueError("Incorrect categories or duplicate IDs.")
     entries = {e["id"] for e in json.loads(KNOWLEDGE.read_text(encoding="utf-8"))["knowledge_entries"]}
     for case in cases:
@@ -103,7 +113,16 @@ def guide(suite: dict) -> str:
                 *[f"- 필수: {point}" for point in case["must"]],
                 *[f"- 금지: {point}" for point in case["must_not"]], "",
             ])
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    if suite["suite_id"] != "assistant-eval-v1":
+        result = result.replace("현재 앱을 바꾸기 전에 기대 결과를 고정한 기준선이다.",
+                                "별도 범위에 맞춰 기대 결과를 정한 평가본이다. 대체 자료 평가본은 기존 질문을 재사용하며, 변경된 기대 범위는 cases.json에 기록했다.")
+        result = result.replace("40문항 v1", f"{len(suite['cases'])}문항 ({suite['suite_id']})").replace("40개", f"{len(suite['cases'])}개")
+        result = result.replace("기본 지식 6·식사 6·운동 6·개인 기록 8·의료 위험 8·접근 제한 6개다.",
+                                "·".join(f"{LABELS[key]} {count}" for key, count in suite["category_counts"].items()) + "개다.")
+        result = result.replace("python scripts/evaluate_assistant.py", f"python scripts/evaluate_assistant.py --suite docs/research/{suite['suite_id']}/cases.json")
+        result = result.replace("assistant_eval_v1/runs", f"{suite['suite_id']}/runs")
+    return result
 
 
 def citation_catalog() -> dict:
@@ -111,14 +130,16 @@ def citation_catalog() -> dict:
     sources = {s["id"]: s for s in bundle["sources"]}
     catalog = {}
     for entry in bundle["knowledge_entries"]:
-        # Product-rule mixed entries are ineligible in the current preview.
-        if any(sources[e["source_id"]]["kind"] != "official_health_reference" for e in entry["evidence"]):
+        if any(sources[e["source_id"]]["kind"] not in {"official_health_reference", "open_health_reference", "official_food_label_reference"} for e in entry["evidence"]):
             continue
         for evidence in entry["evidence"]:
             source = sources[evidence["source_id"]]
             catalog[f"{entry['id']}:{source['id']}"] = {
                 "title": source["title"], "publisher": source["publisher"],
-                "url": source["canonical_url"], "pdfPages": evidence["pdf_pages"],
+                "url": source["canonical_url"], "pdfPages": evidence.get("pdf_pages", []),
+                "section": evidence["section"], "evidenceRole": evidence["role"],
+                "reuseLabel": source["reuse_label"], "reuseUrl": source["reuse_url"],
+                "attribution": source["attribution"], "adaptationNotice": source["adaptation_notice"],
             }
     return catalog
 
@@ -226,7 +247,7 @@ def model_metadata() -> dict:
     return metadata
 
 
-def run(suite: dict, base: str, output: Path) -> int:
+def run(suite: dict, base: str, output: Path, suite_path: Path = SUITE) -> int:
     if output.exists():
         raise ValueError("Output already exists. Choose a fresh directory to preserve the baseline.")
     shared = client()
@@ -237,10 +258,14 @@ def run(suite: dict, base: str, output: Path) -> int:
     if availability["status"] != 200 or availability["json"].get("available") is not True or availability["json"].get("draftPreview") is not True:
         raise ValueError("Local draft-preview assistant is not available.")
     output.mkdir(parents=True)
-    frozen_suite = SUITE.read_bytes()
+    frozen_suite = suite_path.read_bytes()
     (output / "cases.json").write_bytes(frozen_suite)
     (output / "runner-source.txt").write_bytes(Path(__file__).read_bytes())
     source_hashes = {path: digest(ROOT / path) for path in SOURCE_PATHS}
+    for relative in SOURCE_PATHS:
+        snapshot = output / "source-snapshot" / relative
+        snapshot.parent.mkdir(parents=True, exist_ok=True)
+        snapshot.write_bytes((ROOT / relative).read_bytes())
     metadata = {
         "suite_id": suite["suite_id"], "started_at": now(), "finished_at": None,
         "suite_sha256": hashlib.sha256(frozen_suite).hexdigest(), "base_url": base,
@@ -279,7 +304,7 @@ def run(suite: dict, base: str, output: Path) -> int:
                           "kind": (response.get("json") or {}).get("kind"), "ms": response["elapsed_ms"],
                           "automatic_pass": result["automatic_pass"]}, ensure_ascii=False), flush=True)
     metadata["finished_at"] = now()
-    metadata["suite_unchanged"] = SUITE.read_bytes() == frozen_suite
+    metadata["suite_unchanged"] = suite_path.read_bytes() == frozen_suite
     metadata["source_hashes_after"] = {path: digest(ROOT / path) for path in SOURCE_PATHS}
     metadata["app_sources_unchanged"] = metadata["source_hashes_after"] == source_hashes
     results = metadata["results"]
@@ -302,14 +327,15 @@ def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run", action="store_true", help="Send all 40 requests to the running local demo app.")
+    parser.add_argument("--run", action="store_true", help="Send the frozen requests to the running local demo app.")
+    parser.add_argument("--suite", type=Path, default=SUITE)
     parser.add_argument("--base-url", default="http://127.0.0.1:3000")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--write-guide", action="store_true", help="Render the question guide from the frozen JSON (offline).")
     args = parser.parse_args()
-    suite = load_suite()
+    suite = load_suite(args.suite)
     expected_guide = guide(suite)
-    guide_path = SUITE.with_name("QUESTIONS.md")
+    guide_path = args.suite.with_name("QUESTIONS.md")
     if args.write_guide:
         guide_path.write_text(expected_guide, encoding="utf-8")
     elif not guide_path.exists() or guide_path.read_text(encoding="utf-8") != expected_guide:
@@ -317,8 +343,8 @@ def main() -> int:
     if args.run:
         if not args.output:
             parser.error("--run requires a fresh --output directory")
-        return run(suite, local_base(args.base_url), args.output.resolve())
-    print(f"PASS: 40 frozen cases, categories 6/6/6/8/8/6, guide matches. SHA256={digest(SUITE)}")
+        return run(suite, local_base(args.base_url), args.output.resolve(), args.suite)
+    print(f"PASS: {len(suite['cases'])} frozen cases, guide matches. SHA256={digest(args.suite)}")
     return 0
 
 
