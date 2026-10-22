@@ -1,0 +1,4 @@
+# Frozen evaluation captures retain exact bytes for their recorded SHA-256 hashes.
+# Whitespace in archived source and console output is part of the captured evidence.
+docs/research/assistant_eval_v1/runs/** -text -whitespace
+docs/research/assistant_eval_v1/cases.json -text

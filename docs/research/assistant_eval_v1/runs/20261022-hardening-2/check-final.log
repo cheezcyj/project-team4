@@ -1,0 +1,222 @@
+npm notice run team4-glucose-records@0.1.0 check
+npm notice run npm run lint && npm run typecheck && npm test && npm run build
+npm notice run team4-glucose-records@0.1.0 lint
+npm notice run eslint src tests scripts next.config.ts
+npm notice run team4-glucose-records@0.1.0 typecheck
+npm notice run tsc --noEmit
+npm notice run team4-glucose-records@0.1.0 test
+npm notice run npm run test:unit && npm run test:db
+npm notice run team4-glucose-records@0.1.0 test:unit
+npm notice run tsx --test tests/unit/*.test.ts
+✔ signup requires valid email, a long matching password and limits bcrypt input to 72 bytes (0.9684ms)
+✔ withdrawal clears chunked authentication and every PKCE flow cookie for this project only (0.2283ms)
+✔ current urgent reports lead with 119 before personal values, medication or model generation (6.3528ms)
+✔ negated symptoms, terminology and conditional examples are not treated as a current emergency (1.0761ms)
+✔ natural treatment changes and indirect diagnosis requests stop before generation (2.2654ms)
+✔ spoken measurements are bounded without blocking general duration or medication education (0.1951ms)
+✔ query aliases retrieve equivalent food and indoor activity questions without unrelated matches (2.1195ms)
+✔ generation receives the complete required conditions for memory limits and nutrition label units (15.4487ms)
+✔ draft corpus remains blocked by default and in Supabase, with explicit local preview only (2.7872ms)
+✔ production eligibility requires approval, current review dates, reuse permission and intact content (1.4369ms)
+✔ lexical retrieval selects relevant Korean knowledge and abstains on unrelated or overly broad input (8.9255ms)
+✔ exercise evidence requires an activity question rather than an incidental keyword (2.1542ms)
+✔ model endpoint configuration accepts loopback only and never browser-supplied destinations (0.2153ms)
+✔ LM Studio text format still requires a JSON answer and validated source identifiers (17.1896ms)
+✔ only the explicit LM Studio engine transport failure retries once within the original request signal (2.7709ms)
+✔ chat rejects missing AI acknowledgement, empty or oversized questions and extra identity/history fields (1.824ms)
+✔ unsupported personal requests, medical requests and absent evidence do not call the model (1.2727ms)
+✔ screenshot regressions and measurement variants stop before model processing (3.89ms)
+✔ general HbA1c and time questions still reach the model with relevant evidence (2.3572ms)
+✔ answer uses server-owned source links and sends only the current question and selected public snippets (0.7731ms)
+✔ invented citations, malformed output and upstream errors never expose raw model responses (3.5763ms)
+✔ cancelled calls and duplicate in-flight requests release their slot (1.5664ms)
+✔ model timeout and oversized upstream response fail without exposing upstream content (6.2444ms)
+✔ compatible protocol works through real HTTP to a local mock, without loading any model (85.416ms)
+✔ missing consent allows own read/delete, denies writes, and never exposes another account (18.1039ms)
+✔ writes survive a new store instance, duplicate UUID is not retried, stale updates conflict (10.3552ms)
+✔ parallel writes from different store instances are serialized without losing records (56.909ms)
+✔ old consent is preserved, blocks editing, and retains own read/delete (7.6344ms)
+✔ invalid existing storage fails closed and is preserved for recovery (1.9334ms)
+✔ Seoul recent seven calendar days includes lower midnight and excludes next midnight (2.1711ms)
+✔ Seoul conversion is independent of server local time and validates impossible dates (0.5405ms)
+✔ glucose boundaries are storage constraints, with no medical upper cutoff (0.58ms)
+✔ memo trims empty to null and counts Unicode code points rather than UTF-16 units (0.2129ms)
+✔ equal measurement timestamps preserve distinct records using UUID ordering (8.926ms)
+✔ ten measurement contexts preserve original codes and validate optional meal association (1.7319ms)
+✔ month and custom ranges use Seoul calendar boundaries and reject inconsistent filters (0.9885ms)
+✔ reports retain null for empty data, actual single values and exact comparison context (0.5608ms)
+✔ CSV handles BOM quoted commas, quotes, multiline memo and Korean aliases without evaluating text (0.6004ms)
+✔ CSV rejects malformed quoting, invalid Unicode, too many rows, bad units and every row on any validation failure (0.6392ms)
+✔ meal validator blocks client supplied snapshots, invalid pairs and empty records (0.7639ms)
+✔ meal snapshots preserve historical nutrients and unknowns, convert same verified units only (0.5425ms)
+✔ policy matching keeps partial age overlaps and missing facts as needs-review (0.2677ms)
+✔ demo persists atomic meals, preferences and imports, isolates owners and recovers identical requests (34.5573ms)
+✔ local food importer preserves declared source basis, null vs zero and deterministic identities (2.1981ms)
+✔ food importer rejects wrong headers, duplicate source codes and invalid nutrient numbers (0.5227ms)
+✔ local catalog verifies stored record digest; corruption is preserved and never hidden by fallback (10.3034ms)
+✔ mutation origin checks reject missing or cross-origin input (1.7273ms)
+✔ signed sessions reject tampering, expiry, other signing keys, and nonexistent users (0.3528ms)
+✔ JSON body rejects arrays, malformed payloads, and excessive actual content (2.5663ms)
+✔ record pagination continues past a smaller server row cap and preserves equal-time rows (1.8502ms)
+✔ a later page failure rejects the entire result instead of rendering a partial graph (0.4487ms)
+✔ unexpected duplicate pages and invalid dates cannot cause silent loss or endless pagination (0.2123ms)
+✔ API rejects attempts to override protected server fields before database writes (0.2192ms)
+✔ explicit database HTTP conflict becomes a sanitized stale-record response (0.0971ms)
+✔ installed Supabase client sends one POST for both serialization and explicit conflict responses (16.5971ms)
+✔ Supabase settings prefer runtime server variables and retain legacy anon compatibility (0.8409ms)
+✔ Supabase settings reject privileged keys and insecure remote endpoints (0.2181ms)
+ℹ tests 57
+ℹ suites 0
+ℹ pass 57
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 317.5582
+npm notice run team4-glucose-records@0.1.0 test:db
+npm notice run node supabase/tests/run-db-tests.mjs && node supabase/tests/account-deletion.mjs
+Database SQL tests: PostgreSQL 18.6 (PGlite 0.5.10) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.5 (1db513782be24469589d7cb8a1f1834e9a33f271), 32-bit
+Environment: isolated PGlite; Auth identities are SQL fixtures.
+ok - both app tables enforce RLS
+ok - trigger helpers are invokers with empty search_path
+ok - consent update and delete have no grants
+ok - generated timestamp columns have no client write grants
+ok - anonymous consent read denied
+ok - anonymous consent insert denied
+ok - anonymous consent update denied
+ok - anonymous consent delete denied
+ok - anonymous record read denied
+ok - anonymous record insert denied
+ok - anonymous record update denied
+ok - anonymous record delete denied
+ok - authenticated role without user identity reads nothing
+ok - missing user identity cannot consent
+ok - A cannot read old-policy consent belonging to D
+ok - A cannot insert B consent
+ok - client cannot consent to a different policy version
+ok - client cannot supply agreed_at
+ok - A cannot create a record before consent
+ok - A reads its own first consent with server timestamp
+ok - repeat consent insert cannot overwrite first agreement
+ok - user cannot alter consent
+ok - user cannot delete consent
+ok - A sees two own records and none from C or D
+ok - insert trims memo and generates both timestamps
+ok - Unicode whitespace-only memo is NULL
+ok - equal measured times remain separate records
+ok - A cannot insert a record for B
+ok - client cannot forge record creation time
+ok - client cannot change record ID
+ok - client cannot change record owner
+ok - client cannot change creation time
+ok - client cannot forge update time
+ok - zero glucose rejected
+ok - negative glucose rejected
+ok - fractional integer text rejected
+ok - integer overflow rejected
+ok - missing glucose rejected
+ok - unknown measurement context rejected
+ok - infinite timestamp rejected
+ok - 501 Korean codepoints rejected
+ok - 501 emoji codepoints rejected
+ok - integer max and 500 emoji codepoints accepted
+ok - 500 codepoints preserved with server update timestamp
+ok - minimum positive integer accepted
+ok - empty memo is normalized on update
+ok - B cannot read A records by direct table query
+ok - B cannot read A record by known ID
+ok - B cannot update any foreign record
+ok - B cannot delete any foreign record
+ok - B can create and read its own record
+ok - B can update its own record
+ok - B can delete its own record
+ok - no-consent user can read existing own record
+ok - no-consent user cannot update existing record
+ok - no-consent user cannot insert record
+ok - no-consent user can delete own record
+ok - old-policy user can read own consent status
+ok - old-policy user can read existing own record
+ok - old-policy user cannot update existing record
+ok - old-policy user cannot insert record
+ok - old consent cannot be silently replaced with a new row
+ok - old-policy user can delete own record
+ok - trigger also preserves ID for privileged updates
+ok - trigger also preserves owner for privileged updates
+ok - trigger also preserves creation time for privileged updates
+ok - trigger overwrites privileged update timestamp with database time
+ok - foreign-account mutations left both A records intact
+ok - administrative test account deletion cascades to both app tables
+ok - deleting A account preserves B consent
+PASS: 70 SQL assertions; all test fixtures rolled back.
+Not covered: hosted Supabase Auth, JWT validation, PostgREST, HTTP pagination or cloud deployment.
+PASS: 62 non-AI SQL checks in isolated PGlite; meals, snapshots, stale writes, ownership, preferences, imports and account cascades.
+ok - anonymous cannot call deletion
+ok - missing identity denied
+ok - non-password authentication denied
+ok - old password authentication denied
+ok - unrelated or nonexistent session denied
+ok - another user's session cannot delete caller
+ok - refreshing an old session does not satisfy reauthentication
+PASS: 18 deletion checks; own account, records, meals, settings, imports, consent and sessions removed; other account and shared catalogs preserved.
+npm notice run team4-glucose-records@0.1.0 build
+npm notice run next build
+▲ Next.js 16.4.2 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 14ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 446ms
+  Running TypeScript ...
+  Finished TypeScript in 1359ms ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/20) ...
+  Generating static pages using 15 workers (5/20) 
+  Generating static pages using 15 workers (10/20) 
+  Generating static pages using 15 workers (15/20) 
+✓ Generating static pages using 15 workers (20/20) in 247ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/account
+├ ƒ /api/assistant
+├ ƒ /api/benefits
+├ ƒ /api/consent
+├ ƒ /api/foods
+├ ƒ /api/health
+├ ƒ /api/imports
+├ ƒ /api/login
+├ ƒ /api/logout
+├ ƒ /api/meals
+├ ƒ /api/meals/[id]
+├ ƒ /api/news
+├ ƒ /api/preferences
+├ ƒ /api/records
+├ ƒ /api/records/[id]
+├ ƒ /api/session
+├ ƒ /api/signup
+├ ○ /benefits
+├ ○ /calendar
+├ ○ /comparison
+├ ○ /consent
+├ ○ /dashboard
+├ ○ /foods
+├ ○ /imports
+├ ○ /login
+├ ○ /meals
+├ ƒ /meals/[id]/edit
+├ ○ /meals/new
+├ ○ /mypage
+├ ○ /news
+├ ○ /preferences
+├ ○ /records
+├ ƒ /records/[id]/edit
+├ ○ /records/new
+├ ○ /reports
+└ ○ /signup
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

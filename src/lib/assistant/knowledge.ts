@@ -74,9 +74,18 @@ function normalize(value: string): string {
 const broadKeywords = new Set(["혈당", "기록", "비교", "평균", "밥", "곡류", "현미", "채소", "인슐린", "저혈당"]);
 const exerciseContext = /운동|걷기|걷는|걸어|산책|자전거|탄력밴드|스트레칭|유산소|근력|달리기|신체활동/u;
 
+function queryWithAliases(question: string): string {
+  let query = normalize(question);
+  // 전체 질문을 특정 지식 ID로 치환하지 않고, 같은 뜻의 표현만 검색어에 보태요.
+  if (/(?:설탕|당)(?:을|를)?(?:따로|별도로)?(?:넣지않|추가하지않|첨가하지않|무첨가)|(?:설탕|당)(?:을|를)?(?:따로|별도로)?안넣/u.test(query)) query += "무가당";
+  if (/영양성분/u.test(query) || (/성분표/u.test(query) && /식품|음식|음료|우유|요거트|주스|설탕|당류|탄수화물/u.test(query))) query += "영양표시";
+  if (/집안|집에서/u.test(query)) query += "실내";
+  return query;
+}
+
 // 작은 자료집의 검색 기준선이에요. 임베딩 검색으로 교체해도 답변·출처 계약은 같아요.
 export function retrieveKnowledge(question: string, candidates: KnowledgeMatch[], limit = 3): KnowledgeMatch[] {
-  const query = normalize(question);
+  const query = queryWithAliases(question);
   return candidates.map(match => {
     // 운동 자료에 함께 등장하는 합병증·혈당 수치·30분만으로 운동 질문이라고 추정하지 않아요.
     if (match.entry.topic === "exercise" && !exerciseContext.test(query)) return { ...match, score: 0 };

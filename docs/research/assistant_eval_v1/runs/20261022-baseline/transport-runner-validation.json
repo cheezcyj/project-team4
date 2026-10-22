@@ -1,0 +1,7 @@
+{
+  "real_local_mock_http_error_capture": "passed",
+  "continue_after_failure": "40/40",
+  "expected_failure_exit": 2,
+  "no_overwrite_before_network": "passed",
+  "model_calls": 0
+}
