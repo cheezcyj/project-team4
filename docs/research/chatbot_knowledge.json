@@ -1,0 +1,812 @@
+{
+  "schema_version": "1.0",
+  "reviewed_at": "2026-10-21",
+  "timezone_for_demo": "Asia/Seoul",
+  "status": "curated_planning_draft_not_runtime_validated",
+  "description": "자료·질문·답변 초안과 적용 조건을 연결한 로컬 준비본. 팀 최종 승인·서비스 구현·의료 전문가 검토 완료를 뜻하지 않음.",
+  "scope": {
+    "included": [
+      "본인 혈당 기록 요약",
+      "텍스트 음식 검색과 영양정보",
+      "일반 당뇨 지식",
+      "조건을 보존한 일반 운동 안내",
+      "기획 배경용 집단 통계"
+    ],
+    "deferred_or_excluded": [
+      "점심 메뉴 추천",
+      "사진 인식",
+      "기기 자동 연동",
+      "식사에 따른 미래 혈당 예측",
+      "개인 진단·약물 용량 조정"
+    ]
+  },
+  "proposed_record_contract": {
+    "status": "설계 제안; 기존 ERD·DB를 변경하지 않음",
+    "required_for_comparison": [
+      "authenticated_user_scope",
+      "record_id",
+      "glucose_value",
+      "glucose_unit",
+      "measured_at",
+      "measurement_timezone",
+      "measurement_context"
+    ],
+    "optional_or_contextual": [
+      "meal_period",
+      "meal_memo",
+      "selected_foods",
+      "amount_and_unit"
+    ],
+    "separate_audit_fields": [
+      "created_at",
+      "updated_at"
+    ],
+    "rules": [
+      "실제 측정 시각과 저장 시각을 분리",
+      "측정 상황과 식사 구분을 혼동하지 않음",
+      "최근 7일은 오늘 포함 7개 달력 날짜라는 제품 기준 제안",
+      "오늘은 현재까지 부분 집계",
+      "같은 상황별 기록 산술평균과 건수를 함께 표시",
+      "한쪽 기록이 없으면 변화량 미계산"
+    ]
+  },
+  "food_contract": {
+    "source_selection": {
+      "updated_at": "2026-10-21",
+      "primary_source_ids_in_data_sources_registry": [
+        "MFDS_FOOD_XLSX",
+        "MFDS_PROCESSED_XLSX"
+      ],
+      "origin_evidence": "이미 받은 식약처 공식 배포 엑셀이라는 사용자 확인",
+      "current_draft_source_id": "FOOD_CSV",
+      "prepared_food_datasets": [
+        {
+          "source_id_in_data_sources_registry": "RDA_COMPOSITION_XLSX",
+          "version": "10.4",
+          "rows": 3366,
+          "manifest": "data/processed/food_composition_10_4/manifest.json",
+          "status": "preprocessed_and_locally_validated_not_connected_to_chatbot"
+        }
+      ],
+      "current_statistics_scope": "아래 기준량·결측 집계와 질문별 FOOD_CSV 근거는 기존 CSV 5만 행 참고본에 한정",
+      "processing_status": "RDA 10.4 가공본은 별도 준비 완료. 식약처 엑셀 전처리·질문별 근거 재연결·앱 연결 전"
+    },
+    "columns": [
+      "식품코드",
+      "식품명",
+      "데이터구분명",
+      "에너지(kcal)",
+      "영양성분함량기준량",
+      "단백질(g)",
+      "지방(g)",
+      "탄수화물(g)",
+      "당류(g)",
+      "식이섬유(g)",
+      "나트륨(mg)",
+      "식품중량",
+      "제공기관명"
+    ],
+    "blank_counts": {
+      "식품코드": 0,
+      "식품명": 0,
+      "데이터구분명": 0,
+      "에너지(kcal)": 0,
+      "영양성분함량기준량": 0,
+      "단백질(g)": 0,
+      "지방(g)": 11684,
+      "탄수화물(g)": 11158,
+      "당류(g)": 123,
+      "식이섬유(g)": 44793,
+      "나트륨(mg)": 63,
+      "식품중량": 1895,
+      "제공기관명": 0
+    },
+    "basis_counts": {
+      "100ml": 9347,
+      "100g": 40653
+    },
+    "key": "식품코드(문자열)",
+    "missing_value_policy": "빈 값은 null/정보 없음으로 보존. 0으로 대체하지 않음.",
+    "portion_policy": "양이 없으면 기준량 조회. 같은 g 또는 같은 ml에서만 환산. 식품중량을 무검증 1인분으로 쓰지 않음.",
+    "join_warning": "국민건강영양조사 N_FCODE와 별도 식품 DB 코드 간 기존 점검상 정확 일치 없음. 미검증 이름 조인 금지. NF_*는 섭취량 기여 영양소이며 100g당 성분이 아님."
+  },
+  "reuse_status": "자료별 서비스 이용조건·원문 재배포·도표 전재 허용 범위 확인 대기. 현재는 자체 요약과 출처 연결을 작성.",
+  "sources": [
+    {
+      "id": "KDCA_DIABETES",
+      "title": "당뇨병",
+      "publisher": "질병관리청 국가건강정보포털",
+      "kind": "official_education_pdf",
+      "local_path": "data/당뇨병 _ 국가건강정보포털 _ 질병관리청.pdf",
+      "sha256": "1f8413b6fc5c19bea0f28f4cdcb237d9cb67dfdfa5d96e4b7ed056e634f5fd91",
+      "official_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5305",
+      "pdf_page_count": 27,
+      "web_registered_at": "2020-08-30",
+      "web_updated_at": "2026-09-16",
+      "browser_printed_at": "2026-10-21",
+      "priority_pdf_pages": [
+        9,
+        11,
+        12,
+        13
+      ],
+      "header_footer_only_pdf_pages": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "role": "측정 시점·기록 이유·기본 지식",
+      "limits": [
+        "본문에 이전 연도 지침을 인용한 수치가 있음. 웹 업데이트일을 모든 권고의 개정일로 해석하지 않음.",
+        "인쇄일은 발행일이 아님. 개인 목표값을 일률적으로 부여하지 않음."
+      ]
+    },
+    {
+      "id": "KDCA_EXERCISE",
+      "title": "당뇨환자의 운동요법",
+      "publisher": "질병관리청 국가건강정보포털",
+      "kind": "official_education_pdf",
+      "local_path": "data/당뇨환자의 운동요법 _ 국가건강정보포털 _ 질병관리청.pdf",
+      "sha256": "591941ecb0e2611e03d79b1228196c8e1181efbe067d1ea51e8c2bb187d07a86",
+      "official_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3390",
+      "pdf_page_count": 6,
+      "web_registered_at": "2020-04-17",
+      "web_updated_at": "2026-07-31",
+      "browser_printed_at": "2026-10-21",
+      "priority_pdf_pages": [
+        2,
+        3,
+        4
+      ],
+      "header_footer_only_pdf_pages": [
+        6
+      ],
+      "role": "일반 운동 선택지·운동 전 확인 사항·합병증별 주의",
+      "limits": [
+        "개인 상태 확인 없이 30분 운동 가능 여부를 판정하지 않음.",
+        "운동 전 혈당 수치별 행동·약물 조정 표를 자동 규칙으로 만들지 않음. 학회 수정본과 대상 조건의 대조가 먼저임."
+      ]
+    },
+    {
+      "id": "KDCA_DIET",
+      "title": "당뇨환자의 식이요법",
+      "publisher": "질병관리청 국가건강정보포털",
+      "kind": "official_education_pdf",
+      "local_path": "data/당뇨환자의 식이요법 _ 국가건강정보포털 _ 질병관리청.pdf",
+      "sha256": "6258f56e2bfaf628281b699ad0f8adf676d1256ad8e60d6fba057147596b4413",
+      "official_url": "https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=3388",
+      "pdf_page_count": 11,
+      "web_registered_at": "2020-04-17",
+      "web_updated_at": "2026-08-04",
+      "browser_printed_at": "2026-10-21",
+      "priority_pdf_pages": [
+        1,
+        2,
+        3
+      ],
+      "header_footer_only_pdf_pages": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "role": "일반 영양교육·가공식품 표시 확인",
+      "limits": [
+        "점심 식단 추천은 현재 후순위.",
+        "식이요법 자료 속 운동·저혈당 수치 설명을 다른 지침과 무조건 병합하지 않음.",
+        "무가당 관련 답변은 영양교육이며 최신 식품표시 법령 해석이 아님."
+      ]
+    },
+    {
+      "id": "KDA_GUIDELINE_2025",
+      "title": "2025 당뇨병 진료지침 요약문 수정본(26.2.12)",
+      "publisher": "대한당뇨병학회",
+      "kind": "clinical_guideline_summary_pdf",
+      "local_path": "data/2025 당뇨병 진료지침_요약문_수정본(26.2.12).pdf",
+      "sha256": "cffefb4142b680088630dbb44d6ce5999175f5ac795a77efbaabc0aac42031c3",
+      "official_url": "https://diabetes.or.kr/bbs/?code=guide&mode=view&number=2099",
+      "pdf_page_count": 63,
+      "edition_year": 2025,
+      "official_posted_at": "2025-09-09",
+      "revision_history": [
+        {
+          "date": "2025-12-01",
+          "scope": "운동 전 혈당 대처 및 항비만약물 표 오기 수정(공식 게시물 안내)"
+        },
+        {
+          "date": "2026-02-12",
+          "scope": "인슐린 펜 교육영상 QR 및 URL 수정(공식 게시물 안내)"
+        }
+      ],
+      "priority_pdf_pages": [
+        11,
+        13,
+        14,
+        50,
+        51
+      ],
+      "header_footer_only_pdf_pages": [],
+      "layout_note": "본문 대부분 한 PDF 페이지에 책자 두 쪽. PDF 11=책자 20-21, PDF 50=98-99, PDF 51=100-101.",
+      "role": "측정·자기관리·운동 교육의 교차 확인",
+      "limits": [
+        "CGM 전용 지표를 산발적 수기 기록에 적용하지 않음.",
+        "전문 지침을 개인 진단·운동 허가·인슐린 용량 자동 조정으로 전환하지 않음.",
+        "2026-02-12 파일 수정이 전체 임상 권고의 2026년 개정을 뜻하지 않음."
+      ]
+    },
+    {
+      "id": "KDA_FACT_2026",
+      "title": "Diabetes Fact Sheet in Korea 2026",
+      "publisher": "대한당뇨병학회",
+      "kind": "population_statistics_pdf",
+      "local_path": "data/최종) Diabetes Fact Sheet in Korea 2026_웹용.pdf",
+      "sha256": "3e0710ba40e17eeb12ff426fcecdf555ef6b36c0926b548677a735448cf50a94",
+      "official_url": "https://www.diabetes.or.kr/bbs/?code=fact_sheet&mode=view&number=3220&page=1",
+      "pdf_page_count": 19,
+      "publication_year": 2026,
+      "official_posted_at": "2026-10-06",
+      "main_statistics_years": [
+        2023,
+        2024
+      ],
+      "longitudinal_statistics_years": {
+        "start": 2012,
+        "end": 2024
+      },
+      "priority_pdf_pages": [
+        4,
+        6,
+        10
+      ],
+      "header_footer_only_pdf_pages": [],
+      "layout_note": "본문은 두 쪽 펼침. PDF 4=책자 4-5, PDF 6의 유병률 도표=책자 9, PDF 10=책자 16-17. PDF 19는 텍스트가 없는 뒤표지 이미지.",
+      "role": "프로젝트 필요성·집단 통계 질문",
+      "limits": [
+        "2026년 발간과 조사연도 2023-2024를 구분.",
+        "연령·분모·정의가 다른 비율을 혼합하지 않음.",
+        "집단 조절률의 HbA1c 기준을 모든 개인의 치료 목표로 적용하지 않음."
+      ]
+    },
+    {
+      "id": "FOOD_CSV",
+      "title": "식품영양성분_핵심컬럼.csv",
+      "kind": "local_food_nutrient_extract",
+      "publisher_column_value": "식품의약품안전처",
+      "acquisition_channel_user_reported": "공공데이터포털",
+      "local_path": "data/csv.zip",
+      "archive_member": "식품영양성분_핵심컬럼.csv",
+      "sha256": "d6d23d9c557150ed054c1f0951671e12525f9817b146459f0794aa1bd7df43d2",
+      "hash_scope": "ZIP 파일 전체",
+      "profile_path": "docs/data_profile.json",
+      "rows": 50000,
+      "unique_food_codes": 50000,
+      "exact_duplicate_rows": 0,
+      "basis_counts": {
+        "100g": 40653,
+        "100ml": 9347
+      },
+      "original_download_url": null,
+      "original_extraction_date": null,
+      "official_supplement_urls": [
+        "https://www.data.go.kr/data/15127578/openapi.do",
+        "https://www.data.go.kr/data/15100064/standard.do",
+        "https://various.foodsafetykorea.go.kr/nutrient/industry/openApi/info.do"
+      ],
+      "role": "음식 검색 후 영양정보 조회와 동일 단위 환산",
+      "limits": [
+        "보완 URL은 해당 ZIP의 원본 다운로드 주소로 확정한 링크가 아님.",
+        "원출처 상세 URL·추출 시점·필터·이용조건은 보완 필요.",
+        "결측은 0이 아님. g/ml를 밀도 없이 변환하지 않음.",
+        "식품중량을 검증 없이 1인분으로 간주하지 않음.",
+        "현재 5만 행 추출본을 전체 최신 DB로 표현하지 않음."
+      ]
+    },
+    {
+      "id": "APP_RECORDS",
+      "title": "사용자가 앱에 직접 저장하는 혈당·식사 기록",
+      "kind": "planned_user_owned_application_data",
+      "local_path": null,
+      "status": "필드·집계 방식 제안 단계. 앱 DB 연결 미구현.",
+      "role": "본인 기록 조회·집계",
+      "limits": [
+        "국민건강영양조사나 가상 기록을 실제 앱 사용자 기록으로 제시하지 않음.",
+        "본인 소유 기록만 조회하도록 접근 제어 필요.",
+        "이 자료에 사용자 실측 기록을 넣지 않음."
+      ]
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "R01",
+      "category": "개인 기록",
+      "priority": "P0",
+      "question": "어제와 오늘 혈당 변화 어때?",
+      "answer_mode": "authenticated_query_and_deterministic_aggregation",
+      "answer_draft": "같은 측정 조건의 어제 {n_yesterday}건 평균은 {mean_yesterday}, 오늘 현재까지 {n_today}건 평균은 {mean_today} mg/dL입니다. 차이는 {delta} mg/dL입니다. 비교 기간과 조건, 건수를 함께 표시합니다. 1건씩이면 평균 추세 대신 두 측정값의 차이로 설명합니다.",
+      "required_inputs": [
+        "인증된 본인 기록",
+        "실제 측정 일시·시간대",
+        "혈당값·단위",
+        "측정 상황 및 식사 구분"
+      ],
+      "evidence": [
+        {
+          "source_id": "APP_RECORDS",
+          "note": "수치 조회·차이 계산은 프로그램 설계 기준"
+        },
+        {
+          "source_id": "KDCA_DIABETES",
+          "note": "측정 상황·시각·생활 맥락 기록의 근거. 평균 계산식 자체를 정한 근거는 아님.",
+          "pdf_pages": [
+            11,
+            13
+          ]
+        }
+      ],
+      "conditions": [
+        "같은 측정 상황끼리 비교. 조건을 섞은 전체 평균으로 건강 개선을 판정하지 않음.",
+        "Asia/Seoul 달력 날짜, 실제 측정 시각 기준. 오늘은 부분 기록.",
+        "현재 기록으로 식사·운동이 변화의 원인이라고 추론하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "한쪽 날짜에 같은 조건의 기록이 없으면 변화량을 계산하지 않고 있는 날짜의 기록만 안내한다. 측정 상황이 없으면 조건이 불명확함을 표시한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "R02",
+      "category": "개인 기록",
+      "priority": "P0",
+      "question": "최근 7일 공복 혈당 평균 알려줘.",
+      "answer_mode": "authenticated_query_and_deterministic_aggregation",
+      "answer_draft": "오늘을 포함한 최근 7개 달력 날짜의 공복 기록은 {n_records}건, {n_days}일에 있습니다. 해당 기록의 산술평균은 {mean} mg/dL이며 일별 건수와 값도 함께 보여 줍니다. 오늘 기록은 현재까지 집계했습니다.",
+      "required_inputs": [
+        "인증된 본인 기록",
+        "기간 기준",
+        "실제 측정 일시·시간대",
+        "공복 여부",
+        "혈당값·단위"
+      ],
+      "evidence": [
+        {
+          "source_id": "APP_RECORDS",
+          "note": "최근 7일의 정의·기록별 산술평균은 제품 설계 제안"
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "note": "자기혈당측정 시기·횟수 개별화와 CGM 지표 구분",
+          "pdf_pages": [
+            11
+          ],
+          "printed_pages": "20-21"
+        }
+      ],
+      "conditions": [
+        "평균의 분모는 기록 건수. 기록이 없는 날을 0으로 채우지 않음.",
+        "수기 기록 평균을 실제 24시간 평균이나 CGM 시간범위 비율로 설명하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "공복으로 확인된 기록이 없으면 계산하지 않는다. 일부 날짜가 비면 누락 날짜·기록 수를 안내한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "R03",
+      "category": "개인 기록",
+      "priority": "P1",
+      "question": "오늘 식사 메모에 뭐라고 적었지?",
+      "answer_mode": "authenticated_query_only",
+      "answer_draft": "오늘 실제 측정 시각에 연결된 기록별로 측정 시각·측정 상황·입력한 메모와 선택한 음식을 보여 줍니다. 식사 시각을 별도로 저장하지 않았다면 측정 시각을 식사 시각으로 바꿔 표시하지 않습니다.",
+      "required_inputs": [
+        "인증된 본인 기록",
+        "실제 측정 일시·시간대",
+        "입력한 식사 메모",
+        "선택한 음식이 있으면 해당 연결"
+      ],
+      "evidence": [
+        {
+          "source_id": "APP_RECORDS",
+          "note": "현재 계획한 메모와 음식 선택 데이터 조회"
+        }
+      ],
+      "conditions": [
+        "자유 메모에서 음식 코드·먹은 양을 자동 확정하지 않음.",
+        "식사 시각과 측정 시각은 다른 의미."
+      ],
+      "missing_or_unsupported_behavior": "해당 날짜의 메모가 없으면 메모 없음으로 답한다. 선택 음식이나 양이 빠졌다면 영양 합계를 만들지 않는다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "F01",
+      "category": "음식 영양정보",
+      "priority": "P0",
+      "question": "이 음식 영양정보가 어떻게 돼?",
+      "answer_mode": "food_lookup",
+      "answer_draft": "선택한 {food_name}의 {basis} 기준 열량·탄수화물·당류·단백질·지방 등을 보여 줍니다. 조회한 식품코드, 음식/가공식품 구분, 기준량, 제공기관을 함께 표시합니다. 빈 성분 값은 정보 없음으로 표시합니다.",
+      "required_inputs": [
+        "음식 텍스트 검색어",
+        "검색 결과에서 확인한 식품코드"
+      ],
+      "evidence": [
+        {
+          "source_id": "FOOD_CSV",
+          "note": "식품명·식품코드·기준량·영양성분 열 직접 조회"
+        }
+      ],
+      "conditions": [
+        "제품·조리법이 다른 동명이름 후보가 있으면 사용자가 선택.",
+        "양을 입력하지 않았으면 기준량 정보만 답하며 실제 먹은 양으로 표현하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "음식이 불명확하면 후보를 제시해 선택받고, 검색 결과가 없으면 수치를 추측하지 않는다. 결측은 0으로 대체하지 않는다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "F02",
+      "category": "음식 영양정보",
+      "priority": "P0",
+      "question": "이 음식을 200g 먹었으면 영양성분은 얼마야?",
+      "answer_mode": "food_lookup_and_same_unit_scaling",
+      "answer_draft": "100g 기준 음식의 200g 섭취량은 확인된 각 성분에 2를 곱해 계산합니다. 원래 기준량과 입력한 양, 계산된 성분을 구분해 보여 줍니다. 원본에서 빠진 성분은 계산 후에도 정보 없음입니다.",
+      "required_inputs": [
+        "확인한 식품코드",
+        "섭취량 숫자",
+        "섭취량 단위",
+        "원본 기준량·단위"
+      ],
+      "evidence": [
+        {
+          "source_id": "FOOD_CSV",
+          "note": "성분×섭취량/기준량의 동일 단위 환산. 의학적 섭취 권고가 아닌 산술 계산."
+        }
+      ],
+      "conditions": [
+        "g 기준과 ml 기준을 혼합하지 않음.",
+        "식품중량이나 1인분 문구만으로 사용자가 먹은 양을 확정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "100ml 자료에 g만 주어지면 밀도 없이 계산하지 않고 같은 단위의 양을 확인한다. 1공기·1인분만 주어져 중량이 불명확하면 기준량 정보를 우선 안내한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "F03",
+      "category": "음식 영양정보",
+      "priority": "P1",
+      "question": "이 두 음식 중 탄수화물이 더 적은 건 뭐야?",
+      "answer_mode": "food_lookup_and_comparison",
+      "answer_draft": "확인된 두 식품의 같은 기준량 탄수화물 값을 비교합니다. 실제 섭취량을 각각 제공했다면 그 양을 기준으로 따로 계산해 비교하고, 비교 기준을 명시합니다.",
+      "required_inputs": [
+        "두 식품코드",
+        "각 기준량·단위",
+        "실제 섭취량 비교를 원하면 각 양·단위"
+      ],
+      "evidence": [
+        {
+          "source_id": "FOOD_CSV",
+          "note": "동일 성분·동일 비교 기준의 수치 비교"
+        }
+      ],
+      "conditions": [
+        "한 성분의 크기로 당뇨에 더 좋은 음식이나 개인 적정량을 판정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "한쪽 탄수화물이 결측이거나 단위가 달라 비교할 수 없으면 순위를 만들지 않고 확인 가능한 값을 표시한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "K01",
+      "category": "기본 지식",
+      "priority": "P0",
+      "question": "당화혈색소랑 오늘 잰 혈당은 뭐가 달라?",
+      "answer_mode": "grounded_general_education",
+      "answer_draft": "직접 잰 혈당은 측정 당시의 값을 보여 주고, 당화혈색소는 대략 최근 2-3개월의 평균적인 혈당 상태를 반영하는 검사입니다. 서로 다른 정보를 주며 앱의 몇 번의 수기 혈당만으로 당화혈색소 검사 결과를 확정할 수는 없습니다.",
+      "required_inputs": [
+        "개인 기록 없이 일반 설명 가능"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "note": "당화혈색소가 반영하는 기간",
+          "pdf_pages": [
+            9
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "note": "혈당조절 모니터링·자기혈당측정",
+          "pdf_pages": [
+            11
+          ],
+          "printed_pages": "20-21"
+        }
+      ],
+      "conditions": [
+        "개인의 진단이나 목표 수치를 이 설명만으로 정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "검사 결과나 약물 변경 판단을 요청하면 일반 개념을 설명하고 개인별 판단은 담당 의료진에게 확인하도록 안내한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "K02",
+      "category": "기본 지식",
+      "priority": "P0",
+      "question": "식후 2시간은 밥 다 먹고부터 재는 거야?",
+      "answer_mode": "grounded_general_education",
+      "answer_draft": "식후 2시간은 일반적으로 식사를 시작한 시각, 즉 첫 숟가락을 먹은 때를 기준으로 셉니다. 기록에는 실제 측정 시각과 식후 2시간이라는 측정 상황을 함께 남기면 비교하기 좋습니다.",
+      "required_inputs": [
+        "일반 설명 가능",
+        "실제 경과시간 확인을 원하면 식사 시작 시각과 측정 시각 필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "note": "식후 혈당 측정 시점 설명",
+          "pdf_pages": [
+            11,
+            12
+          ]
+        }
+      ],
+      "conditions": [
+        "아침·점심 선택만으로 식사 시작 시각을 추정하지 않음.",
+        "현재 설계에 식사 시작 시각이 없다면 식후 2시간 준수 여부를 자동 검증했다고 말하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "식사 시작 시각을 모르면 원칙을 설명하되 정확히 2시간 뒤에 측정한 기록이라고 확인해 주지 않는다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "K03",
+      "category": "기본 지식",
+      "priority": "P0",
+      "question": "혈당 수치 말고 측정 상황이나 식사 메모도 왜 남겨?",
+      "answer_mode": "grounded_general_education",
+      "answer_draft": "혈당은 식사 전후와 활동 등 측정 맥락에 따라 달라질 수 있어, 측정 상황과 시각을 남기면 비슷한 조건의 기록끼리 살펴보기 좋습니다. 식사 메모는 당시 상황을 떠올리는 데 도움이 됩니다.",
+      "required_inputs": [
+        "개인 기록 없이 일반 설명 가능"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "note": "날짜·혈당·식사·활동 등 기록과 해석 맥락",
+          "pdf_pages": [
+            13
+          ]
+        }
+      ],
+      "conditions": [
+        "원문에 나온 모든 기록 항목을 앱 필수 입력으로 강제하지 않음. 식사 메모는 현재 UI에서 선택 입력.",
+        "기록의 동시 발생으로 원인을 확정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "메모가 없어도 저장된 혈당·측정 상황을 요약한다. 음식이 혈당을 올린 원인이라고 단정하지 않는다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "K04",
+      "category": "기본 지식",
+      "priority": "P0",
+      "question": "혈당은 하루에 몇 번 재야 해?",
+      "answer_mode": "grounded_general_education",
+      "answer_draft": "측정 시기와 횟수는 당뇨병 유형, 치료 방법, 혈당 상태와 저혈당 위험 등에 따라 달라집니다. 담당 의료진과 정한 측정 계획을 따르고, 앱에서는 공복·식전·식후 등 실제 측정 상황을 구분해 기록하는 방향이 좋습니다.",
+      "required_inputs": [
+        "일반 설명 가능",
+        "개인 일정 확정은 의료진의 측정 계획 필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIABETES",
+          "note": "자가 측정 시기·횟수의 개별화",
+          "pdf_pages": [
+            11
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "note": "자기혈당측정의 대상과 시기 개별화",
+          "pdf_pages": [
+            11
+          ],
+          "printed_pages": "20-21"
+        }
+      ],
+      "conditions": [
+        "모든 사용자에게 같은 하루 횟수·시간표를 처방하지 않음.",
+        "개인 약물 정보를 받더라도 챗봇이 새로운 측정·투약 계획을 확정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "치료 계획을 모르면 일반 원칙까지만 안내하고 본인의 측정 계획을 확인하도록 한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "K05",
+      "category": "기본 지식",
+      "priority": "P1",
+      "question": "무가당이라고 쓰여 있으면 당류가 없는 거야?",
+      "answer_mode": "grounded_general_education_and_optional_food_lookup",
+      "answer_draft": "무가당이라는 표현만으로 제품에 당류나 탄수화물이 없다고 판단하기는 어렵습니다. 원재료 자체의 당류가 있을 수 있으므로 영양정보의 탄수화물·당류와 표시 기준량을 함께 확인하세요.",
+      "required_inputs": [
+        "일반 설명 가능",
+        "제품별 수치는 정확한 제품 또는 선택한 식품코드 필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_DIET",
+          "note": "가공식품 선택 시 원재료의 당과 영양표시 확인",
+          "pdf_pages": [
+            3
+          ]
+        },
+        {
+          "source_id": "FOOD_CSV",
+          "note": "제품이 식별된 경우에만 탄수화물·당류 조회"
+        }
+      ],
+      "conditions": [
+        "식품표시 용어의 법적 허용 조건에 관한 답변이 아님.",
+        "표현만으로 당류 0g이나 개인에게 안전한 식품이라고 판정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "정확한 제품이 없으면 일반 원칙만 답하고 영양 수치를 만들어 내지 않는다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "E01",
+      "category": "운동 안내",
+      "priority": "P0",
+      "question": "30분 정도 있는데 가볍게 운동할 만한 거 있어?",
+      "answer_mode": "grounded_general_options_with_conditions",
+      "answer_draft": "일반적인 운동 선택지로 걷기나 실내 자전거가 있습니다. 평소 의료진과 확인한 운동 범위에서 몸 상태와 체력에 맞게 시간·강도를 조절하세요. 현재 증상, 운동 제한이나 발 문제, 인슐린 등 저혈당 위험과 관련된 치료 여부에 따라 적합한 운동이 달라질 수 있습니다.",
+      "required_inputs": [
+        "가용 시간",
+        "일반 후보 설명 가능",
+        "개인화하려면 현재 증상·운동 제한·합병증·저혈당 관련 치료와 평소 운동 계획 확인 필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "note": "운동 종류와 시작 전 확인·주의",
+          "pdf_pages": [
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "note": "유산소 운동 예시와 합병증별 주의",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": "98-99"
+        }
+      ],
+      "conditions": [
+        "30분 가능하다는 말만으로 30분 연속 운동을 처방하거나 안전을 보장하지 않음.",
+        "근거 없는 5분·20분·5분 개인 루틴이나 소모 열량을 만들어 내지 않음.",
+        "약물 용량이나 운동 전 혈당별 탄수화물 수치를 자동 조정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "상태가 불명확하면 일반 후보만 소개한다. 운동 제한·증상 관련 질문이면 개인 운동 허가를 확정하지 않고 기존 의료진 안내 확인을 우선한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "E02",
+      "category": "운동 안내",
+      "priority": "P1",
+      "question": "집 안에서 할 수 있는 운동도 있어?",
+      "answer_mode": "grounded_general_options_with_conditions",
+      "answer_draft": "실내 자전거와 저항운동에 쓰는 밴드·자신의 체중을 이용하는 운동이 지침의 예시에 포함됩니다. 어떤 동작과 강도가 맞는지는 평소 운동 경험과 합병증, 관절·발 상태에 따라 달라집니다.",
+      "required_inputs": [
+        "운동 공간·기구 여부",
+        "개인 동작을 정하려면 운동 제한과 평소 운동 계획 확인 필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "note": "유산소·저항운동과 주의 사항",
+          "pdf_pages": [
+            3,
+            4
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "note": "운동 도구·종류 및 합병증별 주의 표",
+          "pdf_pages": [
+            50
+          ],
+          "printed_pages": "98-99"
+        }
+      ],
+      "conditions": [
+        "일반적인 종류를 소개하고 무조건 가능한 개인 동작·횟수·중량을 정하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "발·관절·눈 등의 제한이 불명확하면 구체적인 고강도 동작을 제시하지 않고 기존에 허용된 운동 범위를 확인한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "E03",
+      "category": "운동 안내",
+      "priority": "P0",
+      "question": "운동 전후 혈당을 신경 써야 하는 이유가 뭐야?",
+      "answer_mode": "grounded_general_education",
+      "answer_draft": "운동에 따라 혈당이 달라질 수 있고, 치료 방법과 운동 강도·시간에 따라 저혈당이나 고혈당을 주의해야 하기 때문입니다. 운동 전 확인과 운동 중·후 관찰 방법은 본인의 치료·운동 계획에 맞춰 정해야 합니다.",
+      "required_inputs": [
+        "일반 설명 가능",
+        "개인 행동 판단에는 치료·증상·측정 시점 등 추가 정보 필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDCA_EXERCISE",
+          "note": "운동 전 평가와 혈당·저혈당 주의",
+          "pdf_pages": [
+            2,
+            4
+          ]
+        },
+        {
+          "source_id": "KDA_GUIDELINE_2025",
+          "note": "운동 전 및 강도·시간 증가 시 혈당 확인",
+          "pdf_pages": [
+            14
+          ],
+          "printed_pages": "26-27"
+        }
+      ],
+      "conditions": [
+        "일반 교육에 한정. 혈당값 한 개로 운동 허가나 인슐린 용량 변경을 답하지 않음.",
+        "운동 전 혈당 대처 표를 적용하려면 표의 대상·예외 및 수정 이력 검토가 선행되어야 함."
+      ],
+      "missing_or_unsupported_behavior": "당장 운동해도 되는지 또는 약을 얼마나 바꿀지 묻는 경우 일반 설명과 기존 개인 계획 확인으로 범위를 제한한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "S01",
+      "category": "국내 현황",
+      "priority": "P2",
+      "question": "우리나라 당뇨병은 얼마나 흔해?",
+      "answer_mode": "grounded_population_statistics",
+      "answer_draft": "대한당뇨병학회 Diabetes Fact Sheet in Korea 2026은 2023-2024년 통합 자료에서 30세 이상 성인의 당뇨병 유병률을 16.3%로 제시합니다. 의사 진단·치료·공복혈당·당화혈색소를 포함한 정의에 따른 값입니다.",
+      "required_inputs": [
+        "개인 정보 불필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDA_FACT_2026",
+          "note": "자료원·대상·정의 및 유병률 도표",
+          "pdf_pages": [
+            4,
+            6
+          ],
+          "printed_pages": "4-5, 9"
+        }
+      ],
+      "conditions": [
+        "2026년 조사 결과나 모든 연령의 비율로 표현하지 않음.",
+        "같은 도표의 공복혈당 기준 15.3%와 구분.",
+        "개인의 발병 확률로 해석하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "다른 연령·연도·정의의 비율을 요청하면 해당 도표를 추가 확인하기 전 수치를 확장하지 않는다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    },
+    {
+      "id": "S02",
+      "category": "국내 현황",
+      "priority": "P2",
+      "question": "당뇨병 조절률 38.7%는 무슨 뜻이야?",
+      "answer_mode": "grounded_population_statistics",
+      "answer_draft": "해당 Fact Sheet의 2023-2024년 통합 관리 현황에서 38.7%는 30세 이상 당뇨병 유병자 중 당화혈색소가 6.5% 미만인 사람의 비율입니다. 전체 국민 중 비율이나 치료 중인 사람만의 비율과는 분모가 다릅니다.",
+      "required_inputs": [
+        "개인 정보 불필요"
+      ],
+      "evidence": [
+        {
+          "source_id": "KDA_FACT_2026",
+          "note": "조절률 정의·분모 및 관리 수준",
+          "pdf_pages": [
+            4,
+            10
+          ],
+          "printed_pages": "4-5, 16-17"
+        }
+      ],
+      "conditions": [
+        "집단 통계의 정의를 사용자의 개인 치료 목표로 일괄 적용하지 않음.",
+        "인식률·치료율·조절률의 분모와 지표를 혼동하지 않음."
+      ],
+      "missing_or_unsupported_behavior": "사용자가 자신의 목표 수치를 묻는다면 통계 정의와 개인 목표 설정을 구분해 설명한다.",
+      "status": "문헌 근거·설계 기준을 정리한 답변 초안; 앱 실제 출력 검증 전"
+    }
+  ]
+}

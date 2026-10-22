@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "source_id": "FOOD_CSV",
+  "note": "현재 원본 CSV를 직접 확인해 정한 기대값. 식품 정보는 가상 데이터가 아니며 외부 정확성 검증 전의 로컬 참고 자료임.",
+  "cases": [
+    {"id":"S01","description":"정확한 이름 5건을 관련 후보보다 우선하며 코드 보존","operation":"search","input":{"query":"흑미밥"},"expected":{"total_matches":26,"exact_name_matches":5,"requires_food_code_selection":true,"candidates.4.match_kind":"exact_name"}},
+    {"id":"S02","description":"공백이 있는 이름 검색","operation":"search","input":{"query":"김 치 찌 개","limit":5},"expected":{"total_matches":65,"exact_name_matches":5,"candidates.0.match_kind":"exact_name","has_more":true}},
+    {"id":"S03","description":"검색 결과 없음","operation":"search","input":{"query":"없는음식검증용xyz"},"expected":{"total_matches":0,"candidates":[],"requires_food_code_selection":false}},
+    {"id":"S04","description":"공백·밑줄 정리 후 후보 245건이며 정확한 우유로 단정하지 않음","operation":"search","input":{"query":"우유"},"expected":{"total_matches":245,"exact_name_matches":0,"requires_food_code_selection":true}},
+    {"id":"S05","description":"마지막 검색 페이지","operation":"search","input":{"query":"흑미밥","limit":2,"offset":25},"expected":{"total_matches":26,"offset":25,"returned_count":1,"has_more":false}},
+    {"id":"S06","description":"빈 검색어로 전체 식품 반환 방지","operation":"search","input":{"query":"  _  "},"expected_error":"query_required"},
+    {"id":"N01","description":"섭취량이 없으면 100g 기준 정보","operation":"nutrition","input":{"food_code":"P123-201020300-6723"},"expected":{"calculation_basis":"reference","quantity.amount":100,"quantity.unit":"g","nutrients.energy_kcal":145,"nutrients.carbohydrate_g":31}},
+    {"id":"N02","description":"100g 기준 음식을 200g으로 환산","operation":"nutrition","input":{"food_code":"P123-201020300-6723","amount":"200","unit":"g"},"expected":{"calculation_basis":"specified_amount","nutrients.energy_kcal":290,"nutrients.carbohydrate_g":62,"nutrients.protein_g":6,"nutrients.fat_g":1.6}},
+    {"id":"N03","description":"실제 0과 결측 보존","operation":"nutrition","input":{"food_code":"P123-201020300-6723","amount":"200","unit":"g"},"expected":{"nutrients.sugars_g":0,"nutrients.sodium_mg":0,"nutrients.dietary_fiber_g":null,"missing_nutrients":["dietary_fiber_g"]}},
+    {"id":"N04","description":"100ml 기준 음식을 250ml로 환산하고 반올림","operation":"nutrition","input":{"food_code":"D706-266000000-0001","amount":"250","unit":"mL"},"expected":{"quantity.unit":"ml","nutrients.energy_kcal":47.5,"nutrients.carbohydrate_g":5.83,"nutrients.fat_g":1.33,"nutrients.sodium_mg":475}},
+    {"id":"N05","description":"원본 단위와 다른 양 입력","operation":"nutrition","input":{"food_code":"D501-052000000-0001","amount":"200","unit":"g"},"expected_error":"unit_mismatch"},
+    {"id":"N06","description":"양만 입력한 경우 단위 확인","operation":"nutrition","input":{"food_code":"P123-201020300-6723","amount":"200"},"expected_error":"unit_required"},
+    {"id":"N07","description":"단위만 입력한 경우 양 확인","operation":"nutrition","input":{"food_code":"P123-201020300-6723","unit":"g"},"expected_error":"amount_required"},
+    {"id":"N08","description":"알 수 없는 식품코드","operation":"nutrition","input":{"food_code":"UNKNOWN-FOOD-CODE"},"expected_error":"food_not_found"},
+    {"id":"N09","description":"음수 섭취량","operation":"nutrition","input":{"food_code":"P123-201020300-6723","amount":"-10","unit":"g"},"expected_error":"invalid_amount"},
+    {"id":"N10","description":"유한하지 않은 숫자","operation":"nutrition","input":{"food_code":"P123-201020300-6723","amount":"NaN","unit":"g"},"expected_error":"invalid_number"},
+    {"id":"N11","description":"1공기라는 단위에서 중량 추정 금지","operation":"nutrition","input":{"food_code":"P123-201020300-6723","amount":"1","unit":"공기"},"expected_error":"unsupported_unit"}
+  ]
+}
