@@ -36,11 +36,11 @@ test('ten measurement situations expose meal slots only when relevant and persis
   expect(stored.meal_slot).toBeNull();
 });
 
-test('assistant shell stays on the page, never sends a question, restores focus and clears the draft on logout',async({page})=>{
+test('disabled assistant checks availability without sending a question, restores focus and clears on logout',async({page})=>{
   await login(page);
   await expect(page.getByRole('img',{name:/최근 7일 혈당 그래프/}).locator('.recharts-scatter-line path')).toHaveAttribute('d', /L/);
   const outbound:string[]=[];
-  page.on('request',request=>{if(/\/(?:chat|ai|assistant)(?:\/|$)/.test(new URL(request.url()).pathname))outbound.push(request.url());});
+  page.on('request',request=>{if(request.method()==='POST'&&/\/(?:chat|ai|assistant)(?:\/|$)/.test(new URL(request.url()).pathname))outbound.push(request.url());});
   await page.getByRole('button',{name:'도우미 열기',exact:true}).click();
   const panel=page.getByRole('dialog',{name:'이어드림 도우미',exact:true});
   await expect(panel).toBeVisible();
