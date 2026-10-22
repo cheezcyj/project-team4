@@ -15,7 +15,8 @@ export default defineConfig({
     screenshot: "only-on-failure",
     locale: "ko-KR",
     timezoneId: "Asia/Seoul",
-    ...devices["Desktop Chrome"]
+    ...devices["Desktop Chrome"],
+    ...(process.env.PLAYWRIGHT_BROWSER_CHANNEL ? { channel: process.env.PLAYWRIGHT_BROWSER_CHANNEL } : {})
   },
   webServer: {
     command: "npm run start:demo",
@@ -23,6 +24,8 @@ export default defineConfig({
     reuseExistingServer: false,
     env: {
       PORT: "3100",
+      ASSISTANT_ENABLED: "0",
+      ASSISTANT_ALLOW_DRAFT_PREVIEW: "0",
       DEMO_DATA_FILE: `.local/e2e/demo-${Date.now()}.json`
     },
     timeout: 60_000

@@ -1,0 +1,126 @@
+# 일반 지식 챗봇 1차 연결
+
+질문 → 인증·AI 처리 안내 확인 → 자료 검색 → 로컬 모델 호출 → 답변·출처 표시 흐름을 구현했다. 준비한 지식 15개 중 제품 기획 규칙이 근거에 섞인 `B05`·`N05`는 제외하고, 공식 건강자료만 근거로 연결된 13개를 검색 대상으로 삼는다. LangChain이나 벡터 DB를 추가하지 않고 키워드 검색을 첫 기준선으로 사용한다. 실제 모델 연결은 아래에서 확인했으며, 한국어 답변 품질을 종합 평가하거나 의학적 내용을 승인한 결과는 아니다.
+
+## 현재 범위
+
+- 로그인한 사용자의 현재 질문 한 개와 선택한 공개 지식 요약만 모델에 전달한다. 서버·브라우저 저장소에 대화를 저장하지 않는다. 모델 서버 자체의 로그 정책은 별도로 확인해야 한다.
+- 개인 혈당·식사 기록, 계정 번호·이메일·메모·이전 대화를 모델 요청에 넣지 않는다. 개인 기록 요약과 음식 영양 DB 조회 도구는 다음 단계다.
+- 모델이 반환한 출처 ID를 검색 결과와 대조하고, 링크·기관·PDF 페이지는 서버가 관리하는 자료에서 표시한다. 출처가 없으면 정보 부족 안내로 처리한다.
+- 질문 길이, 요청 출처, 사용자 인증, AI 처리 확인, 동시 요청, 시간 제한, 모델 응답 크기와 형식을 검사한다. 닫기·페이지 이동·로그아웃·계정 변경 시 요청을 취소하고 화면 내용을 지운다.
+- 질문의 위험 표현 처리는 제한적인 규칙이며 검증된 의료 위험 분류기가 아니다. 출처 ID의 일치가 답변 내용의 사실성이나 임상적 정확성을 보장하지 않는다.
+- 운동 자료는 운동·걷기·자전거 등의 활동 문맥이 있는 질문에서만 검색한다. `혈당 수치`·`합병증`·`30분`·`실내`만 겹친다고 운동 자료를 답변 근거로 사용하지 않는다. 현재 자료에는 합병증 전반을 직접 설명하는 문항이 없으므로 일반 합병증 질문에는 근거 부족을 안내한다.
+- 개인 수치를 적은 표현은 검색 전에 범위를 제한한다. 혈당 수치·값·측정 결과, 당화혈색소/HbA1c, 소수·전각 숫자를 구분하며 일반적인 기간 질문은 유지한다. 개인 수치 해석·개인 기록 조회·맞춤 식단 추천의 안내 문구를 구분한다. 이 규칙이 모든 표현을 인식하는 것은 아니다.
+
+## 자료의 승인 상태
+
+기존 `knowledge.json`의 `runtime_publishable=false`와 초안 상태를 유지한다. 기본 설정과 Supabase 모드에서는 이 자료로 답변하지 않는다.
+
+로컬 시연의 `ASSISTANT_ALLOW_DRAFT_PREVIEW=1`은 개발 중 검색·연결을 확인하는 선택이다. `APP_MODE=demo`에서만 적용되고 화면에 미리보기임을 표시한다. 실제 서비스 승인을 대신하지 않는다.
+
+운영 검색에는 자료집 게시 허용·내용/출처 검토, 문항의 승인일·유효한 재검토 기한, 출처의 재사용 허용 및 내용 해시가 필요하다. 원본 JSON을 변경해 승인 절차를 건너뛰지 않는다.
+
+## 이 PC에서 연결하기
+
+별도로 실행한 모델 서버가 `POST /v1/chat/completions`를 지원해야 한다. `ASSISTANT_MODEL_RESPONSE_FORMAT`은 기본 `json_object`이며 이 옵션을 거부하는 LM Studio에서는 `text`를 사용한다. 두 설정 모두 모델에게 JSON 답변을 요구하고 서버에서 JSON·출처 ID를 엄격하게 검증한다. 앱은 모델을 다운로드하거나 GPU에 로드하지 않는다. 현재 연결부는 loopback 주소만 허용한다.
+
+요청에는 `chat_template_kwargs: {enable_thinking: false}`와 `reasoning_effort: "none"`을 지정한다. 검색 근거의 완전한 출처 ID 목록과 출력 예시를 명시하며, 모델이 이를 줄여 쓰거나 없는 ID를 만들면 답변을 차단한다. 최초 llama.cpp 서버에서는 JSON Schema의 grammar 초기화가 실패했으므로 JSON 지시와 서버의 엄격한 사후 검증을 사용한다.
+
+검색 요약에는 자료의 제목·주제도 함께 전달한다. 프롬프트는 질문에 직접 답할 내용만 사용하고, 관련 단어가 있다는 이유로 다른 주제로 넘어가지 않으며, 답할 근거가 없으면 출처를 비우도록 지시한다. 이 지시 자체는 모델의 준수를 보장하지 않으므로 실제 답변 평가는 별도로 필요하다.
+
+모델 서버 주소와 모델 이름을 확인한 뒤 `.env.local`에 다음을 설정한다. 비밀키는 Git에 올리지 않는다.
+
+```dotenv
+ASSISTANT_ENABLED=1
+ASSISTANT_MODEL_BASE_URL=http://127.0.0.1:8080/v1
+ASSISTANT_MODEL=실제_서버의_모델_이름
+ASSISTANT_MODEL_API_KEY=
+ASSISTANT_MODEL_RESPONSE_FORMAT=json_object
+ASSISTANT_ALLOW_DRAFT_PREVIEW=1
+```
+
+```powershell
+npm run dev:demo
+```
+
+서버 설정 후 앱을 다시 실행하고 가상 계정으로 로그인한다. 도우미에서 AI 처리 안내를 확인한 다음 `당화혈색소가 무엇인가요?`를 입력한다. 모델 연결이 없으면 준비 중 또는 연결 오류를 표시하며, 미리 작성한 답을 실제 모델 응답으로 대신 보여주지 않는다.
+
+## 파일과 API
+
+- `src/lib/assistant/knowledge.ts`: 자료 승인·해시 검사, 키워드 검색, 출처 구성.
+- `src/lib/assistant/model.ts`: 로컬 호환 API 호출, 시간/크기 제한, 답변·출처 ID 검사.
+- `src/lib/assistant/service.ts`: 입력·범위 확인, 질문 처리, 동시 요청 제한.
+- `GET /api/assistant`: 인증 후 사용 가능 상태만 반환. 모델 주소나 키를 공개하지 않는다.
+- `POST /api/assistant`: `{question, allow_model_processing: true}`만 받는다. `user_id`·임의 모델 주소·대화 기록을 받지 않는다.
+- `src/components/assistant/assistant-widget.tsx`: 질문 전송, 답변·출처, 오류, 취소 및 초기화.
+
+## 검증 범위
+
+```powershell
+npm run check
+npx playwright test tests/e2e/assistant.spec.ts tests/e2e/assistant-shell.spec.ts
+```
+
+Playwright 브라우저가 없고 Chrome이 설치된 PC에서는 먼저 PowerShell에서 `$env:PLAYWRIGHT_BROWSER_CHANNEL='chrome'`을 설정해 설치된 Chrome으로 실행할 수 있다.
+
+단위 테스트는 자료 승인·변조·만료, 검색 기준선, 개인 요청의 범위 제한, 출처 위조, 취소, 로컬 HTTP 모의 서버와의 호환을 확인한다. 브라우저 테스트는 실제 앱의 인증/출처 검사와 모의 답변을 이용한 화면·동의·초기화를 확인한다. E2E 실행에서는 실제 모델 호출을 비활성화한다.
+
+1차 구현 검증: `npm run check`의 lint·타입 검사·단위 테스트 46개·격리 SQL 70개·비 AI SQL 62개·계정 삭제 18개·프로덕션 빌드가 통과했다. 설치된 Chrome으로 위 브라우저 테스트 7개도 통과했고, 360px 답변 화면과 기본 비활성 모드의 360/768/1280px 접근성 검사를 확인했다. 당시에는 모의 응답을 사용했다. 로그는 로컬 `.tmp/research/assistant-check.log`, `.tmp/research/assistant-e2e.log`, 화면은 `.local/playwright-results/`에 있다.
+
+## 첫 실제 모델 연결 확인 (11480)
+
+사용자가 실행한 `http://127.0.0.1:11480/v1`을 연결했다. 모델 서버를 재시작하거나 로딩 설정을 바꾸지 않았다. 로컬 `.env.local`에 실제 `/v1/models`의 모델 ID를 저장했으며 Git에서는 제외한다.
+
+당시 앱은 `http://127.0.0.1:3000`의 로컬 가상 계정 모드로 실행했다. 빌드한 앱을 다시 실행하려면 프로젝트 루트에서 다음 명령을 사용한다. 환경 파일을 명시적으로 읽으므로 모델 연결 설정도 적용된다.
+
+```powershell
+npm run build
+node --env-file-if-exists=.env.local scripts/run-demo.mjs --production
+```
+
+| 항목 | 확인값 |
+| --- | --- |
+| 모델 | `google/gemma-4-E4B-it-qat-q4_0-gguf` |
+| 공식 리비전 | `4b4a2c1d584be7264f87aac328a1bc739ce81b6c` |
+| 파일 | `gemma-4-E4B_q4_0-it.gguf`, 5,154,941,280 bytes |
+| SHA-256 | `676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee` — Google 파일 메타데이터와 일치 |
+| 서버 보고 빌드 | `b1-bcb85fc` |
+| 서버 문맥 설정 | 131,072 tokens — 전체 문맥을 채우는 시험은 하지 않음 |
+| 앱의 요청 | 텍스트만, 추론 모드 끔, 최대 출력 512 tokens, 30초 제한 |
+
+가상 계정으로 실제 앱 API에서 다음을 확인했다.
+
+- 당화혈색소·무가당 표시·과일과 주스 질문 3개: 실제 모델 답변과 해당 지식의 출처 ID·링크·PDF 페이지 확인.
+- 개인 혈당 변화·인슐린 용량·관련 없는 날씨 질문 3개: 각각 범위 제한·안전 안내·근거 부족 처리.
+- 비로그인 차단·AI 처리 동의 확인·개발용 미리보기 상태 및 캐시 금지: 3개 확인.
+- 실제 브라우저 질문 전송과 답변·출처 표시: 1건 확인. 1280px·360px 화면 저장.
+
+일반 질문 3개의 순차 API 응답은 서버가 준비된 상태에서 각각 571/657/657ms였다. 개발 앱·단일 계정·짧은 질문에서 측정한 연결 확인이며 동시 사용자 성능이나 일반적인 응답 시간을 보장하지 않는다. 초기 첫 요청에는 30초 시간초과가 한 번 있었고 원인은 확정하지 않았다.
+
+원격 지식 전송이나 실제 이용자 기록은 사용하지 않았다. 근거 자료는 계속 초안이며, 이 결과는 임상적 정확성이나 전체 평가 문항의 통과를 뜻하지 않는다. 증거는 로컬 `.tmp/research/assistant-live/`의 `model-provenance.json`, `api-smoke.json`, `browser-smoke.json`과 화면 PNG에 보관한다.
+
+연결 수정 후 `npm run check`도 다시 통과했고 단위 테스트 46개·SQL 70/62개·계정 삭제 18개·빌드 결과를 `.tmp/research/assistant-live/check.log`에 보관했다. 실제 모델 호출을 비활성화한 브라우저 회귀 검사 7개는 `e2e.log`, 빌드한 앱에서의 실제 모델 질문·화면 확인은 `browser-production.json`과 `live-production-answer-*.png`에 따로 기록했다.
+
+## 스크린샷의 검색 오류 수정 및 LM Studio 재연결
+
+2026-10-22 사용자가 확인한 네 화면 중 `식전 혈당 수치가 140이 나왔어`와 `당뇨병 합병증은 뭐가 있어?`에 운동 자료가 잘못 연결됐다. 개인 수치 표현의 판별을 보완하고 운동 문맥이 없는 질문에서 운동 자료를 제외했다. 일반 당화혈색소 설명과 실제 운동 질문의 검색은 유지한다. 식단·개인 기록·개인 수치의 범위 제한 문구도 구분했다.
+
+사용자가 모델을 다시 로드한 62121 포트는 LM Studio가 실행한 `llama-server.exe`의 내부 포트였고, `/v1/models`가 401을 반환했다. `lms server status --json`에서 외부 API 서버가 꺼져 있는 것을 확인한 뒤 `lms server start --port 1234 --bind 127.0.0.1`로 로컬 API만 시작했다. 모델 로딩이나 설정은 변경하지 않았다. `/v1/models`와 `lms ps --json`으로 로드된 `gemma-4-e4b-it-qat`를 확인했다.
+
+이 LM Studio 서버는 `json_object`에 400을 반환하며 `json_schema` 또는 `text`만 허용한다고 응답했다. 이전 서버의 schema grammar 오류를 우회하기 위해 schema를 강제하지 않고 명시적인 `text` 모드와 기존 JSON·출처 사후 검증을 사용한다. 로컬 `.env.local`의 연결값은 다음과 같으며 Git에서 제외한다.
+
+```dotenv
+ASSISTANT_MODEL_BASE_URL=http://127.0.0.1:1234/v1
+ASSISTANT_MODEL=gemma-4-e4b-it-qat
+ASSISTANT_MODEL_RESPONSE_FORMAT=text
+```
+
+이 서버에서는 `chat_template_kwargs`만 보낸 요청에 추론 토큰이 발생해 출력 512 tokens 중 472 tokens를 사용했고, JSON 답변이 `finish_reason=length`로 잘렸다. 요청에 `reasoning_effort: "none"`을 함께 지정한 뒤 동일한 질문에서 추론 토큰 0·완전한 JSON·유효한 출처 ID를 확인했다. 잘린 답변을 허용하거나 형식 검사를 완화하지 않았다. 초기 11480 서버의 시간초과 원인이 밝혀진 것은 아니다.
+
+연속된 실제 요청에서는 LM Studio가 HTTP 400과 `Engine protocol predict request failed: fetch failed`를 반환하는 현상도 재현했다. 해당 오류 문자열이 명시된 경우에만 같은 취소 신호·30초 제한 안에서 요청을 한 번 더 보낸다. 두 번째 요청도 실패하면 연결 오류를 반환하며, 다른 HTTP 오류·시간초과·취소·답변 형식/출처 오류에는 재시도하지 않는다. LM Studio 내부 연결 실패의 근본 원인은 확인하지 못했다. 앱에서는 텍스트 생성만 요청하며 도구 실행이나 개인 기록 쓰기는 하지 않는다.
+
+수정 후 lint·타입 검사·단위 테스트 51개·프로덕션 빌드를 통과했다. 빌드한 앱 API에서 스크린샷의 네 질문과 정상적인 운동 질문을 순서대로 확인해 5개 모두 예상한 응답을 받았다. 당화혈색소·운동 질문 2개는 실제 모델 답변과 유효한 출처를 반환했고, 나머지 3개는 범위 제한/근거 부족으로 처리했다. 실제 360px 브라우저에서도 제한 안내 3개를 확인했다. 실제 모델을 비활성화한 브라우저 회귀 검사 7개도 통과했다. 원본 자료의 승인 상태는 변경하지 않았으며, 이번 수정에서 DB 구조나 집계 계산은 변경하지 않았다. 로그·원인 진단·화면은 로컬 `.tmp/research/assistant-query-fix/`에 보관한다.
+
+독립 평가 문항으로 한국어 설명·근거 충실도·숫자 보존·정보 부족 처리·지연 시간을 폭넓게 측정하는 작업은 남아 있다. 그 결과와 자료 승인 후 개인 기록 도구를 추가한다.
+
+참고: [llama.cpp 서버의 호환 API](https://github.com/ggml-org/llama.cpp/tree/master/tools/server), [Next.js Route Handlers](https://nextjs.org/docs/app/api-reference/file-conventions/route).
