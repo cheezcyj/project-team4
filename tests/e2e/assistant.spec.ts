@@ -34,7 +34,9 @@ test("chat sends only after acknowledgement and renders the answer and source on
     } else {
       submitted = route.request().postDataJSON();
       await route.fulfill({ json: { kind: "answer", answer: "검사에 관한 일반적인 설명입니다.", draftPreview: true,
-        citations: [{ id: "B01:KDCA_DIABETES", title: "당뇨병", publisher: "질병관리청", url: "https://health.kdca.go.kr/", pdfPages: [9] }] } });
+        citations: [{ id: "B01:R1", title: "Managing Diabetes", publisher: "NIDDK", url: "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes", pdfPages: [],
+          section: "A1C 설명", reuseLabel: "NIDDK 교육 본문 이용정책", reuseUrl: "https://www.niddk.nih.gov/copyright",
+          attribution: "NIDDK, Managing Diabetes.", adaptationNotice: "프로젝트의 한국어 요약이며 기관의 서비스 승인을 뜻하지 않습니다." }] } });
     }
   });
   await page.setViewportSize({ width: 360, height: 800 });
@@ -47,7 +49,10 @@ test("chat sends only after acknowledgement and renders the answer and source on
   await send.click();
   await expect(panel.getByText("검사에 관한 일반적인 설명입니다.", { exact: true })).toBeVisible();
   await expect(panel.getByText("검사에 관한 일반적인 설명입니다.", { exact: true })).toBeInViewport();
-  await expect(panel.getByRole("link", { name: "질병관리청 · 당뇨병", exact: true })).toHaveAttribute("href", "https://health.kdca.go.kr/");
+  await expect(panel.getByRole("link", { name: "NIDDK · Managing Diabetes", exact: true })).toHaveAttribute("href", "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes");
+  await expect(panel.getByText("— A1C 설명", { exact: true })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "NIDDK 교육 본문 이용정책", exact: true })).toHaveAttribute("href", "https://www.niddk.nih.gov/copyright");
+  await expect(panel.getByText(/PDF .*쪽/)).toHaveCount(0);
   expect(submitted).toEqual({ question: "당화혈색소가 무엇인가요?", allow_model_processing: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({ path: info.outputPath("assistant-answer-360.png"), fullPage: true });
@@ -57,6 +62,32 @@ test("chat sends only after acknowledgement and renders the answer and source on
   await expect(panel.getByLabel("질문", { exact: true })).toHaveValue("");
   await expect(panel.getByRole("checkbox")).not.toBeChecked();
   await expect(panel.getByRole("region", { name: "도우미 답변" })).toHaveCount(0);
+});
+
+test("article licence and notice clause credits remain visible at 360px", async ({ page }, info) => {
+  await login(page);
+  await page.route("**/api/assistant", async route => {
+    if (route.request().method() === "GET") await route.fulfill({ json: { available: true, draftPreview: true, message: "일반 건강정보" } });
+    else await route.fulfill({ json: { kind: "answer", answer: "식사와 영양표시에 관한 교육용 답변입니다.", draftPreview: true, citations: [
+      { id: "N01:R3", title: "Ernährungsempfehlungen für Menschen mit Diabetes (Update 2026)", publisher: "Klammer 외", url: "https://link.springer.com/article/10.1007/s00508-025-02676-7", pdfPages: [], section: "4. 식품 기반 권고",
+        reuseLabel: "CC BY 4.0", reuseUrl: "https://creativecommons.org/licenses/by/4.0/", attribution: "Klammer C, Schindler K, Bugl R, et al. (2026).", adaptationNotice: "프로젝트가 한국어로 요약·재구성했습니다." },
+      { id: "N03:R4", title: "식품등의 표시기준", publisher: "식품의약품안전처", url: "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917", pdfPages: [], section: "별지 1, 1. 아. 3)다)",
+        reuseLabel: "국가 고시 규범 본문", reuseUrl: "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769", attribution: "식품의약품안전처, 제2025-60호." },
+    ] } });
+  });
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+  const panel = page.getByRole("dialog", { name: "이어드림 도우미", exact: true });
+  await panel.getByLabel("질문", { exact: true }).fill("식사와 영양표시를 어떻게 살펴봐?");
+  await panel.getByRole("checkbox").check();
+  await panel.getByRole("button", { name: "질문 전송", exact: true }).click();
+  await expect(panel.getByRole("link", { name: "CC BY 4.0", exact: true })).toHaveAttribute("href", "https://creativecommons.org/licenses/by/4.0/");
+  await expect(panel.getByText("Klammer C, Schindler K, Bugl R, et al. (2026).", { exact: true })).toBeVisible();
+  await expect(panel.getByText("프로젝트가 한국어로 요약·재구성했습니다.", { exact: true })).toBeVisible();
+  await expect(panel.getByText("— 별지 1, 1. 아. 3)다)", { exact: true })).toBeVisible();
+  await expect(panel.getByText(/PDF .*쪽/)).toHaveCount(0);
+  expect(await panel.evaluate(e => e.scrollWidth <= e.clientWidth + 1)).toBe(true);
+  await page.screenshot({ path: info.outputPath("replacement-credits-360.png"), fullPage: true });
 });
 
 test("network failures show a readable error while preserving the question for retry", async ({ page }) => {

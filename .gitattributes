@@ -1,0 +1,13 @@
+# Frozen evaluation captures retain exact bytes for their recorded SHA-256 hashes.
+# Whitespace in archived source and console output is part of the captured evidence.
+docs/research/assistant_eval_v1/runs/** -text -whitespace
+docs/research/assistant_eval_v1/cases.json -text
+docs/research/assistant-eval-new20/runs/** -text -whitespace
+docs/research/assistant-eval-new20/cases.json -text
+
+# Preserve replacement corpus input hashes and frozen evaluation bytes across OSes.
+docs/research/chatbot_replacement_v1/FAQ_13.md -text
+docs/research/chatbot_replacement_v1/SOURCES.json -text -whitespace
+docs/research/chatbot_replacement_v1/knowledge.json -text -whitespace
+docs/research/assistant-eval-replacement40/cases.json -text -whitespace
+docs/research/assistant-eval-replacement40/runs/** -text -whitespace

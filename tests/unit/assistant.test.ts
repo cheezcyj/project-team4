@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createServer } from "node:http";
-import bundle from "../../docs/research/chatbot_v5/knowledge.json";
+import bundle from "../../docs/research/chatbot_replacement_v1/knowledge.json";
 import { contentHash, eligibleKnowledge, retrieveKnowledge, type KnowledgeBundle } from "../../src/lib/assistant/knowledge";
 import { generateAnswer, modelSettings } from "../../src/lib/assistant/model";
 import { answerQuestion, assistantStatus } from "../../src/lib/assistant/service";
@@ -12,7 +12,7 @@ const context: RequestContext = { session: { user: { id: "assistant-test-user", 
 const env = { ASSISTANT_ENABLED: "1", ASSISTANT_ALLOW_DRAFT_PREVIEW: "1", ASSISTANT_MODEL: "test-model", ASSISTANT_MODEL_BASE_URL: "http://127.0.0.1:9999/v1" };
 const question = { question: "당화혈색소가 무엇인가요?", allow_model_processing: true };
 const hasCode = (code: string) => (error: unknown) => error instanceof ApiError && error.code === code;
-function completion(answer = "검사에 관한 일반적인 설명입니다.", citationIds = ["B01:KDCA_DIABETES"]) {
+function completion(answer = "검사에 관한 일반적인 설명입니다.", citationIds = ["B01:R1"]) {
   return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({ answer, citation_ids: citationIds }) } }] });
 }
 
@@ -50,10 +50,73 @@ test("lexical retrieval selects relevant Korean knowledge and abstains on unrela
   for (const [text, id] of [
     ["당화혈색소가 무엇인가요?", "B01"], ["HbA1c 설명", "B01"], ["식후 2시간은 언제부터인가요?", "B02"],
     ["탄수화물은 먹어도 되나요?", "N02"], ["무가당이라는 뜻은?", "N03"], ["과일 주스는 어떤가요?", "N04"],
-    ["실내 자전거 운동", "X02"], ["30분 정도 가벼운 운동", "X01"],
+    ["실내에서 할 운동", "X02"], ["벽밀기", "X02"], ["팔 들기", "X02"], ["30분 정도 가벼운 운동", "X01"],
   ]) assert.equal(retrieveKnowledge(text, candidates)[0]?.entry.id, id, text);
   assert.equal(retrieveKnowledge("내일 날씨 알려줘", candidates).length, 0);
   assert.equal(retrieveKnowledge("혈당", candidates).length, 0);
+});
+
+test("replacement references include web sections, notice clauses and reuse attribution; malformed metadata stays ineligible", () => {
+  const candidates = eligibleKnowledge(true);
+  assert.deepEqual([...new Set(candidates.flatMap(m => m.citations.map(c => c.id.split(":")[1])))].sort(), ["R1", "R2", "R3", "R4"]);
+  for (const match of candidates) {
+    assert.equal(contentHash(match.entry), match.entry.content_sha256);
+    for (const citation of match.citations) {
+      assert.deepEqual(citation.pdfPages, []);
+      assert.ok(citation.section && citation.attribution && citation.adaptationNotice && citation.reuseLabel);
+      assert.equal(new URL(citation.reuseUrl!).protocol, "https:");
+    }
+  }
+  assert.equal(candidates.find(m => m.entry.id === "N01")!.citations[0].reuseUrl, "https://creativecommons.org/licenses/by/4.0/");
+  assert.match(candidates.find(m => m.entry.id === "N03")!.citations[0].section!, /별지 1/u);
+  assert.equal(candidates.find(m => m.entry.id === "X05")!.citations[0].evidenceRole, "background_only");
+  for (const mutation of [
+    (data: KnowledgeBundle) => { data.sources[0].document_type = "unverified"; },
+    (data: KnowledgeBundle) => { data.sources[0].reuse_url = "javascript:alert(1)"; },
+    (data: KnowledgeBundle) => { data.sources[0].attribution = ""; },
+    (data: KnowledgeBundle) => { data.knowledge_entries[0].evidence[0].section = " "; },
+    (data: KnowledgeBundle) => { data.knowledge_entries[0].evidence[0].pdf_pages = [9]; },
+  ]) {
+    const data: KnowledgeBundle = structuredClone(bundle);
+    mutation(data);
+    data.knowledge_entries[0].content_sha256 = contentHash(data.knowledge_entries[0]);
+    assert.equal(eligibleKnowledge(true, Date.now(), data).some(m => m.entry.id === "B01"), false);
+  }
+});
+
+test("old equipment instructions have no replacement evidence, while the new indoor activity prompt uses only R2", async () => {
+  for (const text of ["실내 자전거 운동", "탄력 밴드로 할 수 있는 운동", "실내 자전거와 탄력 밴드는 누구나 안전하게 해도 돼?"]) {
+    assert.deepEqual(retrieveKnowledge(text, eligibleKnowledge(true)), [], text);
+    const result = await answerQuestion(context, { ...question, question: text }, { env, fetch: async () => { throw new Error("No equipment evidence"); } });
+    assert.equal(result.kind, "no_evidence");
+  }
+  const result = await answerQuestion(context, { ...question, question: "집에서 벽밀기나 팔 들기 같은 운동이 있어?" }, { env, fetch: async (_url, init) => {
+    const prompt = JSON.parse(JSON.parse(String(init!.body)).messages[1].content);
+    assert.equal(prompt.knowledge[0].title, bundle.knowledge_entries.find(e => e.id === "X02")!.title);
+    assert.deepEqual(prompt.knowledge[0].citation_ids, ["X02:R2"]);
+    assert.match(prompt.knowledge[0].summary, /벽밀기나 팔 들기/u);
+    assert.doesNotMatch(prompt.knowledge[0].summary, /자전거|밴드/u);
+    return completion("벽밀기와 팔 들기는 자신에게 맞는지 기존 계획과 전문가 안내를 확인해 주세요.", ["X02:R2"]);
+  } });
+  assert.equal(result.kind, "answer");
+  assert.equal(result.sourceSupplemented, false);
+});
+
+test("all 13 replacement questions reach their new evidence through the service without sending original documents", async () => {
+  for (const entry of bundle.knowledge_entries) {
+    const result = await answerQuestion(context, { ...question, question: entry.title }, { env, fetch: async (_url, init) => {
+      const body = String(init!.body);
+      const prompt = JSON.parse(JSON.parse(body).messages[1].content);
+      const selected = prompt.knowledge.find((item: { citation_ids: string[] }) => item.citation_ids.includes(`${entry.id}:${entry.evidence[0].source_id}`));
+      assert.ok(selected, entry.id);
+      assert.equal(selected.summary, entry.summary);
+      assert.ok(prompt.knowledge.every((item: { citation_ids: string[] }) => item.citation_ids.every(id => /^[BNX]\d\d:R[1-4]$/.test(id))));
+      for (const value of ["KDCA_", "KDA_GUIDELINE", "source_sha256", "snapshot", "local_path", context.session.user!.email]) assert.ok(!body.includes(value), value);
+      return completion(entry.summary, selected.citation_ids);
+    } });
+    assert.equal(result.kind, "answer", entry.id);
+    assert.equal(result.citations[0].id, `${entry.id}:${entry.evidence[0].source_id}`);
+  }
 });
 
 test("exercise evidence requires an activity question rather than an incidental keyword", () => {
@@ -63,7 +126,7 @@ test("exercise evidence requires an activity question rather than an incidental 
     "혈당 수치가 뭔가요?", "식후 30분에 혈당 재도 돼?", "실내에서 혈당을 측정해도 돼?", "발 상처가 생겼어", "케톤이란 뭐야?",
   ]) assert.deepEqual(retrieveKnowledge(text, candidates), [], text);
   for (const [text, id] of [
-    ["30분 산책", "X01"], ["식사 후 걷기는 어때?", "X01"], ["탄력 밴드로 할 수 있는 운동", "X02"],
+    ["30분 산책", "X01"], ["식사 후 걷기는 어때?", "X01"], ["집에서 근력 운동", "X02"],
     ["운동 전후 혈당을 확인하는 이유", "X03"], ["합병증이 있는데 운동 시작 전에 뭘 확인해야 해?", "X04"],
     ["혈당 수치 하나로 운동 가능 여부를 알 수 있어?", "X05"],
   ]) assert.equal(retrieveKnowledge(text, candidates)[0]?.entry.id, id, text);
@@ -181,23 +244,27 @@ test("answer uses server-owned source links and sends only the current question 
     const prompt = JSON.parse(JSON.parse(sent).messages[1].content);
     assert.equal(prompt.knowledge[0].title, bundle.knowledge_entries[0].title);
     assert.equal(prompt.knowledge[0].topic, "basic");
-    assert.deepEqual(prompt.knowledge[0].citation_ids, ["B01:KDCA_DIABETES", "B01:KDA_GUIDELINE_2025"]);
+    assert.deepEqual(prompt.knowledge[0].citation_ids, ["B01:R1"]);
+    assert.equal(prompt.knowledge[0].sources[0].section, bundle.knowledge_entries[0].evidence[0].section);
+    assert.equal(prompt.knowledge[0].sources[0].pdf_pages, undefined);
     assert.equal(prompt.knowledge[0].id, undefined);
     return completion();
   } });
   assert.equal(result.kind, "answer"); assert.equal(result.draftPreview, true);
   assert.equal(result.citations[0].url, bundle.sources[0].canonical_url);
-  assert.deepEqual(result.citations[0].pdfPages, [9]);
+  assert.deepEqual(result.citations[0].pdfPages, []);
+  assert.equal(result.citations[0].section, bundle.knowledge_entries[0].evidence[0].section);
+  assert.equal(result.citations[0].reuseUrl, "https://www.niddk.nih.gov/copyright");
   assert.ok(sent.includes("당화혈색소"));
-  for (const excluded of [context.session.user!.email, context.session.user!.id, "local_path", "approved_at", "meal_memo", "glucose_records"]) assert.ok(!sent.includes(excluded), excluded);
+  for (const excluded of [context.session.user!.email, context.session.user!.id, "local_path", "approved_at", "meal_memo", "glucose_records", "KDCA_", "KDA_GUIDELINE_"]) assert.ok(!sent.includes(excluded), excluded);
 });
 
 test("invented citations, malformed output and upstream errors never expose raw model responses", async () => {
-  for (const response of [completion("외부 비밀", ["invented:source"]), completion("축약한 식별자", ["B01"]), Response.json({ choices: [] }), completion("https://invented.example", ["B01:KDCA_DIABETES"])]) {
+  for (const response of [completion("외부 비밀", ["invented:source"]), completion("축약한 식별자", ["B01"]), completion("이전 자료", ["B01:KDCA_DIABETES"]), Response.json({ choices: [] }), completion("https://invented.example", ["B01:R1"])]) {
     await assert.rejects(answerQuestion(context, question, { env, fetch: async () => response }), hasCode("INVALID_MODEL_RESPONSE"));
   }
   await assert.rejects(answerQuestion(context, question, { env, fetch: async () => Response.json({
-    choices: [{ finish_reason: "length", message: { content: JSON.stringify({ answer: "잘린 응답", citation_ids: ["B01:KDCA_DIABETES"] }) } }],
+    choices: [{ finish_reason: "length", message: { content: JSON.stringify({ answer: "잘린 응답", citation_ids: ["B01:R1"] }) } }],
   }) }), hasCode("INVALID_MODEL_RESPONSE"));
   await assert.rejects(answerQuestion(context, question, { env, fetch: async () => new Response("private upstream error", { status: 500 }) }), hasCode("MODEL_UNAVAILABLE"));
   const result = await answerQuestion(context, question, { env, fetch: async () => completion("unsupported claim", []) });
@@ -248,6 +315,6 @@ test("compatible protocol works through real HTTP to a local mock, without loadi
     assert.ok(address && typeof address !== "string");
     const settings = modelSettings({ ...env, ASSISTANT_MODEL: "mock-model", ASSISTANT_MODEL_BASE_URL: `http://127.0.0.1:${address.port}/v1` })!;
     const result = await generateAnswer(question.question, retrieveKnowledge(question.question, eligibleKnowledge(true)), settings);
-    assert.deepEqual(result.citationIds, ["B01:KDCA_DIABETES"]);
+    assert.deepEqual(result.citationIds, ["B01:R1"]);
   } finally { await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve())); }
 });

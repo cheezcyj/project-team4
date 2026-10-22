@@ -1,0 +1,20 @@
+npm notice run team4-glucose-records@0.1.0 npx
+npm notice run playwright test tests/e2e/assistant.spec.ts tests/e2e/assistant-shell.spec.ts --output .local/assistant-records-20261022/regression-release
+[WebServer] npm notice run team4-glucose-records@0.1.0 start:demo
+[WebServer] npm notice run node scripts/run-demo.mjs --production
+[WebServer] (node:12624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:14848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\assistant-shell.spec.ts:15:5 › ten measurement situations expose meal slots only when relevant and persist the explicit choice (1.7s)
+  ok 2 tests\e2e\assistant-shell.spec.ts:39:5 › disabled assistant checks availability without sending a question, restores focus and clears on logout (850ms)
+  ok 3 tests\e2e\assistant-shell.spec.ts:61:5 › news stays empty and responsive navigation and assistant expose accessible content (2.6s)
+  ok 4 tests\e2e\assistant.spec.ts:14:5 › assistant API protects authentication, origin, consent and unavailable configuration (97ms)
+  ok 5 tests\e2e\assistant.spec.ts:28:5 › chat sends only after acknowledgement and renders the answer and source on narrow screens (946ms)
+  ok 6 tests\e2e\assistant.spec.ts:62:5 › network failures show a readable error while preserving the question for retry (822ms)
+  ok 7 tests\e2e\assistant.spec.ts:79:5 › closing an in-flight question clears it and a late answer cannot reappear (831ms)
+
+  7 passed (9.5s)

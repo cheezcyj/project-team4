@@ -1,0 +1,337 @@
+"""Frozen local demo evaluation; no model load, tuning, or app mutation.
+
+Default: offline schema validation. --run explicitly sends requests to the app.
+Only synthetic demo accounts are accepted. App responses, not provider internals,
+are captured; semantic review is deliberately separate from automatic checks.
+"""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
+import http.cookiejar
+import json
+from pathlib import Path
+import statistics
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SUITE = ROOT / "docs/research/assistant_eval_v1/cases.json"
+KNOWLEDGE = ROOT / "docs/research/chatbot_v5/knowledge.json"
+CATEGORIES = {"basic": 6, "nutrition": 6, "exercise": 6, "personal": 8, "medical_risk": 8, "access": 6}
+LABELS = dict(zip(CATEGORIES, ["기본 지식", "식사", "운동", "개인 기록", "의료 위험", "접근 제한"]))
+KINDS = {"answer", "no_evidence", "unsupported", "safety"}
+SOURCE_PATHS = [
+    "src/lib/assistant/model.ts", "src/lib/assistant/service.ts",
+    "src/lib/assistant/knowledge.ts", "src/lib/assistant/types.ts",
+    "src/lib/assistant/safety.ts",
+    "src/app/api/assistant/route.ts", "src/lib/server/http.ts",
+    "src/lib/server/session.ts", "src/lib/server/session/demo.ts",
+    "docs/research/chatbot_v5/knowledge.json",
+]
+
+
+def digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def save(path: Path, value: object) -> None:
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def load_suite(path: Path = SUITE) -> dict:
+    suite = json.loads(path.read_text(encoding="utf-8"))
+    cases = suite["cases"]
+    counts = suite["category_counts"]
+    if suite["schema_version"] != 1 or set(counts) != set(CATEGORIES) or any(type(n) is not int or n < 1 for n in counts.values()):
+        raise ValueError("Expected schema v1 with positive counts for each known category.")
+    if path.resolve() == SUITE.resolve() and (counts != CATEGORIES or len(cases) != 40):
+        raise ValueError("The original 40-case distribution is frozen.")
+    if Counter(c["category"] for c in cases) != counts or len({c["id"] for c in cases}) != sum(counts.values()):
+        raise ValueError("Incorrect categories or duplicate IDs.")
+    entries = {e["id"] for e in json.loads(KNOWLEDGE.read_text(encoding="utf-8"))["knowledge_entries"]}
+    for case in cases:
+        if not case["question"].strip() or len(case["question"]) > 1000 or not case["must"] or not case["must_not"]:
+            raise ValueError(f"Incomplete case: {case['id']}")
+        expect = case["expect"]
+        if expect["status"] == 200:
+            if not expect.get("kinds") or not set(expect["kinds"]) <= KINDS:
+                raise ValueError(f"Missing/invalid expected kinds: {case['id']}")
+        elif not expect.get("code"):
+            raise ValueError(f"Missing expected error code: {case['id']}")
+        if not set(expect.get("entries", [])) <= entries:
+            raise ValueError(f"Unknown expected evidence: {case['id']}")
+        if case.get("session", "authenticated") not in {"authenticated", "anonymous", "logged_out"}:
+            raise ValueError(f"Unknown session: {case['id']}")
+    return suite
+
+
+def guide(suite: dict) -> str:
+    lines = [
+        "# 도우미 평가 40문항 v1", "",
+        "현재 앱을 바꾸기 전에 기대 결과를 고정한 기준선이다. 질문 원본·요청 조건·필수/금지 사항은 [cases.json](cases.json)에 있다.", "",
+        "기본 지식 6·식사 6·운동 6·개인 기록 8·의료 위험 8·접근 제한 6개다. 자동 검사는 HTTP 상태·응답 형태·범위 분류·출처 참조를 확인한다. 내용 정확성·조건 누락·응급 안내 우선순위는 응답 원문을 따로 읽어 검토한다.", "",
+        "## 평가 범위", "",
+        *[f"- {item}" for item in suite["limitations"]], "",
+        "자료집이 실제 서비스 승인 상태라는 뜻은 아니다. 초안 미리보기를 켠 로컬 가상 계정에서만 실행하며 모델 로드·설정 변경·개인 기록 저장은 하지 않는다.", "",
+        "## 실행", "", "```powershell", "python scripts/evaluate_assistant.py",
+        "python scripts/evaluate_assistant.py --run --output docs/research/assistant_eval_v1/runs/새로운실행이름", "```", "",
+        "기본 명령은 오프라인 문항 검증만 한다. 실제 실행에는 앱과 모델이 먼저 실행돼 있어야 한다. 기본 앱 주소는 http://127.0.0.1:3000 이며 --base-url로 loopback 주소만 지정할 수 있다. 실행 폴더가 이미 있으면 덮어쓰지 않는다. 러너는 자체 재시도를 하지 않으며 앱 내부의 기존 재시도 동작은 그대로다.", "",
+        "run.json에는 실행 전 문항 해시·소스/빌드 식별값·모델 목록, 질문별 HTTP 응답 원문·시간·자동 검사와 실행 후 소스 동일 여부가 남는다. 로그인 쿠키·키·계정 정보는 저장하지 않는다. review-template.json은 수작업 검토용 빈 양식이며 미검토 항목을 통과로 세지 않는다.", "",
+        "자동 검사 실패가 있으면 2를 반환하되 중단하지 않고 40개 결과를 모두 저장한다. 수작업 검토 결과와 실패 원인은 별도 파일에 남겨 자동 검사와 구분한다.", "",
+        "## 문항과 기대 결과", "",
+    ]
+    for category in CATEGORIES:
+        lines.extend([f"### {LABELS[category]}", ""])
+        for case in suite["cases"]:
+            if case["category"] != category:
+                continue
+            expect = case["expect"]
+            outcome = "/".join(expect.get("kinds", [expect.get("code", "")]))
+            lines.extend([
+                f"**{case['id']}** {case['question']}", "",
+                f"- 요청 조건: `{case['variant']}` · 기대: HTTP {expect['status']} `{outcome}`" + (f" · 지식 `{', '.join(expect['entries'])}`" if expect.get("entries") else ""),
+                *[f"- 필수: {point}" for point in case["must"]],
+                *[f"- 금지: {point}" for point in case["must_not"]], "",
+            ])
+    result = "\n".join(lines)
+    if suite["suite_id"] != "assistant-eval-v1":
+        result = result.replace("40문항 v1", f"{len(suite['cases'])}문항 ({suite['suite_id']})").replace("40개", f"{len(suite['cases'])}개")
+        result = result.replace("기본 지식 6·식사 6·운동 6·개인 기록 8·의료 위험 8·접근 제한 6개다.",
+                                "·".join(f"{LABELS[key]} {count}" for key, count in suite["category_counts"].items()) + "개다.")
+        result = result.replace("python scripts/evaluate_assistant.py", f"python scripts/evaluate_assistant.py --suite docs/research/{suite['suite_id']}/cases.json")
+        result = result.replace("assistant_eval_v1/runs", f"{suite['suite_id']}/runs")
+    return result
+
+
+def citation_catalog() -> dict:
+    bundle = json.loads(KNOWLEDGE.read_text(encoding="utf-8"))
+    sources = {s["id"]: s for s in bundle["sources"]}
+    catalog = {}
+    for entry in bundle["knowledge_entries"]:
+        # Product-rule mixed entries are ineligible in the current preview.
+        if any(sources[e["source_id"]]["kind"] != "official_health_reference" for e in entry["evidence"]):
+            continue
+        for evidence in entry["evidence"]:
+            source = sources[evidence["source_id"]]
+            catalog[f"{entry['id']}:{source['id']}"] = {
+                "title": source["title"], "publisher": source["publisher"],
+                "url": source["canonical_url"], "pdfPages": evidence["pdf_pages"],
+            }
+    return catalog
+
+
+def automatic_checks(case: dict, response: dict, catalog: dict) -> list[dict]:
+    checks = []
+
+    def check(name: str, passed: bool) -> None:
+        checks.append({"name": name, "passed": bool(passed)})
+
+    expect = case["expect"]
+    data = response.get("json")
+    check("expected_http_status", response["status"] == expect["status"])
+    check("json_object", isinstance(data, dict))
+    check("no_store", "no-store" in response.get("headers", {}).get("cache-control", ""))
+    if not isinstance(data, dict):
+        return checks
+    if expect["status"] != 200:
+        check("expected_error_code", data.get("code") == expect["code"])
+        check("no_answer_or_citations_in_error", "answer" not in data and "citations" not in data)
+        return checks
+    check("expected_kind", data.get("kind") in expect["kinds"])
+    check("nonempty_answer_under_limit", isinstance(data.get("answer"), str) and 0 < len(data["answer"]) <= 2000)
+    check("draft_preview", data.get("draftPreview") is True)
+    citations = data.get("citations")
+    check("citations_array", isinstance(citations, list))
+    if not isinstance(citations, list):
+        return checks
+    if data.get("kind") == "answer":
+        check("answer_has_evidence", len(citations) > 0)
+        check("server_owned_citations", all(isinstance(c, dict) and c.get("id") in catalog and
+              all(c.get(key) == value for key, value in catalog[c["id"]].items()) for c in citations))
+        if expect.get("entries"):
+            check("expected_entry_cited", any(isinstance(c, dict) and c.get("id", "").split(":")[0] in expect["entries"] for c in citations))
+    else:
+        check("fallback_has_no_citations", not citations)
+    return checks
+
+
+def client() -> urllib.request.OpenerDirector:
+    return urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+
+
+def request(opener, url: str, body: dict | None = None, origin: str | None = None) -> dict:
+    headers = {"Content-Type": "application/json"}
+    if origin:
+        headers["Origin"] = origin
+    req = urllib.request.Request(url, data=None if body is None else json.dumps(body, ensure_ascii=False).encode("utf-8"), headers=headers)
+    started = time.perf_counter()
+    try:
+        try:
+            stream = opener.open(req, timeout=40)
+        except urllib.error.HTTPError as error:
+            stream = error
+        with stream:
+            raw = stream.read(65_537)
+            if len(raw) > 65_536:
+                raise ValueError("Response exceeded evaluation capture limit.")
+            text = raw.decode("utf-8")
+            try:
+                value = json.loads(text)
+            except ValueError:
+                value = None
+            return {"status": stream.status, "elapsed_ms": round((time.perf_counter() - started) * 1000),
+                    "headers": {name: stream.headers.get(name, "") for name in ["cache-control", "content-type"]},
+                    "response_text": text, "json": value}
+    except (OSError, ValueError) as error:
+        return {"status": 0, "elapsed_ms": round((time.perf_counter() - started) * 1000),
+                "transport_error": type(error).__name__, "json": None, "headers": {}}
+
+
+def git(*args: str) -> str:
+    return subprocess.check_output(["git", *args], cwd=ROOT, encoding="utf-8").strip()
+
+
+def local_base(value: str) -> str:
+    parsed = urllib.parse.urlsplit(value)
+    if parsed.scheme != "http" or parsed.hostname not in {"127.0.0.1", "localhost", "::1"} or parsed.path not in {"", "/"} or parsed.query or parsed.fragment or parsed.username or parsed.password:
+        raise ValueError("Only an HTTP loopback app origin is allowed.")
+    return value.rstrip("/")
+
+
+def model_metadata() -> dict:
+    # Record only these nonsensitive settings, never the API key or whole env.
+    allowed = {"ASSISTANT_MODEL_BASE_URL", "ASSISTANT_MODEL", "ASSISTANT_MODEL_RESPONSE_FORMAT", "ASSISTANT_ALLOW_DRAFT_PREVIEW", "ASSISTANT_ENABLED"}
+    env_path = ROOT / ".env.local"
+    settings = {}
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            key, separator, value = line.partition("=")
+            if separator and key in allowed:
+                settings[key] = value.strip().strip("\"'")
+    model_base = settings.get("ASSISTANT_MODEL_BASE_URL", "").rstrip("/")
+    parsed = urllib.parse.urlsplit(model_base)
+    metadata = {"local_config_snapshot": settings, "runtime_config_match": "Not exposed by the app; config snapshot and build/source hashes are provenance, not remote attestation."}
+    if parsed.hostname in {"127.0.0.1", "localhost", "::1"} and parsed.scheme == "http" and not parsed.username and not parsed.password and not parsed.query and not parsed.fragment:
+        response = request(client(), model_base + "/models")
+        metadata["models_status"] = response["status"]
+        listed = (response.get("json") or {}).get("data", []) if isinstance(response.get("json"), dict) else []
+        if not isinstance(listed, list):
+            listed = []
+        metadata["models"] = {"object": "list", "data": [item for item in listed
+                              if isinstance(item, dict) and item.get("id") == settings.get("ASSISTANT_MODEL")]}
+        metadata["models_catalog_scope"] = "configured_model_only"
+    return metadata
+
+
+def run(suite: dict, base: str, output: Path, suite_path: Path = SUITE) -> int:
+    if output.exists():
+        raise ValueError("Output already exists. Choose a fresh directory to preserve the baseline.")
+    shared = client()
+    login = request(shared, base + "/api/login", {"demoAccount": "a"}, base)
+    if login["status"] != 200 or login["json"].get("mode") != "demo":
+        raise ValueError("Evaluation requires a working local demo login; no real accounts are allowed.")
+    availability = request(shared, base + "/api/assistant")
+    if availability["status"] != 200 or availability["json"].get("available") is not True or availability["json"].get("draftPreview") is not True:
+        raise ValueError("Local draft-preview assistant is not available.")
+    output.mkdir(parents=True)
+    frozen_suite = suite_path.read_bytes()
+    (output / "cases.json").write_bytes(frozen_suite)
+    (output / "runner-source.txt").write_bytes(Path(__file__).read_bytes())
+    source_hashes = {path: digest(ROOT / path) for path in SOURCE_PATHS}
+    metadata = {
+        "suite_id": suite["suite_id"], "started_at": now(), "finished_at": None,
+        "suite_sha256": hashlib.sha256(frozen_suite).hexdigest(), "base_url": base,
+        "git_commit": git("rev-parse", "HEAD"), "git_branch": git("branch", "--show-current"),
+        "git_dirty": bool(git("status", "--porcelain")),
+        "build_id": (ROOT / ".next/BUILD_ID").read_text(encoding="utf-8").strip(),
+        "runner_sha256": digest(Path(__file__)), "source_hashes_before": source_hashes,
+        "model": model_metadata(), "assistant_status": availability["json"],
+        "synthetic_accounts_only": True, "sequential": True, "runner_retries": 0,
+        "capture_boundary": "Raw app HTTP responses. Provider requests/usage and retry count are not observed.",
+        "results": [],
+    }
+    # Persist the frozen expectation and runtime metadata BEFORE the first question.
+    save(output / "run.json", metadata)
+    save(output / "review-template.json", {"suite_sha256": metadata["suite_sha256"], "reviews": [
+        {"id": c["id"], "semantic_pass": None, "notes": ""} for c in suite["cases"]]})
+    catalog = citation_catalog()
+    for case in suite["cases"]:
+        selected_client = shared
+        if case.get("session") == "anonymous":
+            selected_client = client()
+        elif case.get("session") == "logged_out":
+            selected_client = client()
+            before = request(selected_client, base + "/api/login", {"demoAccount": "b"}, base)
+            after = request(selected_client, base + "/api/logout", {}, base)
+            if before["status"] != 200 or after["status"] != 200:
+                raise ValueError("Could not prepare the logout case.")
+        body = {"question": case["question"], "allow_model_processing": case.get("allow_model_processing", True), **case.get("extra_fields", {})}
+        response = request(selected_client, base + "/api/assistant", body, case.get("origin", base))
+        checks = automatic_checks(case, response, catalog)
+        result = {"id": case["id"], "category": case["category"], "question": case["question"],
+                  **response, "automatic_checks": checks, "automatic_pass": all(c["passed"] for c in checks)}
+        metadata["results"].append(result)
+        save(output / "run.json", metadata)
+        print(json.dumps({"id": case["id"], "status": response["status"],
+                          "kind": (response.get("json") or {}).get("kind"), "ms": response["elapsed_ms"],
+                          "automatic_pass": result["automatic_pass"]}, ensure_ascii=False), flush=True)
+    metadata["finished_at"] = now()
+    metadata["suite_unchanged"] = suite_path.read_bytes() == frozen_suite
+    metadata["source_hashes_after"] = {path: digest(ROOT / path) for path in SOURCE_PATHS}
+    metadata["app_sources_unchanged"] = metadata["source_hashes_after"] == source_hashes
+    results = metadata["results"]
+    times = [r["elapsed_ms"] for r in results]
+    generated = [r["elapsed_ms"] for r in results if (r.get("json") or {}).get("kind") == "answer"]
+    metadata["summary"] = {
+        "total": len(results), "automatic_pass": sum(r["automatic_pass"] for r in results),
+        "returned_model_answers": len(generated),
+        "kind_counts": dict(Counter((r.get("json") or {}).get("kind", "http_error") for r in results)),
+        "median_app_ms_all_cases": statistics.median(times), "max_app_ms_all_cases": max(times),
+        "median_app_ms_model_answers": statistics.median(generated) if generated else None,
+        "semantic_review": "pending", "clinical_approval": False,
+    }
+    save(output / "run.json", metadata)
+    print(json.dumps(metadata["summary"], ensure_ascii=False), flush=True)
+    return 0 if all(r["automatic_pass"] for r in results) and metadata["suite_unchanged"] and metadata["app_sources_unchanged"] else 2
+
+
+def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run", action="store_true", help="Send the frozen requests to the running local demo app.")
+    parser.add_argument("--suite", type=Path, default=SUITE)
+    parser.add_argument("--base-url", default="http://127.0.0.1:3000")
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--write-guide", action="store_true", help="Render the question guide from the frozen JSON (offline).")
+    args = parser.parse_args()
+    suite = load_suite(args.suite)
+    expected_guide = guide(suite)
+    guide_path = args.suite.with_name("QUESTIONS.md")
+    if args.write_guide:
+        guide_path.write_text(expected_guide, encoding="utf-8")
+    elif not guide_path.exists() or guide_path.read_text(encoding="utf-8") != expected_guide:
+        raise ValueError("Question guide is missing/stale; use --write-guide offline.")
+    if args.run:
+        if not args.output:
+            parser.error("--run requires a fresh --output directory")
+        return run(suite, local_base(args.base_url), args.output.resolve(), args.suite)
+    print(f"PASS: {len(suite['cases'])} frozen cases, guide matches. SHA256={digest(args.suite)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

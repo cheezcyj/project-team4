@@ -1,0 +1,39 @@
+{
+  "validated_at": "2026-10-22T03:05:38.667536+00:00",
+  "build_id": "O3wwlJqsllAC_fMg0lUMb",
+  "suite_sha256": "1c4e6501a7af7de2840dbb2e0504563d34221f7b3f5fe8cdfb759023e5c982f0",
+  "source_hashes": {
+    "src/lib/assistant/model.ts": "0e0ea13a12ce2c5d25e4319b311a25eadf3b5fc22c5d101e811666adfa12463b",
+    "src/lib/assistant/service.ts": "52a9b49271401007bb9aa5aedfc6b6abb6173389bc054cb29f39ec6c5fecf153",
+    "src/lib/assistant/knowledge.ts": "e814e0614568ce8f6a2399b91a44ad797235a6cfee05d097331d9f56811e8a63",
+    "src/lib/assistant/types.ts": "a6a2bb0067b4a909572119d7c1240171f3bd07141a9c161ed4ae19868d639340",
+    "src/lib/assistant/safety.ts": "38ffe0805ecf5acf6702f524f23f633c7bbd47c30304e21d3f6d6f3f25a6d882",
+    "src/app/api/assistant/route.ts": "f8c9ed2d3b9a7ee043930219dee05171de3398c32cd2e48dcbdf3849524fb21d",
+    "src/lib/server/http.ts": "c0841e77fb149e39843c0c06683eca27203f40020eceb60b7ec4915053d77b17",
+    "src/lib/server/session.ts": "0b461af0e41ad12438950d3287ae972c2ff2a880520662a699b3861fb6bca264",
+    "src/lib/server/session/demo.ts": "7b1cfa9a8eac1845586fa2de9c4a9bda276e80d92f218bc62f33ac3e7ea8b6ea",
+    "docs/research/chatbot_v5/knowledge.json": "aee29fcfb7b23712c0f10a10ff8c9ecd069a6977270ae202054e6fbfbdccb124"
+  },
+  "checks": {
+    "lint": "passed",
+    "typecheck": "passed",
+    "unit_tests": 57,
+    "isolated_sql": 70,
+    "non_ai_sql": 62,
+    "account_deletion": 18,
+    "production_build": "passed",
+    "browser_mock_tests": 7,
+    "local_source_hashes": 8,
+    "actual_app_automatic": 40,
+    "manual_content": 40
+  },
+  "original_baseline_combined": 32,
+  "intermediate_combined": 38,
+  "evidence_boundary": "Frozen regression suite and developer review; not independent clinical validation.",
+  "logs": {
+    "check-final.log": "da12f360db67adc1c112a77749a0d582e9ee7b098408cccf72397c55e346744d",
+    "e2e-final.log": "c35a7d035ef5dd067cf87c9e5b824c11e3665f4877a8fa79094d6892aed6b24b",
+    "data-check-final.log": "5352c5028b41611e67a17a994c19c4980b15a725baab1a02fd0e71aca7d246c2"
+  },
+  "source_archive": ".tmp\\research\\assistant-hardening-20261022\\checkpoint-final"
+}

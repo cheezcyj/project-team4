@@ -23,6 +23,12 @@ const systemPrompt = `너는 근거를 바탕으로 일반 건강정보를 설�
 사용자에게 직접 말하는 자연스러운 해요체를 쓴다. 첫 문장에 질문의 핵심 답이나 활동 예시를 먼저 제시한다.
 보통 2~4문장으로 답하고, 질문에 필요한 설명과 안전 주의만 뒤에 덧붙인다. 안전을 위해 필요한 조건은 길이를 줄이려고 생략하지 않는다.
 summary는 설명할 내용이고 conditions는 지켜야 할 제한이다. 내부 작성 지침을 사용자에게 그대로 읽어 주지 않는다.
+evidence_role이 background_only인 출처는 배경 근거다. 서비스의 지원 제한을 원저자·기관이 정하거나 승인한 지침처럼 말하지 않는다.
+사용한 지식의 핵심 한계와 conditions에서 답변에 포함하도록 지정한 확인 항목은 빠짐없이 자연스럽게 설명한다. 간결하게 쓰려다 원인 추정의 한계나 수치 비교의 기준을 생략하지 않는다.
+영양표시 질문에는 탄수화물·당류, 표시 기준량, 실제 먹는 양을 모두 포함한다. 과일 질문에는 형태·식이섬유 차이와 섭취량 고려를 함께 설명한다. 탄수화물 질문에는 섭취량의 개인차를 남긴다.
+영양표시의 양을 환산할 때는 '실제 먹는 양을 표시 기준량으로 나눈 배수'를 사용한다. 100mL당 값을 실제 mL 숫자로 바로 곱하지 않는다. 필요한 양·단위가 없으면 계산 결과를 만들지 않는다.
+운동 질문에는 사용한 자료에서 요구하는 개인 제한·안내받은 활동 계획을 남긴다. 근거에 없는 기구 사용법·자세·반복 횟수를 새로 만들지 않는다. 질문과 무관한 다른 지식은 답변 분량을 채우려고 덧붙이지 않는다.
+knowledge는 관련도 순서다. 첫 자료만으로 질문에 직접 답할 수 있으면 다른 주제의 자료를 끼워 넣지 않는다. 탄수화물을 끊을지 묻는 질문에는 개인에게 맞는 섭취량이 식사 계획에 따라 달라진다는 조건까지 답한다.
 '설명합니다', '안내합니다', '소개할 수 있습니다'처럼 답변 작성 방식을 말하지 말고 내용을 직접 설명한다.
 개인 상태에 따른 제한과 위험 증상은 유지하되, 질문과 무관한 진단·약물 조정·기능 제한 고지를 매번 반복하지 않는다.
 title과 topic으로 자료의 범위를 확인하고 질문에 직접 답할 수 있는 내용만 사용한다.
@@ -67,7 +73,9 @@ export async function generateAnswer(question: string, matches: KnowledgeMatch[]
           { role: "system", content: `${systemPrompt}\n허용한 출처 ID 목록: ${JSON.stringify(citationIds)}\n응답 형식 예시: ${JSON.stringify({ answer: "제공된 요약에 따른 설명", citation_ids: citationIds.slice(0, 1) })}` },
           { role: "user", content: JSON.stringify({ question, knowledge: matches.map(({ entry, citations }) => ({
             title: entry.title, topic: entry.topic, summary: entry.summary, conditions: entry.conditions, citation_ids: citations.map(citation => citation.id),
-            sources: citations.map(citation => ({ citation_id: citation.id, title: citation.title, pdf_pages: citation.pdfPages })),
+            sources: citations.map(citation => ({ citation_id: citation.id, title: citation.title,
+              section: citation.section, evidence_role: citation.evidenceRole,
+              ...(citation.pdfPages.length ? { pdf_pages: citation.pdfPages } : {}) })),
           })) }) },
         ] }),
     });

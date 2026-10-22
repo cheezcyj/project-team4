@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "scope": "structure_provenance_and_local_consistency_not_medical_or_runtime_approval",
+  "bundle_version": "v5-draft-4",
+  "bundle_sha256": "aee29fcfb7b23712c0f10a10ff8c9ecd069a6977270ae202054e6fbfbdccb124",
+  "local_sources_verified": true,
+  "checks": [
+    "counts_and_unique_ids",
+    "references_and_pdf_page_ranges",
+    "knowledge_content_hashes_and_draft_dates",
+    "faq_coverage_templates_and_fallbacks",
+    "example_boundaries_and_record_contract",
+    "all_8_source_file_sha256_matches",
+    "rda_catalog_hash_food_codes_nutrients_and_markers_match",
+    "generated_documents_match_canonical_bundle"
+  ],
+  "counts": {
+    "sources": 8,
+    "knowledge_entries": 15,
+    "faqs": 20,
+    "meal_examples": 3,
+    "exercise_examples": 3
+  },
+  "generated_document_sha256": {
+    "FAQ_20.md": "1607b8bd846cc2a9286d06deb17e41930dac899d9bb17216fe89efef3151fe8f",
+    "EXAMPLES.md": "04abaaf8b12677303a1653f1e112230d082cf469a10f4f64fbc520290fb976bb",
+    "SOURCES.md": "98bb1ec5ec3c4816c66e64c42265af3e157cd64bf8376f60e87d73ee6af086b3"
+  },
+  "not_tested": [
+    "clinical accuracy approval",
+    "source reuse approval",
+    "real AI responses",
+    "app access control and consent",
+    "CSV import"
+  ]
+}

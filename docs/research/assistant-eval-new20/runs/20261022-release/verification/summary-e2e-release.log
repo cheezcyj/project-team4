@@ -1,0 +1,18 @@
+npm notice run team4-glucose-records@0.1.0 npx
+npm notice run playwright test --config playwright.summary.config.ts --output .local/assistant-records-20261022/summary-release
+[WebServer] npm notice run team4-glucose-records@0.1.0 start:demo
+[WebServer] npm notice run node scripts/run-demo.mjs --production
+[WebServer] (node:29092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:7472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\assistant-records.spec.ts:26:5 › real summary API enforces authentication, same origin, service consent, explicit record consent and strict scope (156ms)
+  ok 2 tests\e2e\assistant-records.spec.ts:47:5 › real storage and screen show only own fasting measurements, exact statistics and record provenance without a model (1.1s)
+  ok 3 tests\e2e\assistant-records.spec.ts:78:5 › withdrawing record permission aborts a pending request and discards a late result (882ms)
+  ok 4 tests\e2e\assistant-records.spec.ts:98:5 › a record change in another tab invalidates the displayed summary and clears permission (1.3s)
+  ok 5 tests\e2e\assistant-records.spec.ts:114:5 › logout in another tab removes a personal summary and record permission (1.2s)
+
+  5 passed (6.2s)
