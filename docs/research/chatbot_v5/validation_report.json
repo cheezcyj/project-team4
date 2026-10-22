@@ -1,8 +1,8 @@
 {
   "status": "passed",
   "scope": "structure_provenance_and_local_consistency_not_medical_or_runtime_approval",
-  "bundle_version": "v5-draft-1",
-  "bundle_sha256": "6c1f8ff5c73a9e33e58b348c47d5beb311fd62b743d663b1dce2be9a92c20001",
+  "bundle_version": "v5-draft-2",
+  "bundle_sha256": "3dd5c356d94cd0cde1d4edab6d76b5cd9f9385b5998b183ac2972408118060f8",
   "local_sources_verified": true,
   "checks": [
     "counts_and_unique_ids",
@@ -22,7 +22,7 @@
     "exercise_examples": 3
   },
   "generated_document_sha256": {
-    "FAQ_20.md": "e8df2717aa77de4b1a566eb92650daa43a8eb949b27b465e0c86f31f58e9250e",
+    "FAQ_20.md": "8dc5d95ce416f2404d374fc2bbd0e97914a5054f2d54ec36534f43f02975f7d6",
     "EXAMPLES.md": "04abaaf8b12677303a1653f1e112230d082cf469a10f4f64fbc520290fb976bb",
     "SOURCES.md": "98bb1ec5ec3c4816c66e64c42265af3e157cd64bf8376f60e87d73ee6af086b3"
   },
