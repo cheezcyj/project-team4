@@ -1,0 +1,37 @@
+{
+  "captured_at": "2026-10-23T00:39:49.726350+00:00",
+  "loaded_models": [
+    {
+      "type": "llm",
+      "modelKey": "google/gemma-4-e4b-it-qat-q4_0-gguf/gemma-4-e4b_q4_0-it.gguf",
+      "format": "gguf",
+      "displayName": "Gemma 4 E4B Instruct",
+      "publisher": "google",
+      "path": "google/gemma-4-E4B-it-qat-q4_0-gguf/gemma-4-E4B_q4_0-it.gguf",
+      "sizeBytes": 5154941280,
+      "indexedModelIdentifier": "google/gemma-4-E4B-it-qat-q4_0-gguf/gemma-4-E4B_q4_0-it.gguf",
+      "deviceIdentifier": null,
+      "paramsString": "7.5B",
+      "architecture": "gemma4",
+      "quantization": {
+        "name": "Q4_0",
+        "bits": 4
+      },
+      "identifier": "gemma-4-e4b-it-qat",
+      "ttlMs": null,
+      "lastUsedTime": 1792715939214,
+      "vision": false,
+      "trainedForToolUse": true,
+      "maxContextLength": 131072,
+      "contextLength": 131072,
+      "status": "idle",
+      "queued": 0,
+      "parallel": 4,
+      "engineConfigFileEnabled": false
+    }
+  ],
+  "server": {
+    "running": true,
+    "port": 1234
+  }
+}

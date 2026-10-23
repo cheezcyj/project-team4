@@ -1,0 +1,508 @@
+{
+  "schema_version": "replacement-review/1.0",
+  "authored_on": "2026-10-22",
+  "status": "draft_sources_connected_for_demo_preview",
+  "approval": {
+    "team_content_approved": false,
+    "medical_review_completed": false,
+    "source_reuse_review_completed": false
+  },
+  "runtime_publishable": false,
+  "sources": [
+    {
+      "id": "R1",
+      "capture_id": "NIDDK_MANAGING",
+      "title": "Managing Diabetes",
+      "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+      "canonical_url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+      "kind": "official_health_education_web",
+      "source_last_reviewed": "2023-10",
+      "checked_on": "2026-10-22",
+      "reuse": {
+        "basis": "NIDDK website copyright policy; no CC or KOGL licence assigned",
+        "policy_capture_id": "NIDDK_REUSE_POLICY",
+        "policy_url": "https://www.niddk.nih.gov/copyright",
+        "assessment": "General educational text candidate under site policy; exceptions and edited-content conditions apply. Not an express project-specific RAG approval.",
+        "conditions": [
+          "Use the institutional educational body text only; linked external material is separate.",
+          "Do not reuse logos or third-party graphics.",
+          "Identify the Korean summary as an independent adaptation, without institutional endorsement.",
+          "Do not use it to recommend specific medical advice, treatments or referrals."
+        ],
+        "runtime_reuse_approved": false
+      },
+      "review_spans": [
+        {
+          "section": "A1C 설명",
+          "snapshot_text_lines": [
+            134,
+            135
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "현재 혈당을 보여 주는 혈당계",
+          "snapshot_text_lines": [
+            164,
+            165
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "측정 방법·횟수와 날짜·시간·음식·활동 기록",
+          "snapshot_text_lines": [
+            169,
+            169
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "식사 시작 기준 측정 시점",
+          "snapshot_text_lines": [
+            170,
+            175
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        }
+      ],
+      "excluded_from_draft": [
+        "personal blood glucose targets",
+        "drug or insulin changes",
+        "third-party images and linked publications"
+      ],
+      "snapshot": {
+        "id": "NIDDK_MANAGING",
+        "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+        "resolved_url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+        "retrieved_at_utc": "2026-10-22T06:44:31.863482+00:00",
+        "path": "data/references/chatbot_replacement_20261022/NIDDK_MANAGING.html",
+        "sha256": "43d83207ea91f336a20427cf2eb5c899d08c234e9996d1b513f8d92e6baf0354",
+        "bytes": 71462,
+        "text_path": "data/references/chatbot_replacement_20261022/NIDDK_MANAGING.txt",
+        "text_sha256": "804c249a87ae9cd36226411d1e12a81e1e916faa0df18fae13c7d722fab255cc"
+      }
+    },
+    {
+      "id": "R2",
+      "capture_id": "NIDDK_HEALTHY_LIVING",
+      "title": "Healthy Living with Diabetes",
+      "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+      "canonical_url": "https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes",
+      "kind": "official_health_education_web",
+      "source_last_reviewed": "2023-10",
+      "checked_on": "2026-10-22",
+      "reuse": {
+        "basis": "Same NIDDK policy as R1, applied to this page body separately",
+        "policy_capture_id": "NIDDK_REUSE_POLICY",
+        "policy_url": "https://www.niddk.nih.gov/copyright",
+        "assessment": "General activity education candidate. The text is not an individual exercise clearance or a detailed equipment-use manual.",
+        "conditions": [
+          "Same edited-content conditions and exceptions as R1.",
+          "Exclude the plate-method illustration credited to CDC, all images, logos and external linked material."
+        ],
+        "runtime_reuse_approved": false
+      },
+      "review_spans": [
+        {
+          "section": "새 활동 전 상담과 개인별 활동 고려",
+          "snapshot_text_lines": [
+            177,
+            182
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "유산소 활동",
+          "snapshot_text_lines": [
+            183,
+            184
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "근력·저항운동 예시",
+          "snapshot_text_lines": [
+            185,
+            186
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "활동 관련 저혈당 예방",
+          "snapshot_text_lines": [
+            195,
+            197
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        }
+      ],
+      "excluded_from_draft": [
+        "individual exercise duration, load or repetitions",
+        "insulin dose changes",
+        "stationary-bike setup and resistance-band instructions"
+      ],
+      "snapshot": {
+        "id": "NIDDK_HEALTHY_LIVING",
+        "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes",
+        "resolved_url": "https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes",
+        "retrieved_at_utc": "2026-10-22T06:44:31.863482+00:00",
+        "path": "data/references/chatbot_replacement_20261022/NIDDK_HEALTHY_LIVING.html",
+        "sha256": "57ce17e98272fc3f1be279354852be44c76c14270344ec7b75f21b7f5b85d873",
+        "bytes": 72002,
+        "text_path": "data/references/chatbot_replacement_20261022/NIDDK_HEALTHY_LIVING.txt",
+        "text_sha256": "9a8d295b97cfafca6b57a61a07ddbdf950a80c3c0d39f4acee39a891b1213dbc"
+      }
+    },
+    {
+      "id": "R3",
+      "capture_id": "KLAMMER_NUTRITION_2026",
+      "title": "Ernährungsempfehlungen für Menschen mit Diabetes (Update 2026)",
+      "english_title": "Nutrition recommendations for people with diabetes (Update 2026)",
+      "authors": "Klammer C, Schindler K, Bugl R, et al.",
+      "publisher": "Wiener klinische Wochenschrift / Springer Nature",
+      "citation": "Wien Klin Wochenschr 138 (Suppl 4), 122–141 (2026)",
+      "doi": "10.1007/s00508-025-02676-7",
+      "published_on": "2026-04-30",
+      "canonical_url": "https://link.springer.com/article/10.1007/s00508-025-02676-7",
+      "kind": "open_licensed_nutrition_recommendation",
+      "source_language": "de",
+      "checked_on": "2026-10-22",
+      "reuse": {
+        "basis": "Explicit Rights and permissions section in the article",
+        "licence": "CC-BY-4.0",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+        "rights_snapshot_text_lines": [
+          1211,
+          1214
+        ],
+        "conditions": [
+          "Credit authors and source; link to licence; indicate Korean summary/adaptation.",
+          "Respect separately credited third-party exclusions; no endorsement claim."
+        ],
+        "attribution": "Klammer et al. (2026), DOI: 10.1007/s00508-025-02676-7, CC BY 4.0. 이 프로젝트가 일반 교육용으로 한국어 요약·재구성했으며 원문과 차이가 있습니다.",
+        "runtime_reuse_approved": false
+      },
+      "review_spans": [
+        {
+          "section": "개별 영양 상담",
+          "snapshot_text_lines": [
+            53,
+            56
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "탄수화물과 식이섬유",
+          "snapshot_text_lines": [
+            94,
+            103
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "식품군: 통곡물·채소·과일·콩류·단백질 식품",
+          "snapshot_text_lines": [
+            141,
+            167
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "채소와 과일: 통과일·주스 차이",
+          "snapshot_text_lines": [
+            147,
+            152
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        }
+      ],
+      "excluded_from_draft": [
+        "insulin and drug adjustments",
+        "individual food-amount or energy prescriptions",
+        "German labelling rules as a substitute for Korean rules"
+      ],
+      "snapshot": {
+        "id": "KLAMMER_NUTRITION_2026",
+        "url": "https://link.springer.com/article/10.1007/s00508-025-02676-7",
+        "resolved_url": "https://link.springer.com/article/10.1007/s00508-025-02676-7",
+        "retrieved_at_utc": "2026-10-22T06:44:32.817252+00:00",
+        "path": "data/references/chatbot_replacement_20261022/KLAMMER_NUTRITION_2026.html",
+        "sha256": "0483b03715cd85945507641187cb6369ad75504c1fe69bee0ce3f80818aec272",
+        "bytes": 976023,
+        "text_path": "data/references/chatbot_replacement_20261022/KLAMMER_NUTRITION_2026.txt",
+        "text_sha256": "7f078c32678d234ef73cfbce3252a1ae6af33e01e1b9a9c7fb6cc383f0fc23a1"
+      }
+    },
+    {
+      "id": "R4",
+      "capture_id": "MFDS_LABEL_2025_60",
+      "title": "식품등의 표시기준",
+      "publisher": "식품의약품안전처",
+      "notice_number": "제2025-60호",
+      "notice_date": "2025-08-29",
+      "canonical_url": "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917",
+      "law_version_url": "https://www.law.go.kr/LSW/admRulLsInfoP.do?admRulSeq=2100000263558",
+      "kind": "korean_official_notice_normative_text",
+      "source_language": "ko",
+      "checked_on": "2026-10-22",
+      "version_note": "제2025-60호 원문에서 해당 표시기준을 확인하고 2026-09-11 식약처 설명과 대조. 제2026-37호(2028-01-01 시행 예정)를 이미 시행 중인 규정으로 사용하지 않음. 제품별 경과조치 판정은 범위 밖.",
+      "reuse": {
+        "basis": "저작권법 제7조제2호의 국가 고시 규범 본문. KOGL 또는 CC 라이선스로 표기하지 않음.",
+        "policy_capture_id": "KR_COPYRIGHT_ARTICLE_7",
+        "policy_url": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+        "conditions": [
+          "Use normative clauses as the source, not newsletter artwork or explanatory graphics.",
+          "Keep version, exact clause and date; do not infer a specific product is compliant."
+        ],
+        "runtime_reuse_approved": false
+      },
+      "review_spans": [
+        {
+          "section": "별지 1, 1. 아. 1): 영양성분 표시단위",
+          "snapshot_text_lines": [
+            1447,
+            1455
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "별지 1, 1. 아. 2)나)(3): 탄수화물과 당류 표시",
+          "snapshot_text_lines": [
+            1478,
+            1481
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "별지 1, 1. 아. 3)가): 일반기준과 당류 무 강조표시",
+          "snapshot_text_lines": [
+            1497,
+            1522
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        },
+        {
+          "section": "별지 1, 1. 아. 3)다): 무가당 표시 조건",
+          "snapshot_text_lines": [
+            1575,
+            1580
+          ],
+          "line_numbering": "one_based_in_saved_text"
+        }
+      ],
+      "excluded_from_draft": [
+        "newsletter image, layout and alternative text",
+        "product-specific regulatory determinations",
+        "nutrient values inferred from a marketing label alone"
+      ],
+      "snapshot": {
+        "id": "MFDS_LABEL_2025_60",
+        "url": "https://www.mfds.go.kr/brd/m_211/down.do?brd_id=data0005&seq=14917&data_tp=A&file_seq=1",
+        "resolved_url": "https://www.mfds.go.kr/brd/m_211/down.do?brd_id=data0005&seq=14917&data_tp=A&file_seq=1",
+        "retrieved_at_utc": "2026-10-22T06:44:32.262316+00:00",
+        "path": "data/references/chatbot_replacement_20261022/MFDS_LABEL_2025_60.hwpx",
+        "sha256": "9d12957432351a8a03ecc4551147171466a61091dc81bdc1d7919d49d399d395",
+        "bytes": 3062921,
+        "text_path": "data/references/chatbot_replacement_20261022/MFDS_LABEL_2025_60.txt",
+        "text_sha256": "0ddd648f2e27b1f583cfdc7111b83ef5c9fa4bb08f961db26541e545ee12ac95"
+      }
+    }
+  ],
+  "faq_map": [
+    {
+      "id": "B01",
+      "source_ids": [
+        "R1"
+      ],
+      "scope": "current glucose vs A1C",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "B02",
+      "source_ids": [
+        "R1"
+      ],
+      "scope": "measurement time from meal start",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "B03",
+      "source_ids": [
+        "R1"
+      ],
+      "scope": "date/time and contextual records",
+      "evidence_role": "medical_education_plus_product_limit"
+    },
+    {
+      "id": "B04",
+      "source_ids": [
+        "R1"
+      ],
+      "scope": "individual monitoring plan",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "N01",
+      "source_ids": [
+        "R3"
+      ],
+      "scope": "individual nutrition education and food groups",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "N02",
+      "source_ids": [
+        "R3"
+      ],
+      "scope": "carbohydrate quality, quantity and fibre",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "N03",
+      "source_ids": [
+        "R4"
+      ],
+      "scope": "Korean no-added-sugar vs sugar-free and nutrition label basis",
+      "evidence_role": "food_label_education"
+    },
+    {
+      "id": "N04",
+      "source_ids": [
+        "R3"
+      ],
+      "scope": "whole fruit vs juice",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "X01",
+      "source_ids": [
+        "R2"
+      ],
+      "scope": "walking and breaking activity into smaller parts",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "X02",
+      "source_ids": [
+        "R2"
+      ],
+      "scope": "wall pushups and arm raises",
+      "evidence_role": "medical_education_plus_product_limit"
+    },
+    {
+      "id": "X03",
+      "source_ids": [
+        "R2"
+      ],
+      "scope": "activity-related low blood glucose risk",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "X04",
+      "source_ids": [
+        "R2"
+      ],
+      "scope": "consultation before new activity",
+      "evidence_role": "medical_education"
+    },
+    {
+      "id": "X05",
+      "source_ids": [
+        "R2"
+      ],
+      "scope": "individuality is background; refusal belongs to this service",
+      "evidence_role": "product_limit_with_background_only"
+    }
+  ],
+  "example_map": [
+    {
+      "id": "MEAL-01",
+      "source_ids": [
+        "R3"
+      ]
+    },
+    {
+      "id": "MEAL-02",
+      "source_ids": [
+        "R3"
+      ]
+    },
+    {
+      "id": "MEAL-03",
+      "source_ids": [
+        "R3"
+      ]
+    },
+    {
+      "id": "EXERCISE-01",
+      "source_ids": [
+        "R2"
+      ]
+    },
+    {
+      "id": "EXERCISE-02",
+      "source_ids": [
+        "R2"
+      ]
+    },
+    {
+      "id": "EXERCISE-03",
+      "source_ids": [
+        "R2"
+      ]
+    }
+  ],
+  "supporting_captures": [
+    {
+      "id": "NIDDK_REUSE_POLICY",
+      "url": "https://www.niddk.nih.gov/copyright",
+      "resolved_url": "https://www.niddk.nih.gov/copyright",
+      "retrieved_at_utc": "2026-10-22T06:44:31.702338+00:00",
+      "path": "data/references/chatbot_replacement_20261022/NIDDK_REUSE_POLICY.html",
+      "sha256": "977bc7ff58fd3f8dc5059eaa6d2b535a44f6a296df9cd68d19202916a71c2126",
+      "bytes": 31766,
+      "text_path": "data/references/chatbot_replacement_20261022/NIDDK_REUSE_POLICY.txt",
+      "text_sha256": "ef3e76154b96cb4dd003bf1501bef468b754780a44d242a7d1a2fa0aa69175d2"
+    },
+    {
+      "id": "MFDS_LABEL_POST",
+      "url": "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917",
+      "resolved_url": "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917",
+      "retrieved_at_utc": "2026-10-22T06:44:32.318391+00:00",
+      "path": "data/references/chatbot_replacement_20261022/MFDS_LABEL_POST.html",
+      "sha256": "cc12f987f21119a5c0f50b503ffa81ce85ad5bd0da3d6e3988b1f1e1277c329c",
+      "bytes": 192095,
+      "text_path": "data/references/chatbot_replacement_20261022/MFDS_LABEL_POST.txt",
+      "text_sha256": "e26662c82a62e97f87f8d51f5bfd8540db589a8795229822580a2fba26d99b60"
+    },
+    {
+      "id": "KR_COPYRIGHT_ARTICLE_7",
+      "url": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+      "resolved_url": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+      "retrieved_at_utc": "2026-10-22T06:45:09.401788+00:00",
+      "path": "data/references/chatbot_replacement_20261022/KR_COPYRIGHT_ARTICLE_7.html",
+      "sha256": "dd0cc838dd6954013a725bb54f66ea301ac0d28fc636dc38dc6a29ac43e42b4a",
+      "bytes": 12955,
+      "text_path": "data/references/chatbot_replacement_20261022/KR_COPYRIGHT_ARTICLE_7.txt",
+      "text_sha256": "6b69e0a56dc1fd33202c461ad1c040c39902d66ea7bfcfaac9be5ede1365899e"
+    },
+    {
+      "id": "MFDS_NEWSLETTER_CROSSCHECK",
+      "url": "https://www.mfds.go.kr/brd/m_61/view.do?seq=54457",
+      "resolved_url": "https://www.mfds.go.kr/brd/m_61/view.do?seq=54457",
+      "retrieved_at_utc": "2026-10-22T06:44:33.066513+00:00",
+      "path": "data/references/chatbot_replacement_20261022/MFDS_NEWSLETTER_CROSSCHECK.html",
+      "sha256": "942b0d4dcebd5a0201d122967fb03bd8f06beac7b745ee829f20606ca59294b8",
+      "bytes": 188549,
+      "text_path": "data/references/chatbot_replacement_20261022/MFDS_NEWSLETTER_CROSSCHECK.txt",
+      "text_sha256": "120dd928b56d6138f400c5f3e90507b9507163f33c5f54ae9dd5ca3d70f8af43"
+    }
+  ],
+  "snapshot_handling": "Original captures are local and Git-ignored. Only curated draft text and source metadata are shared here. Captures are not a model prompt corpus.",
+  "runtime_integration": {
+    "bundle_path": "docs/research/chatbot_replacement_v1/knowledge.json",
+    "builder": "scripts/prepare_assistant_replacement.py",
+    "preview_only": true,
+    "clinical_or_public_approval_granted": false
+  }
+}

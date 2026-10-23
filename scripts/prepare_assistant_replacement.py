@@ -10,6 +10,7 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / 'docs/research/chatbot_replacement_v1'
 OUTPUT = FOLDER / 'knowledge.json'
+ENTRY_VERSIONS = {'B03': 2, 'N02': 2, 'N03': 3, 'X04': 2}
 KEYWORDS = {
     'B01': ['당화혈색소', '평균혈당', 'HbA1c'],
     'B02': ['식후2시간', '식후2h', '언제부터', '첫숟가락', '식사시작', '밥을다먹고'],
@@ -90,7 +91,7 @@ def build() -> dict:
                 '개인에게 시간·강도·거리·반복 횟수·소모 열량·약물 조정량을 정하지 않는다.',
             ]
         entry = {
-            'id': eid, 'version': 1, 'topic': 'basic' if eid == 'B01' else 'measurement' if eid.startswith('B') else 'meal' if eid.startswith('N') else 'exercise',
+            'id': eid, 'version': ENTRY_VERSIONS.get(eid, 1), 'topic': 'basic' if eid == 'B01' else 'measurement' if eid.startswith('B') else 'meal' if eid.startswith('N') else 'exercise',
             'language': 'ko-KR', 'title': title, 'summary': summary[1].strip(), 'keywords': KEYWORDS[eid],
             'evidence': [{'source_id': sid, 'section': LOCATORS[eid],
                           'role': 'background_only' if eid == 'X05' else 'label_basis' if eid == 'N03' else 'medical_basis'}
@@ -100,7 +101,7 @@ def build() -> dict:
         entry['content_sha256'] = content_hash(entry)
         entries.append(entry)
     return {
-        'schema_version': '2.0', 'bundle_version': 'replacement-v1-draft-1', 'authored_on': '2026-10-22',
+        'schema_version': '2.0', 'bundle_version': 'replacement-v1-draft-3', 'authored_on': '2026-10-22',
         'status': 'draft_connected_for_demo_preview',
         'approval': {'team_content_approved': False, 'medical_review_completed': False, 'source_reuse_review_completed': False},
         'policy': {'runtime_publishable': False}, 'sources': sources, 'knowledge_entries': entries,

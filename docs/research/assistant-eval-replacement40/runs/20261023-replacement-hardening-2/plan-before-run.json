@@ -1,0 +1,27 @@
+{
+  "written_at": "2026-10-23T00:36:13.429430+00:00",
+  "baseline_run_sha256": "8251a154fdf14ead2d10b8f0bbedc1d98df0a8cc6128ecd187553e3b605fbadc",
+  "run_output": "docs/research/assistant-eval-replacement40/runs/20261023-replacement-hardening-2",
+  "code_changes_allowed_during_run": false,
+  "suite_changes_allowed": false,
+  "change_scope": [
+    "Keep B03 causality limitation in summary and checks",
+    "When B03/N03 required facts are missing, replace incomplete generated text with actually cited summary",
+    "Keep no-sugar threshold and not-exactly-zero limitation",
+    "Retain carbohydrate fiber and pre-exercise activity-capability/prior-restriction conditions already required by frozen rubric"
+  ],
+  "unchanged_controls": [
+    "loaded model identity/quantization/context/parallel",
+    "temperature=0.1, max_tokens=512, reasoning_effort=none, response_format=text",
+    "retrieval keywords, source registry, approval flags",
+    "40 questions, expected outcomes, must/must_not",
+    "personal record calculations, access rules, safety routing"
+  ],
+  "preidentified_scope_changed": {
+    "P01": "Frozen must says records are entirely unconnected. Current widget has a separately consented 7-day fasting-summary button; free-chat cannot compare yesterday/today. Review honesty separately without changing frozen case.",
+    "P02": "Frozen must says aggregation is entirely unconnected. Current widget has a separately consented 7-day fasting-summary button. Review truthful button guidance and no fabricated numbers separately; not a record-summary API test."
+  },
+  "review_basis": "Read all final app responses against unchanged frozen criteria; separate source supplements and scope-changed cases. No clinical approval or judge model.",
+  "retry_policy": "No runner retries; existing app retry unchanged.",
+  "intermediate_run_sha256": "3f41476e6a4871a5404e519238c606f5f337f38db160f69734b6d361e4114207"
+}

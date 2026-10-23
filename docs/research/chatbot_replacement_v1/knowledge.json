@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "bundle_version": "replacement-v1-draft-1",
+  "bundle_version": "replacement-v1-draft-3",
   "authored_on": "2026-10-22",
   "status": "draft_connected_for_demo_preview",
   "approval": {
@@ -137,11 +137,11 @@
     },
     {
       "id": "B03",
-      "version": 1,
+      "version": 2,
       "topic": "measurement",
       "language": "ko-KR",
       "title": "혈당 수치 말고 측정 상황이나 메모는 왜 남겨?",
-      "summary": "혈당값에 날짜·시간과 당시 음식·활동 정보를 함께 남기면 의료진과 기록을 살펴볼 때 도움이 됩니다.",
+      "summary": "혈당값에 날짜·시간과 당시 음식·활동 정보를 함께 남기면 의료진과 기록을 살펴볼 때 도움이 됩니다. 다만 메모만으로 혈당 변화의 원인을 증명할 수는 없고, 실제 음식 섭취량도 확정할 수 없습니다.",
       "keywords": [
         "측정상황",
         "메모",
@@ -162,7 +162,7 @@
       "status": "draft",
       "approved_at": null,
       "review_due_at": null,
-      "content_sha256": "1f1e6b17659e053c5a9cb5ccb9eeeb250a2a3719b15e9b94e7da518ac37b10ef"
+      "content_sha256": "15cf9e54bf05b3e7a425276530b1e04b9fb0a3fe22ecde49b4d4262e59358159"
     },
     {
       "id": "B04",
@@ -224,7 +224,7 @@
     },
     {
       "id": "N02",
-      "version": 1,
+      "version": 2,
       "topic": "meal",
       "language": "ko-KR",
       "title": "탄수화물은 아예 안 먹는 게 좋아?",
@@ -250,15 +250,15 @@
       "status": "draft",
       "approved_at": null,
       "review_due_at": null,
-      "content_sha256": "d97f13a07c87fd2c2142c5408cfaf6e39a42f610ac2877e11f820660aeab02f0"
+      "content_sha256": "4cb20a716c4e984d4838c1e696fcac1112f23369fa6ed4bbc1c7d1d2dd1dd1e6"
     },
     {
       "id": "N03",
-      "version": 1,
+      "version": 3,
       "topic": "meal",
       "language": "ko-KR",
       "title": "무가당이면 당류가 없다는 뜻이야?",
-      "summary": "‘무가당’은 당류 등을 넣지 않는 제조·원재료 조건에 관한 표시라서, 완제품의 당류가 0이라는 뜻은 아닙니다. ‘무당’은 별도의 함량 기준으로, 식품 100g 또는 100mL당 당류 0.5g 미만이 기준입니다. 영양정보에서 당류·탄수화물·열량과 표시 기준량을 보고, 실제 먹는 양도 함께 확인하세요.",
+      "summary": "‘무가당’은 당류 등을 넣지 않는 제조·원재료 조건에 관한 표시라서, 완제품의 당류가 0이라는 뜻은 아닙니다. ‘무당’은 별도의 함량 기준으로, 식품 100g 또는 100mL당 당류 0.5g 미만이 기준이며 정확히 0을 보장하지는 않습니다. 영양정보에서 당류·탄수화물·열량과 표시 기준량을 보고, 실제 먹는 양도 함께 확인하세요.",
       "keywords": [
         "무가당",
         "무당",
@@ -277,12 +277,12 @@
         }
       ],
       "conditions": [
-        "‘무가당’의 전체 표시 요건이나 특정 제품의 적법성을 이 짧은 설명만으로 판정하지 않는다. ‘무당’ 역시 수학적으로 정확한 0을 보장하는 표현으로 설명하지 않는다. 표시 기준량과 실제 먹는 양을 확인하는 조건을 답변에 유지한다. 영양정보나 섭취량이 없으면 섭취 영양값과 혈당 반응을 추정하지 않는다."
+        "‘무가당’의 제조·원재료 조건과 ‘무당’의 별도 함량 기준을 구분해 설명한다. ‘무가당’의 전체 표시 요건이나 특정 제품의 적법성을 이 짧은 설명만으로 판정하지 않는다. ‘무당’ 역시 수학적으로 정확한 0을 보장하는 표현으로 설명하지 않는다. 표시 기준량과 실제 먹는 양을 확인하는 조건을 답변에 유지한다. 영양정보나 섭취량이 없으면 섭취 영양값과 혈당 반응을 추정하지 않는다."
       ],
       "status": "draft",
       "approved_at": null,
       "review_due_at": null,
-      "content_sha256": "73758d888dc83903f1cc036b28ec751ad8fb9680fcf5dd5a4f63e9023fbc2a2d"
+      "content_sha256": "c432a425b5967ae2d981c707133418e9f8d74940f317b897dd423bdb50b04be1"
     },
     {
       "id": "N04",
@@ -414,11 +414,11 @@
     },
     {
       "id": "X04",
-      "version": 1,
+      "version": 2,
       "topic": "exercise",
       "language": "ko-KR",
       "title": "새 운동을 시작하기 전에 뭘 확인해야 해?",
-      "summary": "새로운 활동이나 활동량 변경 전에는 의료진과 상의하세요. 자신의 활동 능력·복약·식사 계획과 건강상태에 맞는 활동인지 확인하는 것이 필요합니다.",
+      "summary": "새로운 활동이나 활동량 변경 전에는 의료진과 상의하세요. 자신의 활동 능력·복약·식사 계획과 건강상태에 맞는 활동인지 확인하는 것이 필요합니다. 현재 증상·평소 활동 수준·기존 운동 제한도 함께 고려하세요.",
       "keywords": [
         "운동시작",
         "운동시작전",
@@ -443,7 +443,7 @@
       "status": "draft",
       "approved_at": null,
       "review_due_at": null,
-      "content_sha256": "be07881debec9b08a02e89738078a1fa7686140c45c110867d49a34954b89ef1"
+      "content_sha256": "4d4c4e2e9c58a6cbee1e3f58321ccd25e48a3e2c700bd9ac4f9b75968f2d8373"
     },
     {
       "id": "X05",
@@ -482,7 +482,7 @@
     "builder": "scripts/prepare_assistant_replacement.py",
     "input_sha256": {
       "docs/research/chatbot_replacement_v1/SOURCES.json": "3cd0d5ae07aa9fb1f778e343432bb979d6186dfe8ea81c8ec4e0acff7c4cdf05",
-      "docs/research/chatbot_replacement_v1/FAQ_13.md": "44ec0316c3314f65bd677a2d90e9b4598ad037c4b39103d6c8789582c42de023"
+      "docs/research/chatbot_replacement_v1/FAQ_13.md": "6f8a96472dc5126bd832b797b53160effe06295162a3cb08437c2d40e1b0ebd0"
     }
   }
 }

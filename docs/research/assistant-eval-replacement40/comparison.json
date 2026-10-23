@@ -1,0 +1,76 @@
+{
+  "suite_sha256": "13f05acb68e6e7c5db5f491b857a916e8178cc5f5717335867a63510374419bd",
+  "model_or_sampling_settings_changed": false,
+  "same_question_regression_not_independent_validation": true,
+  "stages": [
+    {
+      "run": "20261023-replacement-baseline",
+      "run_sha256": "8251a154fdf14ead2d10b8f0bbedc1d98df0a8cc6128ecd187553e3b605fbadc",
+      "automatic_pass": 40,
+      "semantic_pass": 36,
+      "semantic_applicable": 38,
+      "scope_changed": [
+        "P01",
+        "P02"
+      ],
+      "failed": [
+        "B03",
+        "N02"
+      ],
+      "returned_model_answers": 16,
+      "source_supplemented_answers": 1,
+      "median_app_ms_model_answers": 833.0
+    },
+    {
+      "run": "20261023-replacement-hardening-1",
+      "run_sha256": "3f41476e6a4871a5404e519238c606f5f337f38db160f69734b6d361e4114207",
+      "automatic_pass": 40,
+      "semantic_pass": 35,
+      "semantic_applicable": 38,
+      "scope_changed": [
+        "P01",
+        "P02"
+      ],
+      "failed": [
+        "N01",
+        "N02",
+        "X04"
+      ],
+      "returned_model_answers": 15,
+      "source_supplemented_answers": 4,
+      "median_app_ms_model_answers": 788
+    },
+    {
+      "run": "20261023-replacement-hardening-2",
+      "run_sha256": "3ed26303628fcde503ae4228e7e4b846629e239d43209ac4b3ca25c021082acf",
+      "automatic_pass": 40,
+      "semantic_pass": 37,
+      "semantic_applicable": 38,
+      "scope_changed": [
+        "P01",
+        "P02"
+      ],
+      "failed": [
+        "N01"
+      ],
+      "returned_model_answers": 15,
+      "source_supplemented_answers": 2,
+      "median_app_ms_model_answers": 808
+    },
+    {
+      "run": "20261023-replacement-hardening-3",
+      "run_sha256": "543e5771e638216fc995c1cee91d04fd813f47b6e5bc273491b6ff412dcc483f",
+      "automatic_pass": 40,
+      "semantic_pass": 38,
+      "semantic_applicable": 38,
+      "scope_changed": [
+        "P01",
+        "P02"
+      ],
+      "failed": [],
+      "returned_model_answers": 15,
+      "source_supplemented_answers": 2,
+      "median_app_ms_model_answers": 830
+    }
+  ]
+}

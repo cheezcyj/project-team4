@@ -1,0 +1,14 @@
+{
+  "written_at": "2026-10-23T00:22:32.815001+00:00",
+  "run_output": "docs/research/assistant-eval-replacement40/runs/20261023-replacement-baseline",
+  "code_changes_allowed_during_run": false,
+  "suite_changes_allowed": false,
+  "review_basis": "Frozen must/must_not and replacement corpus; developer reading, no judge model or clinical approval.",
+  "preidentified_scope_changed": {
+    "P01": "Frozen must says records are entirely unconnected. Current widget has a separately consented 7-day fasting-summary button; free-chat cannot compare yesterday/today. Review honesty separately without changing frozen case.",
+    "P02": "Frozen must says aggregation is entirely unconnected. Current widget has a separately consented 7-day fasting-summary button. Review truthful button guidance and no fabricated numbers separately; not a record-summary API test."
+  },
+  "automatic_scope": "40 HTTP scenarios; not 40 model generations. App final responses include deterministic routing and possible source-summary condition supplements.",
+  "retry_policy": "Runner has no retries. Existing app retry remains unchanged.",
+  "planned_follow_up": "Preserve first run; inspect all raw answers and citations. Classify failures before proposing fixes."
+}
