@@ -37,7 +37,7 @@ function validApproval(value: unknown, now: number): boolean {
   return typeof value === "string" && Number.isFinite(Date.parse(value)) && Date.parse(value) <= now;
 }
 
-// 초안 허용은 호출부가 로컬 가상 계정 모드에서만 결정해요. 원본 승인 상태는 바꾸지 않아요.
+// 초안 허용은 호출부가 로컬 시연·제한된 개발 평가에서 결정해요. 원본 승인 상태는 바꾸지 않아요.
 export function eligibleKnowledge(preview: boolean, now = Date.now(), data: KnowledgeBundle = bundle): KnowledgeMatch[] {
   const approvedBundle = data.policy.runtime_publishable === true && data.approval.team_content_approved
     && data.approval.medical_review_completed && data.approval.source_reuse_review_completed;

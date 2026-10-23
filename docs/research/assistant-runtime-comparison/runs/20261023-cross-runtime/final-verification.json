@@ -1,0 +1,39 @@
+{
+  "knownSecretScanPassed": true,
+  "documentLinksExist": true,
+  "temporaryOllama11435Stopped": true,
+  "existingServicesAtFinalCheck": {
+    "userLlamaCpp11480": {
+      "unavailable": true,
+      "errorType": "URLError"
+    },
+    "originalOllama11434": {
+      "httpStatus": 200
+    },
+    "app3005": {
+      "httpStatus": 200
+    },
+    "lmStudio1234": {
+      "unavailable": true,
+      "errorType": "URLError"
+    }
+  },
+  "existingUserServersNotStoppedOrRestartedByAgent": true,
+  "originalOllama11434AtFinalCheck": {
+    "tagsModelCount": 0,
+    "psModelCount": 0
+  },
+  "appMode": "supabase",
+  "draftPreviewEnabled": false,
+  "appModelBaseUrl": "http://127.0.0.1:1234/v1",
+  "readmeAndMigrationsUnchanged": true,
+  "headUnchanged": "67f00fca3239a779a91bb8ebe3ba35706bea6523",
+  "nothingStaged": true,
+  "noModelBlobsInSharedArtifacts": true,
+  "newQuestionRequests": 24,
+  "newSuccessfulHttpResponses": 24,
+  "newValidAnswerEnvelopes": 24,
+  "automaticRetries": 0,
+  "emptyPromptPreloads": 1,
+  "success": true
+}

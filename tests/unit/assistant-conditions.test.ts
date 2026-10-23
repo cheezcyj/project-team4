@@ -54,3 +54,33 @@ test("long output uses complete cited source summaries, preserving conditions wi
   assert.equal(result.answer, `참고 자료 요약: ${match.entry.summary}`);
   assert.ok(result.answer.length <= 2000);
 });
+
+test("sugar-label answers retain the numerical threshold and both reference units", () => {
+  const matches = eligibleKnowledge(true);
+  const match = matches.find(item => item.entry.id === "N03")!;
+  const citations = match.citations.map(citation => citation.id);
+  const liveOmission = "'무가당'은 당류 등을 넣지 않는 제조나 원재료의 조건일 뿐, 완제품의 당류가 0이라는 의미는 아니에요. 당류가 0g인지 확인하려면 '무당'이라는 별도의 함량 기준을 확인해야 하는데, 이 경우에도 정확히 0을 보장하지는 않아요. 영양정보에서 당류, 탄수화물, 열량과 표시 기준량을 확인하시고, 실제로 드시는 양도 함께 고려해 보셔야 해요.";
+  const omissions = [liveOmission,
+    match.entry.summary.replace("식품 100g 또는 100mL당 당류 0.5g 미만", "별도의 함량 기준"),
+    match.entry.summary.replace("100g 또는 100mL당", "1회 제공량당"),
+    match.entry.summary.replace("100g 또는 100mL당", "100g당"),
+    match.entry.summary.replace("0.5g 미만", "0.5g 이하"),
+    match.entry.summary.replace("0.5g 미만", "10.5g 미만"),
+    match.entry.summary.replace("100g 또는 100mL", "1100g 또는 1100mL"),
+  ];
+  for (const answer of omissions) {
+    assert.deepEqual(supplementAnswer(answer, citations, matches),
+      { answer: `참고 자료 요약: ${match.entry.summary}`, sourceSupplemented: true });
+    assert.deepEqual(supplementAnswer(answer, ["B01:R1"], matches), { answer, sourceSupplemented: false });
+  }
+});
+
+test("complete sugar-label answers accept normalized spacing, unit case and full-width numbers", () => {
+  const matches = eligibleKnowledge(true);
+  const match = matches.find(item => item.entry.id === "N03")!;
+  const citations = match.citations.map(citation => citation.id);
+  for (const answer of [match.entry.summary,
+    match.entry.summary.replace("100g 또는 100mL당 당류 0.5g 미만", "１００ g 또는 １００ ML당 당류 ０．５ 그램 미만"),
+    match.entry.summary.replace("100g 또는 100mL당 당류 0.5g 미만", "100그램 또는 100밀리리터당 당류 0.5그램 미만"),
+  ]) assert.deepEqual(supplementAnswer(answer, citations, matches), { answer, sourceSupplemented: false });
+});

@@ -1,0 +1,16 @@
+{"scenario":"sequential","position":1,"id":"G02","status":200,"elapsedMs":24390,"validAnswerEnvelope":true,"error":null}
+{"scenario":"sequential","position":2,"id":"G01","status":200,"elapsedMs":329,"validAnswerEnvelope":true,"error":null}
+{"scenario":"sequential","position":3,"id":"G04","status":200,"elapsedMs":301,"validAnswerEnvelope":true,"error":null}
+{"scenario":"sequential","position":4,"id":"G03","status":200,"elapsedMs":530,"validAnswerEnvelope":true,"error":null}
+BATCH {"id":"sequential","successfulHttpResponses":4,"validAnswerEnvelopes":4,"engineErrors":0,"totalWallMs":25552,"maxClientInFlight":1,"allFourSentBeforeFirstResponse":false}
+{"scenario":"delay3s","position":1,"id":"G02","status":200,"elapsedMs":383,"validAnswerEnvelope":true,"error":null}
+{"scenario":"delay3s","position":2,"id":"G01","status":200,"elapsedMs":309,"validAnswerEnvelope":true,"error":null}
+{"scenario":"delay3s","position":3,"id":"G04","status":200,"elapsedMs":369,"validAnswerEnvelope":true,"error":null}
+{"scenario":"delay3s","position":4,"id":"G03","status":200,"elapsedMs":769,"validAnswerEnvelope":true,"error":null}
+BATCH {"id":"delay3s","successfulHttpResponses":4,"validAnswerEnvelopes":4,"engineErrors":0,"totalWallMs":10858,"maxClientInFlight":1,"allFourSentBeforeFirstResponse":false}
+{"scenario":"parallel4","position":2,"id":"G01","status":200,"elapsedMs":5939,"validAnswerEnvelope":true,"error":null}
+{"scenario":"parallel4","position":3,"id":"G04","status":200,"elapsedMs":5939,"validAnswerEnvelope":true,"error":null}
+{"scenario":"parallel4","position":1,"id":"G02","status":200,"elapsedMs":6126,"validAnswerEnvelope":true,"error":null}
+{"scenario":"parallel4","position":4,"id":"G03","status":200,"elapsedMs":6380,"validAnswerEnvelope":true,"error":null}
+BATCH {"id":"parallel4","successfulHttpResponses":4,"validAnswerEnvelopes":4,"engineErrors":0,"totalWallMs":6381,"maxClientInFlight":4,"allFourSentBeforeFirstResponse":true}
+{"output":"D:\\yeardreamschool6th\\teamproject1\\.local\\assistant-runtime-ollama11435-20261023-01","runtime":"ollama","model":"team4-gemma4-e4b-qat:comparison","slots":null,"httpAttempts":12,"retries":0,"metadataUnchanged":true,"successfulHttpResponses":12,"validAnswerEnvelopes":12}

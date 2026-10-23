@@ -1,0 +1,197 @@
+{
+  "wire": [
+    {
+      "type": "sent",
+      "scenario": "sequential",
+      "wireId": 1,
+      "perfMs": 106.5134,
+      "at": "2026-10-23T06:18:32.293Z",
+      "localPort": 59944
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "sequential",
+      "wireId": 1,
+      "perfMs": 24495.5323,
+      "at": "2026-10-23T06:18:56.682Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "sequential",
+      "wireId": 2,
+      "perfMs": 24498.0998,
+      "at": "2026-10-23T06:18:56.685Z",
+      "localPort": 58348
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "sequential",
+      "wireId": 2,
+      "perfMs": 24825.0765,
+      "at": "2026-10-23T06:18:57.012Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "sequential",
+      "wireId": 3,
+      "perfMs": 24825.8521,
+      "at": "2026-10-23T06:18:57.013Z",
+      "localPort": 59944
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "sequential",
+      "wireId": 3,
+      "perfMs": 25126.335,
+      "at": "2026-10-23T06:18:57.313Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "sequential",
+      "wireId": 4,
+      "perfMs": 25127.1909,
+      "at": "2026-10-23T06:18:57.314Z",
+      "localPort": 58348
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "sequential",
+      "wireId": 4,
+      "perfMs": 25656.9312,
+      "at": "2026-10-23T06:18:57.844Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "delay3s",
+      "wireId": 5,
+      "perfMs": 25658.6409,
+      "at": "2026-10-23T06:18:57.845Z",
+      "localPort": 59944
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "delay3s",
+      "wireId": 5,
+      "perfMs": 26040.7788,
+      "at": "2026-10-23T06:18:58.228Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "delay3s",
+      "wireId": 6,
+      "perfMs": 29047.4791,
+      "at": "2026-10-23T06:19:01.234Z",
+      "localPort": 59944
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "delay3s",
+      "wireId": 6,
+      "perfMs": 29355.9241,
+      "at": "2026-10-23T06:19:01.543Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "delay3s",
+      "wireId": 7,
+      "perfMs": 32366.0802,
+      "at": "2026-10-23T06:19:04.553Z",
+      "localPort": 59944
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "delay3s",
+      "wireId": 7,
+      "perfMs": 32734.3505,
+      "at": "2026-10-23T06:19:04.921Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "delay3s",
+      "wireId": 8,
+      "perfMs": 35747.9145,
+      "at": "2026-10-23T06:19:07.935Z",
+      "localPort": 59944
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "delay3s",
+      "wireId": 8,
+      "perfMs": 36516.4848,
+      "at": "2026-10-23T06:19:08.703Z",
+      "status": 200
+    },
+    {
+      "type": "sent",
+      "scenario": "parallel4",
+      "wireId": 9,
+      "perfMs": 36518.7122,
+      "at": "2026-10-23T06:19:08.705Z",
+      "localPort": 59944
+    },
+    {
+      "type": "sent",
+      "scenario": "parallel4",
+      "wireId": 10,
+      "perfMs": 36520.3235,
+      "at": "2026-10-23T06:19:08.707Z",
+      "localPort": 58387
+    },
+    {
+      "type": "sent",
+      "scenario": "parallel4",
+      "wireId": 11,
+      "perfMs": 36520.6224,
+      "at": "2026-10-23T06:19:08.707Z",
+      "localPort": 58388
+    },
+    {
+      "type": "sent",
+      "scenario": "parallel4",
+      "wireId": 12,
+      "perfMs": 36520.9127,
+      "at": "2026-10-23T06:19:08.708Z",
+      "localPort": 58389
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "parallel4",
+      "wireId": 10,
+      "perfMs": 42457.0246,
+      "at": "2026-10-23T06:19:14.644Z",
+      "status": 200
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "parallel4",
+      "wireId": 11,
+      "perfMs": 42457.6207,
+      "at": "2026-10-23T06:19:14.644Z",
+      "status": 200
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "parallel4",
+      "wireId": 9,
+      "perfMs": 42643.509,
+      "at": "2026-10-23T06:19:14.830Z",
+      "status": 200
+    },
+    {
+      "type": "responseHeaders",
+      "scenario": "parallel4",
+      "wireId": 12,
+      "perfMs": 42898.6261,
+      "at": "2026-10-23T06:19:15.085Z",
+      "status": 200
+    }
+  ],
+  "observerErrors": []
+}

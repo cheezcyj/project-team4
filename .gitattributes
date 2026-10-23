@@ -14,3 +14,12 @@ docs/research/assistant-eval-replacement40/runs/** -text -whitespace
 
 # Keep record-summary validation logs, JSON and source evidence byte-identical.
 docs/research/assistant-record-summary-validation/runs/** -text -whitespace
+
+# Keep email-confirmation validation evidence byte-identical.
+docs/research/auth-email-confirmation-validation/runs/** -text -whitespace
+
+# Keep hosted Supabase assistant evaluation captures byte-identical.
+docs/research/assistant-supabase-eval/runs/** -text -whitespace
+
+# Preserve model-runtime comparison evidence across platforms.
+docs/research/assistant-runtime-comparison/runs/** -text -whitespace

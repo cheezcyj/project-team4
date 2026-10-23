@@ -1,0 +1,23 @@
+{
+  "kind": "record_summary",
+  "answer": "2026-10-17 ~ 2026-10-23 (한국시간·오늘 현재까지) 공복 기록은 2건(1일)이에요. 측정 건수 기준 평균 125 mg/dL, 최솟값 110 mg/dL, 최댓값 140 mg/dL이에요. 공복 기록이 없는 6일은 계산에서 제외했으며, 평균은 소수 첫째 자리까지 반올림했어요. 저장된 값의 요약이며 정상 여부·호전 여부·변화 원인을 판단한 결과는 아니에요.",
+  "citations": [],
+  "draftPreview": false,
+  "recordSummary": {
+    "range": {
+      "start": "2026-10-16T15:00:00.000Z",
+      "end": "2026-10-23T15:00:00.000Z",
+      "label": "2026-10-17 ~ 2026-10-23"
+    },
+    "asOf": "2026-10-23T06:38:52.266Z",
+    "timezone": "Asia/Seoul",
+    "measurementContext": "fasting",
+    "unit": "mg/dL",
+    "count": 2,
+    "recordedDays": 1,
+    "missingDays": 6,
+    "average": 125,
+    "min": 110,
+    "max": 140
+  }
+}

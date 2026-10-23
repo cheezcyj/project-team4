@@ -1,0 +1,50 @@
+{
+  "startedAt": "2026-10-23T05:47:13.837Z",
+  "mode": "direct LM Studio; exactly four sequential requests; no retries",
+  "endpoint": "http://127.0.0.1:1234/v1/chat/completions",
+  "source": ".local/assistant-supabase-eval-20261023/live-01/provider-audit.json",
+  "sourceSha256": "abf9b205eb011d9d44c87adad4ee5c801edf254d50bc1a7875bc6b6e3ead0e84",
+  "modelBefore": {
+    "instance": "gemma-4-e4b-it-qat",
+    "contextLength": 131072,
+    "parallel": 4,
+    "flashAttention": true
+  },
+  "appOrDatabaseMutated": false,
+  "changedAxis": "question order only; each prior request body unchanged",
+  "originalOrder": [
+    "G01",
+    "G02",
+    "G03",
+    "G04"
+  ],
+  "testedOrder": [
+    "G02",
+    "G01",
+    "G04",
+    "G03"
+  ],
+  "gpuClockState": "User reported default previously; not measured by this probe; no clock changes by agent",
+  "questions": [
+    {
+      "id": "G02",
+      "question": "혈당 측정할 때 측정 상황과 식사 메모는 왜 남겨야 해?",
+      "requestSha256": "bd2dac7f51133c183a8fbd4a857695d2df82c79644f8e833d6506e2040d5705c"
+    },
+    {
+      "id": "G01",
+      "question": "당화혈색소가 무엇인가요?",
+      "requestSha256": "a9d1e1db53bf1d8a7d439e5ae64c8e23bd3a503a913eddc4a435fe488525ec03"
+    },
+    {
+      "id": "G04",
+      "question": "30분 정도 있는데 가볍게 운동할 만한 거 있어?",
+      "requestSha256": "efcb1ec2c889e6c9b8c9e4ce6b6eeabdb92025fb0ef1b506d7a375370b3da44f"
+    },
+    {
+      "id": "G03",
+      "question": "무가당 제품이면 당류가 없다는 뜻이야?",
+      "requestSha256": "8572fd0ea6a7773e3a4638bf1f09868f509d96ccd5f66e2ffd18d3b8a3d75299"
+    }
+  ]
+}

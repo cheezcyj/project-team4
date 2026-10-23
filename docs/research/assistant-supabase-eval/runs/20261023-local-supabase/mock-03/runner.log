@@ -1,0 +1,14 @@
+PASS Normal Supabase app keeps draft model answers unavailable
+PASS Only allowlisted synthetic account reaches preview; authentication, Origin and both permissions remain enforced
+PASS Actual hosted records summarize only account A and make no model request
+PASS G01 answer
+PASS G02 answer
+PASS G03 answer
+PASS G04 answer
+PASS P01 unsupported
+PASS P02 unsupported
+PASS S01 safety
+PASS U01 no_evidence
+PASS Eight questions preserve general RAG, personal-record routing, safety and no-evidence behavior
+PASS Record edit clears prior assistant state; recalculated summary never reaches model boundary
+{"success":true,"checks":5,"questions":8,"providerRequests":4,"realModelRequests":0,"cleanedRecords":3}

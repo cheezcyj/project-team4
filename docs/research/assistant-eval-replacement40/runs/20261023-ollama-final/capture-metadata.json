@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-23T07:13:12.759858+00:00",
+  "sourceTree": "Assistant-only staged working tree based on 67f00fc; pending auth work excluded. Exact source bytes are frozen in source-snapshot and runner-source.",
+  "noMedicalOrPublicationApproval": true,
+  "excluded": [
+    "environment files",
+    "test account file",
+    "cookies",
+    "authorization headers",
+    "full app/Ollama server logs",
+    "weights"
+  ],
+  "imagesUseSyntheticDataOnly": true,
+  "privateOriginal": ".local/assistant-finalization-20261023/",
+  "scopeExceptionsSameAsExistingReview": [
+    "P01",
+    "P02"
+  ]
+}

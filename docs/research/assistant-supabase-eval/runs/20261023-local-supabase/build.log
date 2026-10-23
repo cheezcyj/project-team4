@@ -1,0 +1,72 @@
+npm notice run team4-glucose-records@0.1.0 build
+npm notice run next build --webpack
+▲ Next.js 16.4.2 (webpack)
+- Environments: .env.local
+✓ Running next.config.ts took 14ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.9s
+  Running TypeScript ...
+
+  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+  	- include was updated to add '.local/assistant-supabase-eval-build/types/**/*.ts'
+  	- include was updated to add '.local/assistant-supabase-eval-build/dev/types/**/*.ts'
+
+  Finished TypeScript in 2.4s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/19) ...
+  Generating static pages using 15 workers (4/19) 
+  Generating static pages using 15 workers (9/19) 
+  Generating static pages using 15 workers (14/19) 
+✓ Generating static pages using 15 workers (19/19) in 760ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/account
+├ ƒ /api/assistant
+├ ƒ /api/assistant/records-summary
+├ ƒ /api/benefits
+├ ƒ /api/consent
+├ ƒ /api/foods
+├ ƒ /api/health
+├ ƒ /api/imports
+├ ƒ /api/login
+├ ƒ /api/logout
+├ ƒ /api/meals
+├ ƒ /api/meals/[id]
+├ ƒ /api/news
+├ ƒ /api/preferences
+├ ƒ /api/records
+├ ƒ /api/records/[id]
+├ ƒ /api/session
+├ ƒ /api/signup
+├ ƒ /auth/callback
+├ ○ /benefits
+├ ○ /calendar
+├ ○ /comparison
+├ ○ /consent
+├ ○ /dashboard
+├ ○ /foods
+├ ○ /imports
+├ ○ /login
+├ ○ /meals
+├ ƒ /meals/[id]/edit
+├ ○ /meals/new
+├ ○ /mypage
+├ ○ /news
+├ ○ /preferences
+├ ○ /records
+├ ƒ /records/[id]/edit
+├ ○ /records/new
+├ ○ /reports
+└ ○ /signup
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

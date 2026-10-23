@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-10-23T14:29:11.712679+09:00",
+  "baseCommit": "67f00fca3239a779a91bb8ebe3ba35706bea6523",
+  "workingTreeHadUncommittedChanges": true,
+  "modelBefore": {
+    "instance": "gemma-4-e4b-it-qat",
+    "contextLength": 131072,
+    "parallel": 4,
+    "flashAttention": true
+  },
+  "modelAfter": {
+    "instance": "gemma-4-e4b-it-qat",
+    "contextLength": 131072,
+    "parallel": 4,
+    "flashAttention": true
+  },
+  "sourceHashes": {
+    "src/app/api/assistant/route.ts": "6bf44b599a6885a6a0fb9a4a7d71820fcf68823e1d3df07598a028e1953cbc39",
+    "src/lib/assistant/preview.ts": "27805feb16545930efc64107d81cb04b44606ae5b3ab9885567785190a2659f4",
+    "src/lib/assistant/service.ts": "ac5efa7f5f9c713326e46ae60d414d66c7dea557b11e585e2d63f39b72ae0279",
+    "src/lib/assistant/knowledge.ts": "e0bdba7bc143943f1a40c4ca32302a67b0660a2aedbd5a33f57a97bea863ebc5",
+    "src/lib/assistant/model.ts": "c6b52a04f86facb093f0b1e0128b3fdce4ca524f7131f1ccc103675e3461b1aa",
+    "src/lib/assistant/record-summary.ts": "c5f8dd0cf8b1bb565087413b591f4f907e8bcfc2c29863d77205d4249a086a19",
+    "src/components/assistant/assistant-widget.tsx": "d95b8536e1f350c68fd55456681419d5634004ca393cd383cca2179dceb28321",
+    "scripts/evaluate-supabase-assistant.mjs": "3ef881fb17d5a6b53c9511d8ec03c234bace38b22106c8f1aa37a1b3c317c9e1",
+    "docs/research/chatbot_replacement_v1/knowledge.json": "2fe0ec8e766a480fdb90000c413a598b1b0e02beb82edf18de766ee3f74df8da"
+  },
+  "bundleVersion": "replacement-v1-draft-3",
+  "corpusPolicy": {
+    "runtime_publishable": false
+  },
+  "corpusApproval": {
+    "team_content_approved": false,
+    "medical_review_completed": false,
+    "source_reuse_review_completed": false
+  },
+  "sharedExclusions": [
+    ".env.local",
+    "test account credential file",
+    "cookies and authentication headers",
+    "original app-server logs with synthetic record UUIDs"
+  ],
+  "screenshotIdentity": "synthetic .invalid test account only",
+  "preExistingSignupWorkPreserved": true,
+  "generatedNextSettingsArchivedAndRestored": true
+}

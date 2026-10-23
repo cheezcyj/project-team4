@@ -1,0 +1,20 @@
+{
+  "ollama": {
+    "status": 200,
+    "response": {
+      "version": "0.40.9"
+    }
+  },
+  "app": {
+    "status": 200,
+    "response": {
+      "status": "ok"
+    }
+  },
+  "3006Closed": true,
+  "11481Closed": true,
+  "previousCaptureHashesVerified": 36,
+  "normalAppEnvironmentApprovalUnchanged": true,
+  "userConfirmedManualShutdownOfPreviousServers": true,
+  "verifiedAt": "2026-10-23T06:43:38.017649+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "restored": [
+    "tsconfig.json",
+    "next-env.d.ts",
+    "AGENTS.md moved into local evidence"
+  ],
+  "environmentKeysChanged": [
+    "ASSISTANT_MODEL",
+    "ASSISTANT_MODEL_BASE_URL"
+  ],
+  "normalDraftPreview": false,
+  "evaluationAllowlistEmpty": true,
+  "unrelatedPrivateSettingsPreserved": true
+}

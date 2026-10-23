@@ -1,0 +1,4 @@
+time=2026-10-23T15:09:25.055+09:00 level=INFO source=routes.go:2513 msg="Listening on 127.0.0.1:11434 (version 0.40.9)"
+llama_context: n_seq_max             = 1
+llama_context: n_ctx                 = 131072
+llama_context: flash_attn            = auto

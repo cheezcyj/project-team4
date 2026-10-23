@@ -1,0 +1,53 @@
+{
+  "startedAt": "2026-10-23T02:57:28.060Z",
+  "baseCommit": "67f00fca3239a779a91bb8ebe3ba35706bea6523",
+  "appMode": "supabase",
+  "authAndDatabase": "actual hosted Supabase; two pre-existing synthetic accounts",
+  "modelMode": "mock",
+  "approvalChanged": false,
+  "retriesByRunner": 0,
+  "sourceHashesBefore": {
+    "src/app/api/assistant/route.ts": "4a5108660d73bf4eb5265a9886544d1d2ba4998c6aa66288f8b2e30266472b22",
+    "src/lib/assistant/preview.ts": "e2485b9b529e0de5d99302f036435bfeb245b03df9f6868dfaeac55f61a376da",
+    "src/lib/assistant/service.ts": "ac5efa7f5f9c713326e46ae60d414d66c7dea557b11e585e2d63f39b72ae0279",
+    "src/lib/assistant/knowledge.ts": "e0bdba7bc143943f1a40c4ca32302a67b0660a2aedbd5a33f57a97bea863ebc5",
+    "src/lib/assistant/model.ts": "c6b52a04f86facb093f0b1e0128b3fdce4ca524f7131f1ccc103675e3461b1aa",
+    "src/lib/assistant/record-summary.ts": "c5f8dd0cf8b1bb565087413b591f4f907e8bcfc2c29863d77205d4249a086a19",
+    "src/components/assistant/assistant-widget.tsx": "d95b8536e1f350c68fd55456681419d5634004ca393cd383cca2179dceb28321",
+    "scripts/evaluate-supabase-assistant.mjs": "3ef881fb17d5a6b53c9511d8ec03c234bace38b22106c8f1aa37a1b3c317c9e1",
+    "docs/research/chatbot_replacement_v1/knowledge.json": "2fe0ec8e766a480fdb90000c413a598b1b0e02beb82edf18de766ee3f74df8da"
+  },
+  "checks": [
+    {
+      "name": "Normal Supabase app keeps draft model answers unavailable",
+      "pass": true
+    }
+  ],
+  "questions": [],
+  "cleanup": [],
+  "success": false,
+  "modelBefore": {
+    "mock": true
+  },
+  "failure": {
+    "type": "AssertionError",
+    "message": "Allowlisted account preview must be available\n\nfalse !== true\n"
+  },
+  "finishedAt": "2026-10-23T02:57:34.252Z",
+  "sourceHashesAfter": {
+    "src/app/api/assistant/route.ts": "4a5108660d73bf4eb5265a9886544d1d2ba4998c6aa66288f8b2e30266472b22",
+    "src/lib/assistant/preview.ts": "e2485b9b529e0de5d99302f036435bfeb245b03df9f6868dfaeac55f61a376da",
+    "src/lib/assistant/service.ts": "ac5efa7f5f9c713326e46ae60d414d66c7dea557b11e585e2d63f39b72ae0279",
+    "src/lib/assistant/knowledge.ts": "e0bdba7bc143943f1a40c4ca32302a67b0660a2aedbd5a33f57a97bea863ebc5",
+    "src/lib/assistant/model.ts": "c6b52a04f86facb093f0b1e0128b3fdce4ca524f7131f1ccc103675e3461b1aa",
+    "src/lib/assistant/record-summary.ts": "c5f8dd0cf8b1bb565087413b591f4f907e8bcfc2c29863d77205d4249a086a19",
+    "src/components/assistant/assistant-widget.tsx": "d95b8536e1f350c68fd55456681419d5634004ca393cd383cca2179dceb28321",
+    "scripts/evaluate-supabase-assistant.mjs": "3ef881fb17d5a6b53c9511d8ec03c234bace38b22106c8f1aa37a1b3c317c9e1",
+    "docs/research/chatbot_replacement_v1/knowledge.json": "2fe0ec8e766a480fdb90000c413a598b1b0e02beb82edf18de766ee3f74df8da"
+  },
+  "sourcesUnchanged": true,
+  "modelAfter": {
+    "mock": true
+  },
+  "modelMetadataUnchanged": true
+}

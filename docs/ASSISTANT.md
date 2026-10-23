@@ -14,13 +14,17 @@
 
 ## 자료의 승인 상태
 
-새 대체 자료집도 `runtime_publishable=false`와 초안 상태다. 자료 교체를 의료 내용·팀·공개 서비스 승인으로 기록하지 않았다. 기본 설정과 Supabase 모드에서는 이 자료로 답변하지 않는다.
+새 대체 자료집도 `runtime_publishable=false`와 초안 상태다. 자료 교체를 의료 내용·팀·공개 서비스 승인으로 기록하지 않았다. 기본 설정과 프로덕션 Supabase 모드에서는 이 자료로 답변하지 않는다.
 
-로컬 시연의 `ASSISTANT_ALLOW_DRAFT_PREVIEW=1`은 개발 중 검색·연결을 확인하는 선택이다. `APP_MODE=demo`에서만 적용되고 화면에 미리보기임을 표시한다. 실제 서비스 승인을 대신하지 않는다.
+로컬 시연의 `ASSISTANT_ALLOW_DRAFT_PREVIEW=1`은 개발 중 검색·연결을 확인하는 선택이다. `APP_MODE=demo` 또는 별도로 제한한 로컬 Supabase 개발 평가에서 적용되며 화면에 미리보기임을 표시한다. Supabase 평가는 개발 모드·loopback 요청·현재 서비스 동의·서버 허용 목록·`.invalid` 가상 계정을 모두 요구한다. 프로덕션에는 적용되지 않으며 실제 서비스 승인을 대신하지 않는다. [평가 실행 방법](ASSISTANT_SUPABASE_EVAL.md)과 [실제 Auth·DB·모델 평가 결과](research/assistant-supabase-eval/REPORT.md)를 참고한다.
 
 운영 검색에는 자료집 게시 허용·내용/출처 검토, 문항의 승인일·유효한 재검토 기한, 출처의 재사용 허용 및 내용 해시가 필요하다. 원본 JSON을 변경해 승인 절차를 건너뛰지 않는다.
 
 ## 이 PC에서 연결하기
+
+현재 이 PC는 Ollama 기본 서버 `127.0.0.1:11434`와 로컬 등록 모델 `team4-gemma4-e4b-qat:latest`를 사용한다. [Ollama 등록·연결 안내](ASSISTANT_OLLAMA.md)에 기존 GGUF 가져오기, 환경 설정과 실제 평가 방법을 정리했다. 아래 예시는 다른 호환 서버에도 적용하는 일반 연결 방법이며, 뒤의 LM Studio·11480 기록은 당시 실행 결과다.
+
+[최종 Ollama 검증](research/assistant-eval-replacement40/OLLAMA_REPORT.md)은 무가당의 세부 기준 누락 보완, 고정 40문항, 모델 언로드 후 첫 요청, 실제 Supabase·팀 시연을 포함한다. [팀 실행 안내](ASSISTANT_TEAM_SETUP.md)에 현재 지원 범위와 초안 자료 상태를 정리했다.
 
 별도로 실행한 모델 서버가 `POST /v1/chat/completions`를 지원해야 한다. `ASSISTANT_MODEL_RESPONSE_FORMAT`은 기본 `json_object`이며 이 옵션을 거부하는 LM Studio에서는 `text`를 사용한다. 두 설정 모두 모델에게 JSON 답변을 요구하고 서버에서 JSON·출처 ID를 엄격하게 검증한다. 앱은 모델을 다운로드하거나 GPU에 로드하지 않는다. 현재 연결부는 loopback 주소만 허용한다.
 

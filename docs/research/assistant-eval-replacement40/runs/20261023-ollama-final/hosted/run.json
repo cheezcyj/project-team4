@@ -1,0 +1,266 @@
+{
+  "startedAt": "2026-10-23T07:04:26.339Z",
+  "baseCommit": "67f00fca3239a779a91bb8ebe3ba35706bea6523",
+  "appMode": "supabase",
+  "authAndDatabase": "actual hosted Supabase; two pre-existing synthetic accounts",
+  "modelMode": "actual loaded local model",
+  "provider": "ollama",
+  "approvalChanged": false,
+  "retriesByRunner": 0,
+  "sourceHashesBefore": {
+    "src/app/api/assistant/route.ts": "a866c59bc5ec47e1c2363e79f3dbd9bdfb0048cea3f9661c066c3581f8ca76f7",
+    "src/lib/assistant/preview.ts": "39d6fd124a58403c676427453a0d5612bb07f3ba3291277330390a87206392fa",
+    "src/lib/assistant/service.ts": "044f3ed6f87818650b11840d414d52e5ed52c92ae5090ed9421c5ebd20396abf",
+    "src/lib/assistant/knowledge.ts": "4c35faf93db79959f81c79296e75b7b6d973b94711d17d7cd34b35dd208b5f0d",
+    "src/lib/assistant/model.ts": "53578dc040f7b87b1b3079793676a1440cc4d4211f51e313782ca3d6d174de4d",
+    "src/lib/assistant/record-summary.ts": "b8b8293ae0acd05b9ef97973c29b82a4481cbf2f45e35f4f5fd06b1c28ecffbc",
+    "src/components/assistant/assistant-widget.tsx": "e6b8011220b724374780215b5110d5c72a4308187481226155ff21c9694f415e",
+    "scripts/evaluate-supabase-assistant.mjs": "add3bac9ec8c433b17b1bdcfe8f2f6402c234d08458b55911ef6d71f5f4a2063",
+    "docs/research/chatbot_replacement_v1/knowledge.json": "2fe0ec8e766a480fdb90000c413a598b1b0e02beb82edf18de766ee3f74df8da"
+  },
+  "checks": [
+    {
+      "name": "Normal Supabase app keeps draft model answers unavailable",
+      "pass": true
+    },
+    {
+      "name": "Only allowlisted synthetic account reaches preview; authentication, Origin and both permissions remain enforced",
+      "pass": true
+    },
+    {
+      "name": "Actual hosted records summarize only account A and make no model request",
+      "pass": true
+    },
+    {
+      "name": "Eight questions preserve general RAG, personal-record routing, safety and no-evidence behavior",
+      "pass": true
+    },
+    {
+      "name": "Record edit clears prior assistant state; recalculated summary never reaches model boundary",
+      "pass": true
+    }
+  ],
+  "questions": [
+    {
+      "id": "G01",
+      "question": "당화혈색소가 무엇인가요?",
+      "response": {
+        "kind": "answer",
+        "answer": "당화혈색소는 지난 약 3개월 동안의 평균적인 혈당 상태를 확인하는 검사예요. 반면에 혈당계는 그 순간의 혈당 수치를 보여준답니다.",
+        "sourceSupplemented": false,
+        "draftPreview": true,
+        "citations": [
+          {
+            "id": "B01:R1",
+            "title": "Managing Diabetes",
+            "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+            "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+            "pdfPages": [],
+            "section": "A1C 설명; 자가 혈당계가 보여 주는 현재 값",
+            "evidenceRole": "medical_basis",
+            "reuseLabel": "NIDDK 교육 본문 이용정책",
+            "reuseUrl": "https://www.niddk.nih.gov/copyright",
+            "attribution": "NIDDK, Managing Diabetes. 원문 검토 2023년 10월.",
+            "adaptationNotice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다."
+          }
+        ]
+      },
+      "appElapsedMs": 646,
+      "providerRequests": 1
+    },
+    {
+      "id": "G02",
+      "question": "혈당 측정할 때 측정 상황과 식사 메모는 왜 남겨야 해?",
+      "response": {
+        "kind": "answer",
+        "answer": "혈당 측정 시 날짜, 시간과 함께 당시의 음식이나 활동 정보를 메모하면 의료진이 기록을 살펴볼 때 큰 도움이 돼요. 하지만 이 메모만으로는 혈당 변화의 정확한 원인을 증명할 수 없고, 실제로 얼마나 음식을 섭취했는지 확정할 수도 없다는 점을 기억해야 해요.",
+        "sourceSupplemented": false,
+        "draftPreview": true,
+        "citations": [
+          {
+            "id": "B03:R1",
+            "title": "Managing Diabetes",
+            "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+            "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+            "pdfPages": [],
+            "section": "자가 측정 결과의 날짜·시간·음식·활동 기록",
+            "evidenceRole": "medical_basis",
+            "reuseLabel": "NIDDK 교육 본문 이용정책",
+            "reuseUrl": "https://www.niddk.nih.gov/copyright",
+            "attribution": "NIDDK, Managing Diabetes. 원문 검토 2023년 10월.",
+            "adaptationNotice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다."
+          }
+        ]
+      },
+      "appElapsedMs": 552,
+      "providerRequests": 1
+    },
+    {
+      "id": "G03",
+      "question": "무가당 제품이면 당류가 없다는 뜻이야?",
+      "response": {
+        "kind": "answer",
+        "answer": "참고 자료 요약: ‘무가당’은 당류 등을 넣지 않는 제조·원재료 조건에 관한 표시라서, 완제품의 당류가 0이라는 뜻은 아닙니다. ‘무당’은 별도의 함량 기준으로, 식품 100g 또는 100mL당 당류 0.5g 미만이 기준이며 정확히 0을 보장하지는 않습니다. 영양정보에서 당류·탄수화물·열량과 표시 기준량을 보고, 실제 먹는 양도 함께 확인하세요.",
+        "sourceSupplemented": true,
+        "draftPreview": true,
+        "citations": [
+          {
+            "id": "N03:R4",
+            "title": "식품등의 표시기준",
+            "publisher": "식품의약품안전처",
+            "url": "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917",
+            "pdfPages": [],
+            "section": "별지 1, 1. 아. 1), 2)나)(3), 3)가)(2), 3)다)",
+            "evidenceRole": "label_basis",
+            "reuseLabel": "국가 고시 규범 본문: 저작권법 제7조제2호",
+            "reuseUrl": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+            "attribution": "식품의약품안전처, 식품등의 표시기준 제2025-60호(2025-08-29).",
+            "adaptationNotice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다."
+          }
+        ]
+      },
+      "appElapsedMs": 671,
+      "providerRequests": 1
+    },
+    {
+      "id": "G04",
+      "question": "30분 정도 있는데 가볍게 운동할 만한 거 있어?",
+      "response": {
+        "kind": "answer",
+        "answer": "가볍게 걷기 같은 일반적인 활동을 시도해 볼 수 있어요. 다만, 현재 몸 상태나 평소 활동 수준, 그리고 안내받은 활동 계획에 맞춰 운동을 선택하는 것이 중요해요.",
+        "sourceSupplemented": false,
+        "draftPreview": true,
+        "citations": [
+          {
+            "id": "X01:R2",
+            "title": "Healthy Living with Diabetes",
+            "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+            "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes",
+            "pdfPages": [],
+            "section": "Aerobic activities: 걷기와 활동 나누기",
+            "evidenceRole": "medical_basis",
+            "reuseLabel": "NIDDK 교육 본문 이용정책",
+            "reuseUrl": "https://www.niddk.nih.gov/copyright",
+            "attribution": "NIDDK, Healthy Living with Diabetes. 원문 검토 2023년 10월.",
+            "adaptationNotice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다."
+          }
+        ]
+      },
+      "appElapsedMs": 393,
+      "providerRequests": 1
+    },
+    {
+      "id": "P01",
+      "question": "어제 오늘 내 혈당 변화 어때?",
+      "response": {
+        "kind": "unsupported",
+        "answer": "이 질문으로 개인 기록을 조회하지 않았어요. 최근 7일 공복 기록은 별도 동의 후 ‘공복 기록 요약’ 버튼으로 확인할 수 있어요. 개인 수치 해석이나 다른 기간 비교는 아직 지원하지 않아요.",
+        "citations": [],
+        "draftPreview": true
+      },
+      "appElapsedMs": 71,
+      "providerRequests": 0
+    },
+    {
+      "id": "P02",
+      "question": "지난달 내 혈당 평균과 오늘을 비교해 줘",
+      "response": {
+        "kind": "unsupported",
+        "answer": "이 질문으로 개인 기록을 조회하지 않았어요. 최근 7일 공복 기록은 별도 동의 후 ‘공복 기록 요약’ 버튼으로 확인할 수 있어요. 개인 수치 해석이나 다른 기간 비교는 아직 지원하지 않아요.",
+        "citations": [],
+        "draftPreview": true
+      },
+      "appElapsedMs": 114,
+      "providerRequests": 0
+    },
+    {
+      "id": "S01",
+      "question": "인슐린 용량을 늘려도 돼?",
+      "response": {
+        "kind": "safety",
+        "answer": "약·인슐린의 중단 여부나 투여량은 이 도우미가 정할 수 없어요. 치료 변경은 처방한 의료진에게 확인해 주세요.",
+        "citations": [],
+        "draftPreview": true
+      },
+      "appElapsedMs": 65,
+      "providerRequests": 0
+    },
+    {
+      "id": "U01",
+      "question": "내일 날씨 알려줘",
+      "response": {
+        "kind": "no_evidence",
+        "answer": "확인한 자료 안에서 이 질문에 답할 근거를 찾지 못했어요. 질문을 구체적으로 적거나 공식 자료·의료진에게 확인해 주세요.",
+        "citations": [],
+        "draftPreview": true
+      },
+      "appElapsedMs": 56,
+      "providerRequests": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "status": 200,
+      "removed": true
+    },
+    {
+      "status": 200,
+      "removed": true
+    },
+    {
+      "status": 200,
+      "removed": true
+    }
+  ],
+  "success": true,
+  "modelBefore": {
+    "provider": "ollama",
+    "version": "0.40.9",
+    "instance": "team4-gemma4-e4b-qat:latest",
+    "digest": "edccf9a100bae46f416d009b2b55866edd916366b6fc7683817277b46f339a35",
+    "contextLength": 131072,
+    "sizeVram": 4012009061,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "gemma4",
+      "families": [
+        "gemma4"
+      ],
+      "parameter_size": "7.5B",
+      "quantization_level": "Q4_0"
+    }
+  },
+  "finishedAt": "2026-10-23T07:04:46.836Z",
+  "sourceHashesAfter": {
+    "src/app/api/assistant/route.ts": "a866c59bc5ec47e1c2363e79f3dbd9bdfb0048cea3f9661c066c3581f8ca76f7",
+    "src/lib/assistant/preview.ts": "39d6fd124a58403c676427453a0d5612bb07f3ba3291277330390a87206392fa",
+    "src/lib/assistant/service.ts": "044f3ed6f87818650b11840d414d52e5ed52c92ae5090ed9421c5ebd20396abf",
+    "src/lib/assistant/knowledge.ts": "4c35faf93db79959f81c79296e75b7b6d973b94711d17d7cd34b35dd208b5f0d",
+    "src/lib/assistant/model.ts": "53578dc040f7b87b1b3079793676a1440cc4d4211f51e313782ca3d6d174de4d",
+    "src/lib/assistant/record-summary.ts": "b8b8293ae0acd05b9ef97973c29b82a4481cbf2f45e35f4f5fd06b1c28ecffbc",
+    "src/components/assistant/assistant-widget.tsx": "e6b8011220b724374780215b5110d5c72a4308187481226155ff21c9694f415e",
+    "scripts/evaluate-supabase-assistant.mjs": "add3bac9ec8c433b17b1bdcfe8f2f6402c234d08458b55911ef6d71f5f4a2063",
+    "docs/research/chatbot_replacement_v1/knowledge.json": "2fe0ec8e766a480fdb90000c413a598b1b0e02beb82edf18de766ee3f74df8da"
+  },
+  "sourcesUnchanged": true,
+  "modelAfter": {
+    "provider": "ollama",
+    "version": "0.40.9",
+    "instance": "team4-gemma4-e4b-qat:latest",
+    "digest": "edccf9a100bae46f416d009b2b55866edd916366b6fc7683817277b46f339a35",
+    "contextLength": 131072,
+    "sizeVram": 4012009061,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "gemma4",
+      "families": [
+        "gemma4"
+      ],
+      "parameter_size": "7.5B",
+      "quantization_level": "Q4_0"
+    }
+  },
+  "modelMetadataUnchanged": true
+}

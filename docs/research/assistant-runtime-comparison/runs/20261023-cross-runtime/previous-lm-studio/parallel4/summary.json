@@ -1,0 +1,165 @@
+{
+  "startedAt": "2026-10-23T06:00:24.421Z",
+  "mode": "direct LM Studio; exactly four concurrent requests released from one barrier; no retries",
+  "endpoint": "http://127.0.0.1:1234/v1/chat/completions",
+  "source": ".local/assistant-supabase-eval-20261023/live-01/provider-audit.json",
+  "sourceSha256": "abf9b205eb011d9d44c87adad4ee5c801edf254d50bc1a7875bc6b6e3ead0e84",
+  "modelBefore": {
+    "instance": "gemma-4-e4b-it-qat",
+    "contextLength": 131072,
+    "parallel": 4,
+    "flashAttention": true
+  },
+  "appOrDatabaseMutated": false,
+  "changedAxis": "four concurrent requests instead of sequential; same request bodies, launch order and default fetch connection policy",
+  "controlPath": ".local/assistant-engine-probe-reordered-2026-10-23T05-47-13-836Z/summary.json",
+  "requestedConcurrency": 4,
+  "delayAfterResponseMs": 0,
+  "originalOrder": [
+    "G01",
+    "G02",
+    "G03",
+    "G04"
+  ],
+  "testedOrder": [
+    "G02",
+    "G01",
+    "G04",
+    "G03"
+  ],
+  "gpuClockState": "User reported default previously; not measured by this probe; no clock changes by agent",
+  "questions": [
+    {
+      "id": "G02",
+      "question": "혈당 측정할 때 측정 상황과 식사 메모는 왜 남겨야 해?",
+      "requestSha256": "bd2dac7f51133c183a8fbd4a857695d2df82c79644f8e833d6506e2040d5705c"
+    },
+    {
+      "id": "G01",
+      "question": "당화혈색소가 무엇인가요?",
+      "requestSha256": "a9d1e1db53bf1d8a7d439e5ae64c8e23bd3a503a913eddc4a435fe488525ec03"
+    },
+    {
+      "id": "G04",
+      "question": "30분 정도 있는데 가볍게 운동할 만한 거 있어?",
+      "requestSha256": "efcb1ec2c889e6c9b8c9e4ce6b6eeabdb92025fb0ef1b506d7a375370b3da44f"
+    },
+    {
+      "id": "G03",
+      "question": "무가당 제품이면 당류가 없다는 뜻이야?",
+      "requestSha256": "8572fd0ea6a7773e3a4638bf1f09868f509d96ccd5f66e2ffd18d3b8a3d75299"
+    }
+  ],
+  "finishedAt": "2026-10-23T06:00:26.552Z",
+  "httpAttempts": 4,
+  "retries": 0,
+  "overlap": {
+    "maxClientInFlight": 4,
+    "completionOrder": [
+      "G04",
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "launchSpreadMs": 1.2836999999999819,
+    "wireSendSpreadMs": 4.501000000000005,
+    "totalBatchMs": 2129.0557,
+    "allFourSentBeforeFirstResponse": true,
+    "uniqueClientConnections": 4,
+    "boundary": "HTTP requests overlap verified; inference-engine slot allocation is not directly observed"
+  },
+  "observerErrors": [],
+  "successfulHttpResponses": 4,
+  "validAnswerEnvelopes": 4,
+  "engineErrors": 0,
+  "results": [
+    {
+      "position": 1,
+      "id": "G02",
+      "question": "혈당 측정할 때 측정 상황과 식사 메모는 왜 남겨야 해?",
+      "startedAt": "2026-10-23T06:00:24.422Z",
+      "httpAttempts": 1,
+      "startOffsetMs": 0.11129999999999995,
+      "responseHeadersAt": "2026-10-23T06:00:26.270Z",
+      "status": 200,
+      "finishReason": "stop",
+      "answer": "혈당값에 날짜, 시간과 당시 드신 음식이나 활동 정보를 함께 남기면 의료진이 기록을 살펴볼 때 큰 도움이 돼요. 하지만 메모만으로는 혈당 변화의 정확한 원인을 증명할 수 없고, 실제로 얼마나 드셨는지 확정하기는 어렵다는 점을 기억해 주세요.",
+      "citationIds": [
+        "B03:R1"
+      ],
+      "validAnswerEnvelope": true,
+      "finishOffsetMs": 1847.5395999999998,
+      "elapsedMs": 1847,
+      "finishedAt": "2026-10-23T06:00:26.270Z",
+      "completionPosition": 3
+    },
+    {
+      "position": 2,
+      "id": "G01",
+      "question": "당화혈색소가 무엇인가요?",
+      "startedAt": "2026-10-23T06:00:24.423Z",
+      "httpAttempts": 1,
+      "startOffsetMs": 0.9137999999999806,
+      "responseHeadersAt": "2026-10-23T06:00:26.203Z",
+      "status": 200,
+      "finishReason": "stop",
+      "answer": "혈당계는 지금 측정된 순간의 혈당을 알려주지만, 당화혈색소는 지난 약 3개월 동안의 평균적인 혈당 상태를 확인하는 검사예요. 이 두 수치는 보여주는 시점과 기간이 다르답니다.",
+      "citationIds": [
+        "B01:R1"
+      ],
+      "validAnswerEnvelope": true,
+      "finishOffsetMs": 1780.9292,
+      "elapsedMs": 1780,
+      "finishedAt": "2026-10-23T06:00:26.203Z",
+      "completionPosition": 2
+    },
+    {
+      "position": 3,
+      "id": "G04",
+      "question": "30분 정도 있는데 가볍게 운동할 만한 거 있어?",
+      "startedAt": "2026-10-23T06:00:24.423Z",
+      "httpAttempts": 1,
+      "startOffsetMs": 1.1766999999999825,
+      "responseHeadersAt": "2026-10-23T06:00:25.947Z",
+      "status": 200,
+      "finishReason": "stop",
+      "answer": "가볍게 걷기를 일반적인 활동 예시로 고려해 볼 수 있어요. 다만, 현재 몸 상태나 평소 활동 수준, 그리고 안내받은 활동 계획에 맞추어 운동을 선택하는 것이 중요해요.",
+      "citationIds": [
+        "X01:R2"
+      ],
+      "validAnswerEnvelope": true,
+      "finishOffsetMs": 1525.4495,
+      "elapsedMs": 1524,
+      "finishedAt": "2026-10-23T06:00:25.948Z",
+      "completionPosition": 1
+    },
+    {
+      "position": 4,
+      "id": "G03",
+      "question": "무가당 제품이면 당류가 없다는 뜻이야?",
+      "startedAt": "2026-10-23T06:00:24.424Z",
+      "httpAttempts": 1,
+      "startOffsetMs": 1.3949999999999818,
+      "responseHeadersAt": "2026-10-23T06:00:26.551Z",
+      "status": 200,
+      "finishReason": "stop",
+      "answer": "‘무가당’은 당류 등을 넣지 않는 제조·원재료 조건일 뿐, 완제품의 당류가 0이라는 뜻은 아니에요. 만약 당류 함량이 0에 가까운 것을 확인하고 싶다면 ‘무당’ 표시를 확인해 보셔야 하는데, 이 경우에도 정확히 0을 보장하지는 않아요. 영양정보에서 당류와 탄수화물, 열량 및 표시 기준량을 꼭 확인하시고 실제 드시는 양도 함께 고려해 주세요.",
+      "citationIds": [
+        "N03:R4"
+      ],
+      "validAnswerEnvelope": true,
+      "finishOffsetMs": 2129.167,
+      "elapsedMs": 2128,
+      "finishedAt": "2026-10-23T06:00:26.551Z",
+      "completionPosition": 4
+    }
+  ],
+  "modelAfter": {
+    "instance": "gemma-4-e4b-it-qat",
+    "contextLength": 131072,
+    "parallel": 4,
+    "flashAttention": true
+  },
+  "modelMetadataUnchanged": true,
+  "lmStudioLoggedEngineErrors": 0
+}

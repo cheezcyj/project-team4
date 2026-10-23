@@ -1,0 +1,16 @@
+{
+  "normalAppMode": "supabase",
+  "normalDraftPreviewEnabled": false,
+  "recordsMutatedByAudit": false,
+  "bothSyntheticAccountsHaveZeroRecentFastingRecords": true,
+  "normalAppDraftBlockedAndSummaryAvailable": true,
+  "sharedTextContainsNoKnownCredentialsOrSyntheticIdentifiers": true,
+  "screenshotsContainOnlySyntheticAccountIdentity": "visually reviewed previously; images excluded from text scan",
+  "relativeDocumentLinksExist": 23,
+  "readmeMigrationsAndHeadUnchanged": true,
+  "generatedSettingsRestored": true,
+  "nothingStaged": true,
+  "temporaryAppProxyAndRegressionServerStopped": true,
+  "corpusApprovalUnchanged": true,
+  "success": true
+}

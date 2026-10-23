@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-10-23T15:25:56.264263+09:00",
+  "reportSha256": "7897df473206b6c7c58ff51703f75f7eb609fe6017b764bebaa19d4c098df12c",
+  "comparisonSha256": "cf6828869c7c0d3c9e11e6f8fe9e299d9f9c8f5266511e173a309f7c478acfc9",
+  "excluded": [
+    ".env.local",
+    "credential files",
+    "cookies and authentication headers",
+    "full Ollama server log",
+    "imported multi-GB model blobs"
+  ],
+  "allNewRequestBodiesCheckedAgainstOriginal": true
+}
