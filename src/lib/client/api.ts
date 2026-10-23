@@ -13,6 +13,16 @@ function invalidateRecordSummary() {
     channel.postMessage({ type: "changed" }); channel.close();
   }
 }
+// 기록을 바꾼 탭과 같은 계정의 다른 탭에서 목록·그래프도 다시 조회해요.
+export function subscribeRecordChanges(onChange: () => void): () => void {
+  window.addEventListener("glucose-records-changed", onChange);
+  const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("glucose-records") : null;
+  if (channel) channel.onmessage = onChange;
+  return () => {
+    window.removeEventListener("glucose-records-changed", onChange);
+    channel?.close();
+  };
+}
 export async function api<T>(url: string, init?: RequestInit): Promise<T> {
   // 응답이 끊겨도 서버에는 저장됐을 수 있어요. 결과를 모르면 자동 재전송하지 않아요.
   const controller = new AbortController();

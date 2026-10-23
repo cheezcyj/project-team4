@@ -1,0 +1,18 @@
+{
+  "sha256": {
+    "build.log": "75a5dafbf807ea266831de9d3c0ca6148f4fb03640bf95ad72bc89be34d117f9",
+    "client-api-source.txt": "fbe4c8f772c2167b9e1f1cdd402f65a0ef62e109be498d5704cf5fa11607a8b9",
+    "e2e.log": "a7fca3283caf6a93bda57deaf993977b12e53444167d25bb0e83289d2b345be1",
+    "lint.log": "8d509e57fd62e60acc471c80032153f12f648db2ca9e1f0c2fca774620a98f25",
+    "stale-before.log": "42598aca17e5f298b4fb30a89034174709d7876024f1a0776025a1c1e2508697",
+    "summary-after-edit-360.png": "245837e59f63a943f643f176b8d9a3a013da27359d5bfb2c005afe859a15c5cf",
+    "summary-after-final-delete-360.png": "e246ed9d64b6aa63fc3663d25829b2735ea7531b9080ed22e9fbb7e856940fbd",
+    "summary-mutations.json": "7f78d236d176681e5883ae01fc3f40da42dc78217656dadf992b4ae6e15edf60",
+    "test-source.txt": "540f1d3790e823686c2647704cd50e7a5fb3d18bc0fe5a81558a86b6b167fdcc",
+    "typecheck.log": "90bc55e2deeaee3cb5a95e0b5904f4be6f871475c75f882d6269f0d5591b7786",
+    "unit.log": "1be945342a5cbe10a3dbbf8a72a3fc60a30e887d9fea06dcfdeb4b0b0c489028",
+    "use-period-data-source.txt": "814ee13df9ef06835d2026ac7d776e69f591e0dff64a58b4f2bf2fbe856dad21",
+    "use-records-source.txt": "6c9e5b02cbde7710e0145301cdc92df8295a12ff5562367af29c2cdf0d502594",
+    "verification.json": "61b47db25ed26a62d43235e92808c6a1db55a2d8472e4e2b6776ad9e558af6cc"
+  }
+}

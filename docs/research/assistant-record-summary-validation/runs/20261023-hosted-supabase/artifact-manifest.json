@@ -1,0 +1,77 @@
+[
+  {
+    "file": "dev-stability-webpack.json",
+    "bytes": 79,
+    "sha256": "3ecc578e321bb6c00444e44d4c1a04f6e2eaa54c2704e3518000de823442dd66"
+  },
+  {
+    "file": "dev-stability.json",
+    "bytes": 7637,
+    "sha256": "47bff1c24000d1009d0f01cba68274f4bceb8e2d211ebffb1ec42c717c879412"
+  },
+  {
+    "file": "hosted-summary-after-edit-360.png",
+    "bytes": 99524,
+    "sha256": "840a2404345d6eecfb37ac7212b797b7ffde9ac706e3de425e143d1792c5db53"
+  },
+  {
+    "file": "hosted-summary-empty-360.png",
+    "bytes": 70030,
+    "sha256": "0bd1b9633cfae72b47643edd0ca2f8198a4fa2fecddd9d59452a365e866e7592"
+  },
+  {
+    "file": "hosted-validation-initial.json",
+    "bytes": 1540,
+    "sha256": "09752e09532185a5f744445521c1530a0ca65b5a72f7b960a92d4b29a0f64977"
+  },
+  {
+    "file": "hosted-validation-webpack-initial.json",
+    "bytes": 1922,
+    "sha256": "4e82db485fdc4cc141fc79af20890b6244ffc42aa6d4447900b55ddf2a772cbe"
+  },
+  {
+    "file": "hosted-validation-webpack-initial.log",
+    "bytes": 359,
+    "sha256": "731c08b942a688b68590bb6a412f3a62301fb29a3be0334559f49420861105d8"
+  },
+  {
+    "file": "hosted-validation-webpack.log",
+    "bytes": 503,
+    "sha256": "5b6d12c4136d391f9184ad8a375458886f33f534f1d3e01f98cb82c315f19518"
+  },
+  {
+    "file": "hosted-validation.json",
+    "bytes": 1868,
+    "sha256": "14a09a1ee8b1a7e0648a499a31d358f609089d7d03c6da5a48e3ddac21c7cc14"
+  },
+  {
+    "file": "inspect-seeds.sql",
+    "bytes": 394,
+    "sha256": "21828f095dde0fa26d7affcf5be30813d02a063cf8ba2cf14edac7af2173bdd6"
+  },
+  {
+    "file": "inspect-test-project.sql",
+    "bytes": 1394,
+    "sha256": "f1073df91af6f251e40726d6c7402e902bc5717109fa9e9a946fe2c0b037aeb1"
+  },
+  {
+    "file": "schema-results.txt",
+    "bytes": 378,
+    "sha256": "9371c3a262925b7cb9fbebde51c014638821a7773ccec94ed7258bd241f2892e"
+  },
+  {
+    "file": "site-url-check.json",
+    "bytes": 592,
+    "sha256": "e35f92403c25f25c034045c8e2bc2b879ec7fa9bef639bb974c37df47864c9d5"
+  },
+  {
+    "file": "test-source.mjs",
+    "bytes": 10786,
+    "sha256": "a1ff539a878ff0866d0ea206956fff1a1b5cf6618cc1f19df464563d7ce6cd8b"
+  },
+  {
+    "file": "verification.json",
+    "bytes": 4248,
+    "sha256": "af98a4fbe80b98c752b61812a1119554af8b9d423ee0778f088ff3eae73d2cfc"
+  }
+]

@@ -1,0 +1,23 @@
+npm notice run team4-glucose-records@0.1.0 npx
+npm notice run playwright test --config playwright.summary.config.ts --output .local/playwright-summary-sync-20261023 --reporter=line
+
+[WebServer] npm notice run team4-glucose-records@0.1.0 start:demo
+[WebServer] npm notice run node scripts/run-demo.mjs --production
+
+
+[WebServer] (node:26404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+
+(node:30412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/6] tests\e2e\assistant-records.spec.ts:29:5 › real summary API enforces authentication, same origin, service consent, explicit record consent and strict scope
+[2/6] tests\e2e\assistant-records.spec.ts:50:5 › real storage and screen show only own fasting measurements, exact statistics and record provenance without a model
+[3/6] tests\e2e\assistant-records.spec.ts:81:5 › withdrawing record permission aborts a pending request and discards a late result
+[4/6] tests\e2e\assistant-records.spec.ts:101:5 › a record change in another tab invalidates the displayed summary and clears permission
+[5/6] tests\e2e\assistant-records.spec.ts:117:5 › logout in another tab removes a personal summary and record permission
+[6/6] tests\e2e\assistant-records.spec.ts:130:5 › editing, reclassifying and deleting records invalidate summaries and recompute exact results
+  6 passed (14.8s)

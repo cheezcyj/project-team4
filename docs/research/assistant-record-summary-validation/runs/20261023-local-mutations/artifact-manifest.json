@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "config-source.txt": "eb5897166f05464bb753894abfcfd28c0c16117a48413f248a116bed2d4b2e26",
+    "db.log": "0a6d631ea287ebafea4abf2712568cb4054c4f8c683d6a9c61fe9ede0ba97ec4",
+    "e2e.log": "a0ad21e51814a2de5ca60120699fbb2f3baa1de763e61d5987dc4378a4f5c85d",
+    "lint.log": "8d509e57fd62e60acc471c80032153f12f648db2ca9e1f0c2fca774620a98f25",
+    "summary-after-edit-360.png": "f519b2d089bf8876535461ad11b444d3e007ffb4ebf38fdf25c1a6d79f4fd3de",
+    "summary-after-final-delete-360.png": "b8fa40f30c6297bcc00ce94a990107682c17fcd34bf15accb1e08297687f63b7",
+    "summary-mutations.json": "ea2eaf0c7b01cd620616048e2826398aeea4c900a1590f200506acfdc11ceb62",
+    "test-source.txt": "4c77807c828249aee7f0d9819101fbdbec4cf4f4afa982800f547a2a24e2fa2d",
+    "typecheck.log": "90bc55e2deeaee3cb5a95e0b5904f4be6f871475c75f882d6269f0d5591b7786",
+    "verification.json": "9a3ba135fa4389740748338717c1e37c134aead8642a4cf1eb6b44f96c2bc80f"
+  }
+}

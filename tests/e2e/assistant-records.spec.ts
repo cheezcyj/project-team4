@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { writeFile } from "node:fs/promises";
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import { recentRange, seoulDay } from "../../src/lib/domain";
 
@@ -18,9 +19,11 @@ async function login(page: Page) {
   await expect(page.getByRole("checkbox", { name: recordLabel, exact: true })).toBeVisible();
 }
 async function add(request: APIRequestContext, value: number, measured_at: string, measurement_context = "fasting") {
-  const response = await request.post("/api/records", { headers, data: { id: randomUUID(), glucose_mg_dl: value, measured_at,
+  const id = randomUUID();
+  const response = await request.post("/api/records", { headers, data: { id, glucose_mg_dl: value, measured_at,
     measurement_context, meal_memo: "PRIVATE_SYNTHETIC_MEMO" } });
   expect(response.status()).toBe(201);
+  return id;
 }
 
 test("real summary API enforces authentication, same origin, service consent, explicit record consent and strict scope", async ({ request }) => {
@@ -122,4 +125,84 @@ test("logout in another tab removes a personal summary and record permission", a
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(0);
   await expect(page.getByRole("checkbox", { name: recordLabel, exact: true })).toHaveCount(0);
+});
+
+test("editing, reclassifying and deleting records invalidate summaries and recompute exact results", async ({ page, context }, info) => {
+  test.setTimeout(60_000);
+  await apiLogin(page.request); await agree(page.request);
+  // The configuration starts a new synthetic file, so only this fixture's A records are removed.
+  const range = recentRange();
+  const rows = await (await page.request.get(`/api/records?start=${seoulDay(range.start)}&end=${seoulDay()}`)).json();
+  for (const row of rows.records) expect((await page.request.delete(`/api/records/${row.id}`, { headers })).status()).toBe(200);
+  const measuredAt = new Date(Date.now() - 60_000).toISOString();
+  const first = await add(page.request, 110, measuredAt);
+  const second = await add(page.request, 130, measuredAt);
+  await page.goto("/dashboard"); await page.setViewportSize({ width: 360, height: 800 });
+  const panel = page.getByRole("dialog", { name: "이어드림 도우미", exact: true });
+  const answer = page.getByRole("region", { name: "도우미 답변" });
+  const evidence: unknown[] = [];
+  async function refresh(step: string, expected: { count: number; average: number | null; min: number | null; max: number | null }) {
+    await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+    const permission = page.getByRole("checkbox", { name: recordLabel, exact: true });
+    await expect(permission).not.toBeChecked();
+    await expect(answer).toHaveCount(0);
+    await permission.check();
+    const received = page.waitForResponse(r => r.url().endsWith(endpoint) && r.request().method() === "POST");
+    await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click();
+    const response = await received;
+    expect(response.status()).toBe(200);
+    const result = await response.json();
+    expect(result.recordSummary).toMatchObject(expected);
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_SYNTHETIC_MEMO");
+    await expect(answer).toContainText(expected.average === null ? "계산하지 않았어요" : `평균 ${expected.average}`);
+    evidence.push({ step, expected, actual: result.recordSummary });
+  }
+  async function invalidated() {
+    await expect(panel).not.toBeVisible();
+    await expect(answer).toHaveCount(0);
+  }
+  const other = await context.newPage();
+  const journal = await context.newPage(); await journal.goto("/records");
+  const journalRegion = journal.getByRole("region", { name: "통합 일지", exact: true });
+  const dashboardRows = page.getByRole("table", { name: /그래프와 같은 최근 7일 기록/ }).locator("tbody tr");
+  await refresh("initial", { count: 2, average: 120, min: 110, max: 130 });
+  await other.goto(`/records/${second}/edit`);
+  await other.getByLabel("혈당값", { exact: false }).fill("140");
+  await other.getByRole("button", { name: "수정 저장", exact: true }).click();
+  await expect(other).toHaveURL(/\/records\?date=/);
+  await invalidated();
+  await expect(dashboardRows.filter({ hasText: /140\s*mg\/dL/ })).toHaveCount(1);
+  await expect(dashboardRows.filter({ hasText: /130\s*mg\/dL/ })).toHaveCount(0);
+  await expect(journalRegion.getByRole("row").filter({ hasText: /140\s*mg\/dL/ })).toHaveCount(1);
+  await refresh("value edited", { count: 2, average: 125, min: 110, max: 140 });
+  await page.screenshot({ path: info.outputPath("summary-after-edit-360.png"), fullPage: true });
+  await other.goto(`/records/${second}/edit`);
+  await other.getByRole("radio", { name: "식전", exact: true }).check();
+  await other.getByRole("button", { name: "수정 저장", exact: true }).click();
+  await expect(other).toHaveURL(/\/records\?date=/);
+  await invalidated();
+  await expect(dashboardRows.filter({ hasText: /140\s*mg\/dL/ })).toContainText("식전");
+  await expect(journalRegion.getByRole("row").filter({ hasText: /140\s*mg\/dL/ })).toContainText("식전");
+  await refresh("reclassified as before_meal", { count: 1, average: 110, min: 110, max: 110 });
+  for (const [id, step, expected] of [
+    [second, "non-fasting record deleted", { count: 1, average: 110, min: 110, max: 110 }],
+    [first, "last fasting record deleted", { count: 0, average: null, min: null, max: null }],
+  ] as const) {
+    await other.goto(`/records/${id}/edit`);
+    await other.getByRole("button", { name: "기록 삭제", exact: true }).click();
+    await other.getByRole("dialog", { name: "이 기록을 삭제할까요?", exact: true })
+      .getByRole("button", { name: "기록 삭제", exact: true }).click();
+    await expect(other).toHaveURL(/\/records\?date=/);
+    await invalidated();
+    await expect(dashboardRows.filter({ hasText: /140\s*mg\/dL/ })).toHaveCount(0);
+    await expect(journalRegion.getByRole("row").filter({ hasText: /140\s*mg\/dL/ })).toHaveCount(0);
+    await refresh(step, expected);
+  }
+  await expect(page.getByRole("heading", { name: "최근 7일에 남긴 기록이 없어요.", exact: true })).toBeVisible();
+  await expect(answer).toContainText("미기록일을 혈당 0으로 처리하지 않아요");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: info.outputPath("summary-after-final-delete-360.png"), fullPage: true });
+  const evidencePath = info.outputPath("summary-mutations.json");
+  await writeFile(evidencePath, JSON.stringify(evidence, null, 2) + "\n", "utf8");
+  await info.attach("summary-mutations.json", { path: evidencePath, contentType: "application/json" });
 });

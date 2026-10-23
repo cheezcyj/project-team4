@@ -1,0 +1,85 @@
+npm notice run team4-glucose-records@0.1.0 test:db
+npm notice run node supabase/tests/run-db-tests.mjs && node supabase/tests/account-deletion.mjs
+Database SQL tests: PostgreSQL 18.6 (PGlite 0.5.10) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.5 (1db513782be24469589d7cb8a1f1834e9a33f271), 32-bit
+Environment: isolated PGlite; Auth identities are SQL fixtures.
+ok - both app tables enforce RLS
+ok - trigger helpers are invokers with empty search_path
+ok - consent update and delete have no grants
+ok - generated timestamp columns have no client write grants
+ok - anonymous consent read denied
+ok - anonymous consent insert denied
+ok - anonymous consent update denied
+ok - anonymous consent delete denied
+ok - anonymous record read denied
+ok - anonymous record insert denied
+ok - anonymous record update denied
+ok - anonymous record delete denied
+ok - authenticated role without user identity reads nothing
+ok - missing user identity cannot consent
+ok - A cannot read old-policy consent belonging to D
+ok - A cannot insert B consent
+ok - client cannot consent to a different policy version
+ok - client cannot supply agreed_at
+ok - A cannot create a record before consent
+ok - A reads its own first consent with server timestamp
+ok - repeat consent insert cannot overwrite first agreement
+ok - user cannot alter consent
+ok - user cannot delete consent
+ok - A sees two own records and none from C or D
+ok - insert trims memo and generates both timestamps
+ok - Unicode whitespace-only memo is NULL
+ok - equal measured times remain separate records
+ok - A cannot insert a record for B
+ok - client cannot forge record creation time
+ok - client cannot change record ID
+ok - client cannot change record owner
+ok - client cannot change creation time
+ok - client cannot forge update time
+ok - zero glucose rejected
+ok - negative glucose rejected
+ok - fractional integer text rejected
+ok - integer overflow rejected
+ok - missing glucose rejected
+ok - unknown measurement context rejected
+ok - infinite timestamp rejected
+ok - 501 Korean codepoints rejected
+ok - 501 emoji codepoints rejected
+ok - integer max and 500 emoji codepoints accepted
+ok - 500 codepoints preserved with server update timestamp
+ok - minimum positive integer accepted
+ok - empty memo is normalized on update
+ok - B cannot read A records by direct table query
+ok - B cannot read A record by known ID
+ok - B cannot update any foreign record
+ok - B cannot delete any foreign record
+ok - B can create and read its own record
+ok - B can update its own record
+ok - B can delete its own record
+ok - no-consent user can read existing own record
+ok - no-consent user cannot update existing record
+ok - no-consent user cannot insert record
+ok - no-consent user can delete own record
+ok - old-policy user can read own consent status
+ok - old-policy user can read existing own record
+ok - old-policy user cannot update existing record
+ok - old-policy user cannot insert record
+ok - old consent cannot be silently replaced with a new row
+ok - old-policy user can delete own record
+ok - trigger also preserves ID for privileged updates
+ok - trigger also preserves owner for privileged updates
+ok - trigger also preserves creation time for privileged updates
+ok - trigger overwrites privileged update timestamp with database time
+ok - foreign-account mutations left both A records intact
+ok - administrative test account deletion cascades to both app tables
+ok - deleting A account preserves B consent
+PASS: 70 SQL assertions; all test fixtures rolled back.
+Not covered: hosted Supabase Auth, JWT validation, PostgREST, HTTP pagination or cloud deployment.
+PASS: 62 non-AI SQL checks in isolated PGlite; meals, snapshots, stale writes, ownership, preferences, imports and account cascades.
+ok - anonymous cannot call deletion
+ok - missing identity denied
+ok - non-password authentication denied
+ok - old password authentication denied
+ok - unrelated or nonexistent session denied
+ok - another user's session cannot delete caller
+ok - refreshing an old session does not satisfy reauthentication
+PASS: 18 deletion checks; own account, records, meals, settings, imports, consent and sessions removed; other account and shared catalogs preserved.

@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-10-23T00:52:44.855009+00:00",
+  "base_commit": "92b8ce0cc181660749ea893d9e16693f21a4698d",
+  "uncommitted_changes": "E2E scenario and documentation; product runtime unchanged",
+  "build_id": "SQMvi52oc3B62EhWXnuPq",
+  "browser": "installed Chrome via Playwright",
+  "e2e_passed": 6,
+  "sql_checks": {
+    "base_rls": 70,
+    "non_ai": 62,
+    "account_deletion": 18
+  },
+  "data_backend": "loopback demo API with unique synthetic file; SQL checks run separately in isolated PGlite",
+  "late_response_case": "one browser cancellation scenario uses a mocked late response",
+  "actual_supabase_auth_postgrest_e2e": "not run; team environment runs on another PC",
+  "model_inference_performed": false,
+  "evidence_output": ".local/playwright-summary-next-20261023-evidence"
+}

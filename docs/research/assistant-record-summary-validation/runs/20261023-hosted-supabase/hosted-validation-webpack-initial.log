@@ -1,0 +1,5 @@
+PASS Supabase mode and anonymous summary rejection
+PASS Two hosted Auth logins and SSR cookies; initial service-consent negative checks retained
+PASS Request permission, injected owner and foreign Origin rejection
+PASS Hosted record creation and app-level account separation
+PASS Direct PostgREST RLS blocks cross-account read, update, delete and insert

@@ -11,3 +11,6 @@ docs/research/chatbot_replacement_v1/SOURCES.json -text -whitespace
 docs/research/chatbot_replacement_v1/knowledge.json -text -whitespace
 docs/research/assistant-eval-replacement40/cases.json -text -whitespace
 docs/research/assistant-eval-replacement40/runs/** -text -whitespace
+
+# Keep record-summary validation logs, JSON and source evidence byte-identical.
+docs/research/assistant-record-summary-validation/runs/** -text -whitespace

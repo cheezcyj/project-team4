@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-23",
+  "scope": "real hosted Supabase Auth/JWT/PostgREST and local Next dev app",
+  "success": false,
+  "modelInferenceRun": false,
+  "appSourceModified": false,
+  "results": [
+    {
+      "name": "Supabase mode and anonymous summary rejection",
+      "result": "pass"
+    },
+    {
+      "name": "Two hosted Auth logins, SSR cookies and service consent",
+      "result": "pass"
+    },
+    {
+      "name": "Request permission, injected owner and foreign Origin rejection",
+      "result": "pass"
+    },
+    {
+      "name": "Hosted record creation and app-level account separation",
+      "result": "pass"
+    },
+    {
+      "name": "Direct PostgREST RLS blocks cross-account read, update, delete and insert",
+      "result": "pass"
+    },
+    {
+      "name": "validation stopped",
+      "result": "fail",
+      "message": "expect(locator).not.toBeChecked() failed\n\nLocator: getByRole('checkbox', { name: '이번 요약을 위해 본인의 최근 7일 공복 기록 조회에 동의합니다.', exact: true })\nExpected: not checked\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"not toBeChecked\" getByRole('checkbox', { name: '이번 요약을 위해 본인의 최근 7일 공복 기록 조회에 동의합니다.', exact: true }) with timeout 5000ms\n  - waiting for getByRole('checkbox', { name: '이번 요약을 위해 본인의 최근 7일 공복 기록 조회에 동의합니다.', exact: true })\n"
+    }
+  ],
+  "summaries": [],
+  "cleanupStatuses": [
+    200,
+    200,
+    200
+  ]
+}

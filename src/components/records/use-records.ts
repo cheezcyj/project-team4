@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GlucoseRecord } from "@/lib/domain";
-import { api, errorMessage } from "@/lib/client/api";
+import { api, errorMessage, subscribeRecordChanges } from "@/lib/client/api";
 import { useAppSession } from "@/components/auth/app-gate";
 export type RecordsResponse = {
   records: GlucoseRecord[];
@@ -33,11 +33,12 @@ export function useRecords(date?: string) {
   }, [date]);
   useEffect(() => {
     let active = true;
+    const unsubscribe = subscribeRecordChanges(() => { if (active) void load(); });
     queueMicrotask(() => {
       if (active)
         void load();
     });
-    return () => { active = false; request.current += 1; };
+    return () => { active = false; unsubscribe(); request.current += 1; };
   }, [load, session.user?.id]);
   return { data, error, load };
 }
