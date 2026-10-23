@@ -1,0 +1,6 @@
+PASS Normal Supabase app keeps draft model answers unavailable
+FAIL AssertionError Allowlisted account preview must be available
+
+false !== true
+
+{"success":false,"checks":1,"questions":0,"providerRequests":0,"realModelRequests":0,"cleanedRecords":0}

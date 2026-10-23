@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-23",
+  "scope": "real hosted Supabase Auth/JWT/PostgREST and local Next dev app",
+  "runtime": "Next.js 16.4.2 development, Webpack",
+  "serviceConsentChecksFrom": "hosted-validation-initial.json",
+  "success": true,
+  "modelInferenceRun": false,
+  "appSourceModified": false,
+  "results": [
+    {
+      "name": "Supabase mode and anonymous summary rejection",
+      "result": "pass"
+    },
+    {
+      "name": "Two hosted Auth logins and SSR cookies; initial service-consent negative checks retained",
+      "result": "pass"
+    },
+    {
+      "name": "Request permission, injected owner and foreign Origin rejection",
+      "result": "pass"
+    },
+    {
+      "name": "Hosted record creation and app-level account separation",
+      "result": "pass"
+    },
+    {
+      "name": "Direct PostgREST RLS blocks cross-account read, update, delete and insert",
+      "result": "pass"
+    },
+    {
+      "name": "Five hosted summary transitions, cross-tab invalidation and dashboard updates at 360px",
+      "result": "pass"
+    },
+    {
+      "name": "Cross-tab logout clears authenticated screen",
+      "result": "pass"
+    }
+  ],
+  "summaries": [
+    {
+      "step": "initial",
+      "count": 2,
+      "average": 120,
+      "min": 110,
+      "max": 130
+    },
+    {
+      "step": "value edited",
+      "count": 2,
+      "average": 125,
+      "min": 110,
+      "max": 140
+    },
+    {
+      "step": "reclassified",
+      "count": 1,
+      "average": 110,
+      "min": 110,
+      "max": 110
+    },
+    {
+      "step": "non-fasting deleted",
+      "count": 1,
+      "average": 110,
+      "min": 110,
+      "max": 110
+    },
+    {
+      "step": "last fasting deleted",
+      "count": 0,
+      "average": null,
+      "min": null,
+      "max": null
+    }
+  ],
+  "cleanupStatuses": [
+    "already deleted by UI",
+    "already deleted by UI",
+    200
+  ]
+}

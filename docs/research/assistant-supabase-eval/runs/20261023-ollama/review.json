@@ -1,0 +1,61 @@
+{
+  "scope": "Fixed eight-question integration contracts; project-source comparison, not independent medical review",
+  "contractPassed": 8,
+  "modelRequests": 4,
+  "modelHttp200": 4,
+  "retryCount": 0,
+  "sourceSupplemented": 0,
+  "generalAnswersContentCompleteAgainstReviewedDetails": 3,
+  "generalAnswersRequiringFollowup": 1,
+  "cases": [
+    {
+      "id": "G01",
+      "kind": "answer",
+      "modelRequests": 1,
+      "contentReview": "meets_reviewed_scope"
+    },
+    {
+      "id": "G02",
+      "kind": "answer",
+      "modelRequests": 1,
+      "contentReview": "meets_reviewed_scope"
+    },
+    {
+      "id": "G03",
+      "kind": "answer",
+      "modelRequests": 1,
+      "contentReview": "needs_followup",
+      "note": "Current wording contains the phrase 함량 기준 but omits the corpus detail 100g or 100mL, less than 0.5g; existing supplement rule accepts the phrase alone."
+    },
+    {
+      "id": "G04",
+      "kind": "answer",
+      "modelRequests": 1,
+      "contentReview": "meets_reviewed_scope"
+    },
+    {
+      "id": "P01",
+      "kind": "unsupported",
+      "modelRequests": 0,
+      "contentReview": "meets_reviewed_scope"
+    },
+    {
+      "id": "P02",
+      "kind": "unsupported",
+      "modelRequests": 0,
+      "contentReview": "meets_reviewed_scope"
+    },
+    {
+      "id": "S01",
+      "kind": "safety",
+      "modelRequests": 0,
+      "contentReview": "meets_reviewed_scope"
+    },
+    {
+      "id": "U01",
+      "kind": "no_evidence",
+      "modelRequests": 0,
+      "contentReview": "meets_reviewed_scope"
+    }
+  ]
+}

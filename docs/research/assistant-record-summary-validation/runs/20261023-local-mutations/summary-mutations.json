@@ -1,0 +1,132 @@
+[
+  {
+    "step": "initial",
+    "expected": {
+      "count": 2,
+      "average": 120,
+      "min": 110,
+      "max": 130
+    },
+    "actual": {
+      "range": {
+        "start": "2026-10-16T15:00:00.000Z",
+        "end": "2026-10-23T15:00:00.000Z",
+        "label": "2026-10-17 ~ 2026-10-23"
+      },
+      "asOf": "2026-10-23T00:50:58.570Z",
+      "timezone": "Asia/Seoul",
+      "measurementContext": "fasting",
+      "unit": "mg/dL",
+      "count": 2,
+      "recordedDays": 1,
+      "missingDays": 6,
+      "average": 120,
+      "min": 110,
+      "max": 130
+    }
+  },
+  {
+    "step": "value edited",
+    "expected": {
+      "count": 2,
+      "average": 125,
+      "min": 110,
+      "max": 140
+    },
+    "actual": {
+      "range": {
+        "start": "2026-10-16T15:00:00.000Z",
+        "end": "2026-10-23T15:00:00.000Z",
+        "label": "2026-10-17 ~ 2026-10-23"
+      },
+      "asOf": "2026-10-23T00:50:59.024Z",
+      "timezone": "Asia/Seoul",
+      "measurementContext": "fasting",
+      "unit": "mg/dL",
+      "count": 2,
+      "recordedDays": 1,
+      "missingDays": 6,
+      "average": 125,
+      "min": 110,
+      "max": 140
+    }
+  },
+  {
+    "step": "reclassified as before_meal",
+    "expected": {
+      "count": 1,
+      "average": 110,
+      "min": 110,
+      "max": 110
+    },
+    "actual": {
+      "range": {
+        "start": "2026-10-16T15:00:00.000Z",
+        "end": "2026-10-23T15:00:00.000Z",
+        "label": "2026-10-17 ~ 2026-10-23"
+      },
+      "asOf": "2026-10-23T00:50:59.385Z",
+      "timezone": "Asia/Seoul",
+      "measurementContext": "fasting",
+      "unit": "mg/dL",
+      "count": 1,
+      "recordedDays": 1,
+      "missingDays": 6,
+      "average": 110,
+      "min": 110,
+      "max": 110
+    }
+  },
+  {
+    "step": "non-fasting record deleted",
+    "expected": {
+      "count": 1,
+      "average": 110,
+      "min": 110,
+      "max": 110
+    },
+    "actual": {
+      "range": {
+        "start": "2026-10-16T15:00:00.000Z",
+        "end": "2026-10-23T15:00:00.000Z",
+        "label": "2026-10-17 ~ 2026-10-23"
+      },
+      "asOf": "2026-10-23T00:50:59.675Z",
+      "timezone": "Asia/Seoul",
+      "measurementContext": "fasting",
+      "unit": "mg/dL",
+      "count": 1,
+      "recordedDays": 1,
+      "missingDays": 6,
+      "average": 110,
+      "min": 110,
+      "max": 110
+    }
+  },
+  {
+    "step": "last fasting record deleted",
+    "expected": {
+      "count": 0,
+      "average": null,
+      "min": null,
+      "max": null
+    },
+    "actual": {
+      "range": {
+        "start": "2026-10-16T15:00:00.000Z",
+        "end": "2026-10-23T15:00:00.000Z",
+        "label": "2026-10-17 ~ 2026-10-23"
+      },
+      "asOf": "2026-10-23T00:50:59.969Z",
+      "timezone": "Asia/Seoul",
+      "measurementContext": "fasting",
+      "unit": "mg/dL",
+      "count": 0,
+      "recordedDays": 0,
+      "missingDays": 7,
+      "average": null,
+      "min": null,
+      "max": null
+    }
+  }
+]

@@ -247,7 +247,7 @@ def model_metadata() -> dict:
     return metadata
 
 
-def run(suite: dict, base: str, output: Path, suite_path: Path = SUITE) -> int:
+def run(suite: dict, base: str, output: Path, suite_path: Path = SUITE, build_dir: Path = ROOT / ".next") -> int:
     if output.exists():
         raise ValueError("Output already exists. Choose a fresh directory to preserve the baseline.")
     shared = client()
@@ -271,7 +271,8 @@ def run(suite: dict, base: str, output: Path, suite_path: Path = SUITE) -> int:
         "suite_sha256": hashlib.sha256(frozen_suite).hexdigest(), "base_url": base,
         "git_commit": git("rev-parse", "HEAD"), "git_branch": git("branch", "--show-current"),
         "git_dirty": bool(git("status", "--porcelain")),
-        "build_id": (ROOT / ".next/BUILD_ID").read_text(encoding="utf-8").strip(),
+        "build_id": (build_dir / "BUILD_ID").read_text(encoding="utf-8").strip(),
+        "build_directory": str(build_dir.relative_to(ROOT)),
         "runner_sha256": digest(Path(__file__)), "source_hashes_before": source_hashes,
         "model": model_metadata(), "assistant_status": availability["json"],
         "synthetic_accounts_only": True, "sequential": True, "runner_retries": 0,
@@ -331,6 +332,7 @@ def main() -> int:
     parser.add_argument("--suite", type=Path, default=SUITE)
     parser.add_argument("--base-url", default="http://127.0.0.1:3000")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--build-dir", type=Path, default=ROOT / ".next", help="App build directory inside this workspace (default: .next).")
     parser.add_argument("--write-guide", action="store_true", help="Render the question guide from the frozen JSON (offline).")
     args = parser.parse_args()
     suite = load_suite(args.suite)
@@ -343,7 +345,10 @@ def main() -> int:
     if args.run:
         if not args.output:
             parser.error("--run requires a fresh --output directory")
-        return run(suite, local_base(args.base_url), args.output.resolve(), args.suite)
+        build_dir = args.build_dir.resolve()
+        if not build_dir.is_relative_to(ROOT) or not (build_dir / "BUILD_ID").is_file():
+            raise ValueError("Use an existing app build directory inside this workspace.")
+        return run(suite, local_base(args.base_url), args.output.resolve(), args.suite, build_dir)
     print(f"PASS: {len(suite['cases'])} frozen cases, guide matches. SHA256={digest(args.suite)}")
     return 0
 

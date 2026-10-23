@@ -1,0 +1,12 @@
+{
+  "coldModelQuestion": 1,
+  "fortySuiteRequests": 17,
+  "fortySuiteAnswerKind": 16,
+  "fortySuiteProviderNoEvidence": 1,
+  "browserVerificationQuestion": 1,
+  "hostedQuestions": 4,
+  "totalProviderRequests": 23,
+  "demoProxyHttp200": 19,
+  "runnerRetries": 0,
+  "draftApprovalsChanged": false
+}

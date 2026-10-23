@@ -1,0 +1,40 @@
+{
+  "startedAt": "2026-10-23T06:17:19.677Z",
+  "base": "http://127.0.0.1:11435",
+  "model": "team4-gemma4-e4b-qat:comparison",
+  "gguf": "C:\\Users\\Administrator\\.lmstudio\\models\\google\\gemma-4-E4B-it-qat-q4_0-gguf\\gemma-4-E4B_q4_0-it.gguf",
+  "sourceSize": 5154941280,
+  "sourceSha256": "676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee",
+  "modelStore": "D:\\yeardreamschool6th\\teamproject1\\.local\\assistant-ollama-runtime-20261023-01\\models",
+  "parameters": {
+    "num_ctx": 131072,
+    "temperature": 0.1,
+    "num_predict": 512
+  },
+  "serverSettings": {
+    "OLLAMA_HOST": "127.0.0.1:11435",
+    "OLLAMA_MODELS": "D:\\yeardreamschool6th\\teamproject1\\.local\\assistant-ollama-runtime-20261023-01\\models",
+    "OLLAMA_NUM_PARALLEL": "4",
+    "OLLAMA_CONTEXT_LENGTH": "131072",
+    "OLLAMA_MAX_LOADED_MODELS": "1",
+    "OLLAMA_FLASH_ATTENTION": "1",
+    "OLLAMA_KV_CACHE_TYPE": "f16",
+    "OLLAMA_NO_CLOUD": "1"
+  },
+  "existingServersPreserved": [
+    11480,
+    11434,
+    1234
+  ],
+  "existingAppConfigurationChanged": false,
+  "inferenceQuestionsPlanned": 12,
+  "emptyPromptPreloadsPlanned": 1,
+  "modelDownloaded": false,
+  "success": false,
+  "failure": {
+    "type": "TypeError",
+    "message": "The argument 'stdio' is invalid. Received WriteStream {\n  fd: null,\n  path: 'D:\\\\yeardreamschool6th\\\\teamproject1\\\\.local\\\\assistant-ollama-runtime-20261023-01\\\\server.lo..."
+  },
+  "finishedAt": "2026-10-23T06:17:19.680Z",
+  "temporaryServerStopped": true
+}

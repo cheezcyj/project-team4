@@ -1,0 +1,63 @@
+npm notice run team4-glucose-records@0.1.0 build
+npm notice run next build
+▲ Next.js 16.4.2 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 26ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 639ms
+  Running TypeScript ...
+  Finished TypeScript in 2.5s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/20) ...
+  Generating static pages using 15 workers (5/20) 
+  Generating static pages using 15 workers (10/20) 
+  Generating static pages using 15 workers (15/20) 
+✓ Generating static pages using 15 workers (20/20) in 360ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/account
+├ ƒ /api/assistant
+├ ƒ /api/assistant/records-summary
+├ ƒ /api/benefits
+├ ƒ /api/consent
+├ ƒ /api/foods
+├ ƒ /api/health
+├ ƒ /api/imports
+├ ƒ /api/login
+├ ƒ /api/logout
+├ ƒ /api/meals
+├ ƒ /api/meals/[id]
+├ ƒ /api/news
+├ ƒ /api/preferences
+├ ƒ /api/records
+├ ƒ /api/records/[id]
+├ ƒ /api/session
+├ ƒ /api/signup
+├ ○ /benefits
+├ ○ /calendar
+├ ○ /comparison
+├ ○ /consent
+├ ○ /dashboard
+├ ○ /foods
+├ ○ /imports
+├ ○ /login
+├ ○ /meals
+├ ƒ /meals/[id]/edit
+├ ○ /meals/new
+├ ○ /mypage
+├ ○ /news
+├ ○ /preferences
+├ ○ /records
+├ ƒ /records/[id]/edit
+├ ○ /records/new
+├ ○ /reports
+└ ○ /signup
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

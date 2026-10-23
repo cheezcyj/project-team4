@@ -1,0 +1,67 @@
+npm notice run team4-glucose-records@0.1.0 npx
+npm notice run playwright test --config playwright.summary.config.ts --grep editing, reclassifying --output .local/playwright-summary-stale-20261023 --reporter=line
+
+[WebServer] npm notice run team4-glucose-records@0.1.0 start:demo
+[WebServer] npm notice run node scripts/run-demo.mjs --production
+
+
+[WebServer] (node:15000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:10232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests\e2e\assistant-records.spec.ts:130:5 › editing, reclassifying and deleting records invalidate summaries and recompute exact results
+  1) tests\e2e\assistant-records.spec.ts:130:5 › editing, reclassifying and deleting records invalidate summaries and recompute exact results 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByRole('table', { name: /그래프와 같은 최근 7일 기록/ }).locator('tbody tr').filter({ hasText: /140\s*mg\/dL/ })
+    Expected: 1
+    Received: 0
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" getByRole('table', { name: /그래프와 같은 최근 7일 기록/ }).locator('tbody tr').filter({ hasText: /140\s*mg\/dL/ }) with timeout 10000ms
+      - waiting for getByRole('table', { name: /그래프와 같은 최근 7일 기록/ }).locator('tbody tr').filter({ hasText: /140\s*mg\/dL/ })
+        23 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      172 |   await expect(other).toHaveURL(/\/records\?date=/);
+      173 |   await invalidated();
+    > 174 |   await expect(dashboardRows.filter({ hasText: /140\s*mg\/dL/ })).toHaveCount(1);
+          |                                                                   ^
+      175 |   await expect(dashboardRows.filter({ hasText: /130\s*mg\/dL/ })).toHaveCount(0);
+      176 |   await expect(journalRegion.getByRole("row").filter({ hasText: /140\s*mg\/dL/ })).toHaveCount(1);
+      177 |   await refresh("value edited", { count: 2, average: 125, min: 110, max: 140 });
+        at D:\yeardreamschool6th\teamproject1\tests\e2e\assistant-records.spec.ts:174:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .local\playwright-summary-stale-20261023\assistant-records-editing--4b134-and-recompute-exact-results\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .local\playwright-summary-stale-20261023\assistant-records-editing--4b134-and-recompute-exact-results\test-failed-3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .local\playwright-summary-stale-20261023\assistant-records-editing--4b134-and-recompute-exact-results\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: .local\playwright-summary-stale-20261023\assistant-records-editing--4b134-and-recompute-exact-results\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    .local\playwright-summary-stale-20261023\assistant-records-editing--4b134-and-recompute-exact-results\trace.zip
+    Usage:
+
+        npx playwright show-trace .local\playwright-summary-stale-20261023\assistant-records-editing--4b134-and-recompute-exact-results\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    tests\e2e\assistant-records.spec.ts:130:5 › editing, reclassifying and deleting records invalidate summaries and recompute exact results 

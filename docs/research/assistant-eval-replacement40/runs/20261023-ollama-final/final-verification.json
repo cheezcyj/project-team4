@@ -1,0 +1,35 @@
+{
+  "verifiedAt": "2026-10-23T07:13:07.246152+00:00",
+  "authFilesPreserved": 30,
+  "readmeUnchanged": true,
+  "rootTypeAndPrivateConfigUnchanged": true,
+  "migrationsUnchanged": true,
+  "ports": {
+    "11434": {
+      "status": 200
+    },
+    "3005": {
+      "status": 200
+    },
+    "3000": {
+      "status": 200
+    },
+    "3006": {
+      "closed": true
+    },
+    "3007": {
+      "closed": true
+    },
+    "3100": {
+      "closed": true
+    },
+    "11481": {
+      "closed": true
+    },
+    "11482": {
+      "closed": true
+    }
+  },
+  "hostedTestRecordsRemoved": 3,
+  "hostedSugarAnswerNowComplete": true
+}

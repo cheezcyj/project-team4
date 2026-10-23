@@ -16,6 +16,7 @@
     "test:unit": "tsx --test tests/unit/*.test.ts",
     "test:db": "node supabase/tests/run-db-tests.mjs && node supabase/tests/account-deletion.mjs",
     "test:e2e": "npm run build && playwright test",
+    "eval:assistant:supabase": "node --env-file-if-exists=.env.local scripts/evaluate-supabase-assistant.mjs",
     "test": "npm run test:unit && npm run test:db",
     "check": "npm run lint && npm run typecheck && npm test && npm run build"
   },

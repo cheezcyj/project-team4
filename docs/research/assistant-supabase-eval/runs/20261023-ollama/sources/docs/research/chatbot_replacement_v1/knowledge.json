@@ -1,0 +1,488 @@
+{
+  "schema_version": "2.0",
+  "bundle_version": "replacement-v1-draft-3",
+  "authored_on": "2026-10-22",
+  "status": "draft_connected_for_demo_preview",
+  "approval": {
+    "team_content_approved": false,
+    "medical_review_completed": false,
+    "source_reuse_review_completed": false
+  },
+  "policy": {
+    "runtime_publishable": false
+  },
+  "sources": [
+    {
+      "id": "R1",
+      "title": "Managing Diabetes",
+      "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+      "canonical_url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+      "kind": "official_health_reference",
+      "document_type": "web",
+      "status": "pending_review",
+      "approved_at": null,
+      "permitted_runtime_reuse": null,
+      "reuse_label": "NIDDK 교육 본문 이용정책",
+      "reuse_url": "https://www.niddk.nih.gov/copyright",
+      "attribution": "NIDDK, Managing Diabetes. 원문 검토 2023년 10월.",
+      "adaptation_notice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다.",
+      "source_sha256": "43d83207ea91f336a20427cf2eb5c899d08c234e9996d1b513f8d92e6baf0354"
+    },
+    {
+      "id": "R2",
+      "title": "Healthy Living with Diabetes",
+      "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+      "canonical_url": "https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes",
+      "kind": "official_health_reference",
+      "document_type": "web",
+      "status": "pending_review",
+      "approved_at": null,
+      "permitted_runtime_reuse": null,
+      "reuse_label": "NIDDK 교육 본문 이용정책",
+      "reuse_url": "https://www.niddk.nih.gov/copyright",
+      "attribution": "NIDDK, Healthy Living with Diabetes. 원문 검토 2023년 10월.",
+      "adaptation_notice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다.",
+      "source_sha256": "57ce17e98272fc3f1be279354852be44c76c14270344ec7b75f21b7f5b85d873"
+    },
+    {
+      "id": "R3",
+      "title": "Ernährungsempfehlungen für Menschen mit Diabetes (Update 2026)",
+      "publisher": "Wiener klinische Wochenschrift / Springer Nature",
+      "canonical_url": "https://link.springer.com/article/10.1007/s00508-025-02676-7",
+      "kind": "open_health_reference",
+      "document_type": "web",
+      "status": "pending_review",
+      "approved_at": null,
+      "permitted_runtime_reuse": null,
+      "reuse_label": "CC BY 4.0",
+      "reuse_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Klammer C, Schindler K, Bugl R, et al. (2026), DOI: 10.1007/s00508-025-02676-7.",
+      "adaptation_notice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다.",
+      "source_sha256": "0483b03715cd85945507641187cb6369ad75504c1fe69bee0ce3f80818aec272"
+    },
+    {
+      "id": "R4",
+      "title": "식품등의 표시기준",
+      "publisher": "식품의약품안전처",
+      "canonical_url": "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917",
+      "kind": "official_food_label_reference",
+      "document_type": "notice",
+      "status": "pending_review",
+      "approved_at": null,
+      "permitted_runtime_reuse": null,
+      "reuse_label": "국가 고시 규범 본문: 저작권법 제7조제2호",
+      "reuse_url": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+      "attribution": "식품의약품안전처, 식품등의 표시기준 제2025-60호(2025-08-29).",
+      "adaptation_notice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다.",
+      "source_sha256": "9d12957432351a8a03ecc4551147171466a61091dc81bdc1d7919d49d399d395"
+    }
+  ],
+  "knowledge_entries": [
+    {
+      "id": "B01",
+      "version": 1,
+      "topic": "basic",
+      "language": "ko-KR",
+      "title": "당화혈색소랑 오늘 잰 혈당은 뭐가 달라?",
+      "summary": "혈당계는 측정한 순간의 혈당을 보여 줍니다. 당화혈색소는 지난 약 3개월의 평균적인 혈당 상태를 살펴보는 검사입니다.",
+      "keywords": [
+        "당화혈색소",
+        "평균혈당",
+        "HbA1c"
+      ],
+      "evidence": [
+        {
+          "source_id": "R1",
+          "section": "A1C 설명; 자가 혈당계가 보여 주는 현재 값",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "앱에 입력한 일부 혈당값의 산술평균을 당화혈색소 검사 결과로 변환하거나 개인 검사 결과를 진단하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "406c5d8f01f5ed893318dadb649a5b2896b72696e5352852d5c623de6105da84"
+    },
+    {
+      "id": "B02",
+      "version": 1,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "식후 2시간은 밥을 다 먹고부터 재는 거야?",
+      "summary": "식후 약 2시간의 기준은 식사를 시작한 시각입니다. 식사를 마친 시각부터 세는 의미가 아닙니다. 개인 측정 일정은 의료진에게 안내받은 계획을 따르세요.",
+      "keywords": [
+        "식후2시간",
+        "식후2h",
+        "언제부터",
+        "첫숟가락",
+        "식사시작",
+        "밥을다먹고"
+      ],
+      "evidence": [
+        {
+          "source_id": "R1",
+          "section": "Recommended targets: 식사 시작 기준의 약 2시간",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "앱에는 식사 시작 시각이 없으므로, 저장된 측정 시각만으로 실제 2시간 경과를 확인했다고 말하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "eed4999867b1258c2c6eafe4166e07c4932e1bda17dce5d65fcc9ba425dc867e"
+    },
+    {
+      "id": "B03",
+      "version": 2,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "혈당 수치 말고 측정 상황이나 메모는 왜 남겨?",
+      "summary": "혈당값에 날짜·시간과 당시 음식·활동 정보를 함께 남기면 의료진과 기록을 살펴볼 때 도움이 됩니다. 다만 메모만으로 혈당 변화의 원인을 증명할 수는 없고, 실제 음식 섭취량도 확정할 수 없습니다.",
+      "keywords": [
+        "측정상황",
+        "메모",
+        "왜기록",
+        "날짜시간",
+        "기록을남기"
+      ],
+      "evidence": [
+        {
+          "source_id": "R1",
+          "section": "자가 측정 결과의 날짜·시간·음식·활동 기록",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "앱의 공복·식전·식후2h·기타 구분은 기록 분류다. 자유 메모는 혈당 변화의 원인을 증명하지 못한다. 메모만으로 음식 섭취량을 확정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "15cf9e54bf05b3e7a425276530b1e04b9fb0a3fe22ecde49b4d4262e59358159"
+    },
+    {
+      "id": "B04",
+      "version": 1,
+      "topic": "measurement",
+      "language": "ko-KR",
+      "title": "혈당은 하루에 몇 번 재야 해?",
+      "summary": "필요한 측정 방법과 횟수는 의료진과 상의해서 정합니다. 사용 중인 치료와 건강상태에 맞는 측정 계획을 확인하세요.",
+      "keywords": [
+        "몇번",
+        "측정횟수",
+        "하루몇",
+        "측정계획"
+      ],
+      "evidence": [
+        {
+          "source_id": "R1",
+          "section": "자가 혈당 측정 방법·빈도의 개별 계획",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "모든 이용자에게 같은 횟수나 시점을 정하지 않는다. 개인 계획이 없으면 새 횟수를 제시하는 대신 담당 의료진 확인으로 안내한다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "32a62b82d214a289574bc43059407ffabbd20db2a7c0da95f952c42f5d736881"
+    },
+    {
+      "id": "N01",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "당뇨 식사는 어떤 원칙으로 구성해?",
+      "summary": "채소·통곡물·콩류 등 다양한 식품을 포함하는 식사 구성을 살펴보세요. 식사 계획은 개인의 생활과 필요에 맞게 영양 상담을 통해 조정합니다.",
+      "keywords": [
+        "당뇨식사",
+        "식사원칙",
+        "식사구성",
+        "균형",
+        "식품군",
+        "식단예시"
+      ],
+      "evidence": [
+        {
+          "source_id": "R3",
+          "section": "개별 영양 상담; 4. 식품 기반 권고",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "아래 식단 카드는 팀이 구성한 조합 예시다. 개인에게 맞는 완성 식단·섭취량·한 끼 영양 합계로 제시하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "2c3e19ae919d2b8a25c09cba5b7d39f134d31891c83616da96b0bd63f3a7a17b"
+    },
+    {
+      "id": "N02",
+      "version": 2,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "탄수화물은 아예 안 먹는 게 좋아?",
+      "summary": "탄수화물은 양뿐 아니라 식품의 종류와 식이섬유도 함께 살펴야 합니다. 통곡물·콩류 같은 선택지를 포함해 자신에게 맞는 식사 계획을 의료진이나 영양사와 정하세요.",
+      "keywords": [
+        "탄수화물",
+        "밥안먹",
+        "곡류",
+        "현미",
+        "끊어",
+        "완전제한"
+      ],
+      "evidence": [
+        {
+          "source_id": "R3",
+          "section": "2.1 탄수화물; 2.2 식이섬유; 4.1 통곡물; 4.3 콩류",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "탄수화물의 완전 배제나 모든 사람에게 같은 섭취량을 권하지 않는다. 개인별 그램 수·열량 비율·인슐린 용량은 계산하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "4cb20a716c4e984d4838c1e696fcac1112f23369fa6ed4bbc1c7d1d2dd1dd1e6"
+    },
+    {
+      "id": "N03",
+      "version": 3,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "무가당이면 당류가 없다는 뜻이야?",
+      "summary": "‘무가당’은 당류 등을 넣지 않는 제조·원재료 조건에 관한 표시라서, 완제품의 당류가 0이라는 뜻은 아닙니다. ‘무당’은 별도의 함량 기준으로, 식품 100g 또는 100mL당 당류 0.5g 미만이 기준이며 정확히 0을 보장하지는 않습니다. 영양정보에서 당류·탄수화물·열량과 표시 기준량을 보고, 실제 먹는 양도 함께 확인하세요.",
+      "keywords": [
+        "무가당",
+        "무당",
+        "무설탕",
+        "제로슈거",
+        "영양표시",
+        "영양정보",
+        "당류",
+        "기준량"
+      ],
+      "evidence": [
+        {
+          "source_id": "R4",
+          "section": "별지 1, 1. 아. 1), 2)나)(3), 3)가)(2), 3)다)",
+          "role": "label_basis"
+        }
+      ],
+      "conditions": [
+        "‘무가당’의 제조·원재료 조건과 ‘무당’의 별도 함량 기준을 구분해 설명한다. ‘무가당’의 전체 표시 요건이나 특정 제품의 적법성을 이 짧은 설명만으로 판정하지 않는다. ‘무당’ 역시 수학적으로 정확한 0을 보장하는 표현으로 설명하지 않는다. 표시 기준량과 실제 먹는 양을 확인하는 조건을 답변에 유지한다. 영양정보나 섭취량이 없으면 섭취 영양값과 혈당 반응을 추정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "c432a425b5967ae2d981c707133418e9f8d74940f317b897dd423bdb50b04be1"
+    },
+    {
+      "id": "N04",
+      "version": 1,
+      "topic": "meal",
+      "language": "ko-KR",
+      "title": "과일을 주스로 마셔도 같아?",
+      "summary": "통과일과 주스는 식이섬유와 포만감에 차이가 있어 같은 식품처럼 단순하게 바꾸어 생각하기 어렵습니다. 과일도 먹는 양을 살펴야 하며 주스 한 잔을 과일 한 개와 같다고 계산하지 마세요.",
+      "keywords": [
+        "과일",
+        "주스",
+        "착즙",
+        "식이섬유",
+        "통과일"
+      ],
+      "evidence": [
+        {
+          "source_id": "R3",
+          "section": "4.2 Gemüse und Obst: 통과일·주스·식이섬유",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "과일 종류·제품·양 없이 당류나 개인의 혈당 상승폭을 계산하지 않는다. 특정 주스·착즙 제품의 성분을 일반화하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "504c13f2e003e158c0bf15da1a6e77e24b5befe54ce3d7870e7e8f50a27a117f"
+    },
+    {
+      "id": "X01",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "30분 정도 있는데 가볍게 할 운동이 있어?",
+      "summary": "일반 활동 예시로 걷기를 살펴볼 수 있습니다. 활동은 작은 단위로 나눌 수도 있으며, 현재 몸 상태·평소 활동 수준과 안내받은 활동 계획에 맞게 선택합니다.",
+      "keywords": [
+        "걷기",
+        "걷는",
+        "걸어",
+        "산책",
+        "30분",
+        "가벼운운동",
+        "운동예시"
+      ],
+      "evidence": [
+        {
+          "source_id": "R2",
+          "section": "Aerobic activities: 걷기와 활동 나누기",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "시간이 30분 남았다고 30분 연속 운동을 처방하지 않는다. 운동 질문에는 아래 공통 제품 제한을 적용한다.",
+        "활동 예시는 일반 교육이다. 현재 증상·평소 활동 수준·복약·합병증·기존 제한에 따라 적합성이 달라진다는 조건을 유지한다.",
+        "개인에게 시간·강도·거리·반복 횟수·소모 열량·약물 조정량을 정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "b1b3eddb7439144228f2c5cbf5580a0ea57ed78ce505e497101d0cab59bd8c10"
+    },
+    {
+      "id": "X02",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "실내에서 할 수 있는 운동도 있어?",
+      "summary": "실내 활동의 예시로 벽밀기나 팔 들기를 살펴볼 수 있습니다. 자신에게 맞는 활동인지와 방법은 기존 운동 계획이나 전문가 안내로 확인하세요.",
+      "keywords": [
+        "실내",
+        "집안",
+        "집에서",
+        "벽밀기",
+        "팔들기",
+        "근력",
+        "저항운동"
+      ],
+      "evidence": [
+        {
+          "source_id": "R2",
+          "section": "Strength training or resistance training: 벽밀기·팔 들기",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "자세·벽과의 거리·반복 횟수·부하를 새로 지정하지 않는다. 자전거·탄력밴드의 안전한 사용법을 확인한 자료로 확대하지 않는다.",
+        "활동 예시는 일반 교육이다. 현재 증상·평소 활동 수준·복약·합병증·기존 제한에 따라 적합성이 달라진다는 조건을 유지한다.",
+        "개인에게 시간·강도·거리·반복 횟수·소모 열량·약물 조정량을 정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "de4fc0d5aeaf9cd4e100dfa3d344532710adbf34d27bf079572cd87da1047b97"
+    },
+    {
+      "id": "X03",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "운동 전후 혈당을 확인하는 이유가 뭐야?",
+      "summary": "신체활동은 혈당을 낮출 수 있고, 인슐린이나 일부 당뇨약을 쓰면 저혈당 위험을 살펴야 합니다. 운동과 관련된 혈당 확인·대처 계획을 의료진에게 확인하세요.",
+      "keywords": [
+        "운동전후",
+        "운동전",
+        "운동후",
+        "저혈당",
+        "인슐린",
+        "혈당확인",
+        "혈당을확인"
+      ],
+      "evidence": [
+        {
+          "source_id": "R2",
+          "section": "Stay safe during physical activity: 저혈당 위험",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "측정해야 할 시점·개인별 기준값이나 약물 조정량을 새로 정하지 않는다. 원문의 투약 관련 설명을 자가 용량 변경 지시로 바꾸지 않는다.",
+        "활동 예시는 일반 교육이다. 현재 증상·평소 활동 수준·복약·합병증·기존 제한에 따라 적합성이 달라진다는 조건을 유지한다.",
+        "개인에게 시간·강도·거리·반복 횟수·소모 열량·약물 조정량을 정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "6db6da5413f573f8a267f52dc6b5a48df6f9b6fcab6b6f02ca06027008015da9"
+    },
+    {
+      "id": "X04",
+      "version": 2,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "새 운동을 시작하기 전에 뭘 확인해야 해?",
+      "summary": "새로운 활동이나 활동량 변경 전에는 의료진과 상의하세요. 자신의 활동 능력·복약·식사 계획과 건강상태에 맞는 활동인지 확인하는 것이 필요합니다. 현재 증상·평소 활동 수준·기존 운동 제한도 함께 고려하세요.",
+      "keywords": [
+        "운동시작",
+        "운동시작전",
+        "새운동",
+        "새로운운동",
+        "합병증",
+        "발상태",
+        "운동제한"
+      ],
+      "evidence": [
+        {
+          "source_id": "R2",
+          "section": "신체활동 전 상담과 개인별 활동 계획",
+          "role": "medical_basis"
+        }
+      ],
+      "conditions": [
+        "합병증별 운동 허용표나 자동 검사·운동 허가 기준을 만들지 않는다.",
+        "활동 예시는 일반 교육이다. 현재 증상·평소 활동 수준·복약·합병증·기존 제한에 따라 적합성이 달라진다는 조건을 유지한다.",
+        "개인에게 시간·강도·거리·반복 횟수·소모 열량·약물 조정량을 정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "4d4c4e2e9c58a6cbee1e3f58321ccd25e48a3e2c700bd9ac4f9b75968f2d8373"
+    },
+    {
+      "id": "X05",
+      "version": 1,
+      "topic": "exercise",
+      "language": "ko-KR",
+      "title": "혈당 수치 하나로 지금 운동해도 되는지 알려줄 수 있어?",
+      "summary": "이 도우미는 혈당 숫자 하나로 지금 운동해도 되는지 허가하지 않습니다. 개인에게 안내된 운동·측정 계획을 확인해 주세요. 현재 증상이나 합병증에 대한 판단도 대신하지 않습니다.",
+      "keywords": [
+        "운동가능",
+        "운동허가",
+        "수치하나",
+        "혈당수치",
+        "운동해도",
+        "결정할수"
+      ],
+      "evidence": [
+        {
+          "source_id": "R2",
+          "section": "개인별 활동 상담: 서비스 지원 범위의 배경 근거",
+          "role": "background_only"
+        }
+      ],
+      "conditions": [
+        "개인 운동 허가는 서비스의 지원 범위 밖이며 기관의 지침 문장으로 인용하지 않는다.",
+        "활동 예시는 일반 교육이다. 현재 증상·평소 활동 수준·복약·합병증·기존 제한에 따라 적합성이 달라진다는 조건을 유지한다.",
+        "개인에게 시간·강도·거리·반복 횟수·소모 열량·약물 조정량을 정하지 않는다."
+      ],
+      "status": "draft",
+      "approved_at": null,
+      "review_due_at": null,
+      "content_sha256": "b6db1504a16d1bff291f9a66a3b7d258f4d7116f490f824023672faf134b7c17"
+    }
+  ],
+  "provenance": {
+    "builder": "scripts/prepare_assistant_replacement.py",
+    "input_sha256": {
+      "docs/research/chatbot_replacement_v1/SOURCES.json": "3cd0d5ae07aa9fb1f778e343432bb979d6186dfe8ea81c8ec4e0acff7c4cdf05",
+      "docs/research/chatbot_replacement_v1/FAQ_13.md": "6f8a96472dc5126bd832b797b53160effe06295162a3cb08437c2d40e1b0ebd0"
+    }
+  }
+}

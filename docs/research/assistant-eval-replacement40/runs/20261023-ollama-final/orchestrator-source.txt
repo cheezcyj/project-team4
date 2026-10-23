@@ -1,0 +1,126 @@
+import assert from "node:assert/strict";
+import { spawn, execFileSync } from "node:child_process";
+import { once } from "node:events";
+import { createWriteStream } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
+import { createServer } from "node:http";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { chromium, expect, request } from "../../node_modules/@playwright/test/index.mjs";
+
+const output = path.dirname(fileURLToPath(import.meta.url));
+const checkout = path.resolve(output, "../assistant-release-checkout-20261023");
+const base = "http://127.0.0.1:3007";
+const upstream = "http://127.0.0.1:11434";
+const model = "team4-gemma4-e4b-qat:latest";
+const events = [], checks = [];
+let app, browser, client, proxy;
+const save = (name, data) => writeFile(path.join(output, name), JSON.stringify(data, null, 2) + "\n");
+const logs = createWriteStream(path.join(output, "demo-server.log"));
+await once(logs, "open");
+const run = { startedAt: new Date().toISOString(), model, baseURL: base,
+  appBuildId: (await readFile(path.join(checkout, ".next/BUILD_ID"), "utf8")).trim(),
+  sourceScope: "assistant-only staged checkout; pending auth changes excluded",
+  modelLifecycle: "unload/reload only this registered test model; Ollama server/app not restarted",
+  approvalChanged: false, checks, success: false };
+const metadata = async () => {
+  const response = await fetch(upstream + "/api/ps", { signal: AbortSignal.timeout(5000) });
+  assert.equal(response.status, 200); return response.json();
+};
+async function command(executable, args, name, env = {}) {
+  const stream = createWriteStream(path.join(output, name)); await once(stream, "open");
+  const child = spawn(executable, args, { cwd: checkout, windowsHide: true, stdio: ["ignore", stream, stream], env: { ...process.env, ...env } });
+  const [code] = await once(child, "exit"); stream.end(); return code;
+}
+try {
+  // Audit only public prompt contents. Never retain request cookies or authorization headers.
+  proxy = createServer(async (incoming, outgoing) => {
+    const event = { startedAt: new Date().toISOString(), status: 0 };
+    const controller = new AbortController();
+    outgoing.on("close", () => { if (!outgoing.writableEnded) controller.abort(); });
+    try {
+      assert.equal(incoming.method, "POST"); assert.equal(incoming.url, "/v1/chat/completions");
+      let body = ""; for await (const chunk of incoming) { body += chunk; assert.ok(body.length < 100_000); }
+      event.request = JSON.parse(body); assert.equal(event.request.model, model);
+      const prompt = JSON.parse(event.request.messages[1].content);
+      assert.deepEqual(Object.keys(prompt).sort(), ["knowledge", "question"]);
+      const started = performance.now();
+      const response = await fetch(upstream + "/v1/chat/completions", { method: "POST", redirect: "error",
+        headers: { "Content-Type": "application/json" }, body,
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(35_000)]) });
+      event.status = response.status; event.response = await response.text(); event.elapsedMs = Math.round(performance.now() - started);
+      outgoing.writeHead(response.status, { "Content-Type": "application/json" }); outgoing.end(event.response);
+    } catch (error) {
+      event.errorType = error.name;
+      if (!outgoing.destroyed) { outgoing.writeHead(503, { "Content-Type": "application/json" }); outgoing.end('{"error":"Local evaluation proxy failed"}'); }
+    } finally { events.push(event); await save("provider-audit.json", events); }
+  });
+  await new Promise((resolve, reject) => { proxy.once("error", reject); proxy.listen(11482, "127.0.0.1", resolve); });
+  app = spawn(process.execPath, ["--env-file-if-exists=.env.local", "scripts/run-demo.mjs", "--production"], {
+    cwd: checkout, windowsHide: true, stdio: ["ignore", logs, logs],
+    env: { ...process.env, PORT: "3007", ASSISTANT_ENABLED: "1", ASSISTANT_MODEL: model,
+      ASSISTANT_MODEL_BASE_URL: "http://127.0.0.1:11482/v1", ASSISTANT_MODEL_RESPONSE_FORMAT: "text",
+      ASSISTANT_ALLOW_DRAFT_PREVIEW: "1", ASSISTANT_MODEL_API_KEY: "", NEXT_TELEMETRY_DISABLED: "1",
+      DEMO_DATA_FILE: ".local/assistant-final-demo.json" },
+  });
+  for (let attempt = 0; attempt < 100; attempt++) {
+    assert.equal(app.exitCode, null);
+    try { if ((await fetch(base + "/api/health")).ok) break; } catch { /* Starting. */ }
+    await new Promise(resolve => setTimeout(resolve, 300));
+  }
+  client = await request.newContext({ baseURL: base });
+  const login = await client.post("/api/login", { headers: { Origin: base }, data: { demoAccount: "a" } });
+  assert.equal(login.status(), 200); assert.equal((await login.json()).mode, "demo");
+  const before = await metadata(); await save("runtime-before.json", before);
+  assert.ok(before.models.every(item => item.name === model), "Unexpected other loaded model; cold-start test cancelled");
+  await save("cold-start-plan.json", { before, configuredModel: model, serverRestarted: false,
+    request: { question: "당化血色素".replace("당化血色素", "당화혈색소가 무엇인가요?"), allow_model_processing: true },
+    condition: "model unloaded immediately before app question; existing Ollama process retained; no empty-prompt preload" });
+  if (before.models.some(item => item.name === model)) {
+    const exe = path.join(process.env.LOCALAPPDATA, "Programs/Ollama/ollama.exe");
+    assert.equal(await command(exe, ["stop", model], "model-stop.log"), 0);
+  }
+  const unloaded = await metadata(); assert.equal(unloaded.models.some(item => item.name === model), false);
+  const start = performance.now();
+  const response = await client.post("/api/assistant", { headers: { Origin: base }, timeout: 40_000,
+    data: { question: "당화혈색소가 무엇인가요?", allow_model_processing: true } });
+  const cold = { status: response.status(), elapsedMs: Math.round(performance.now() - start), response: await response.json(),
+    modelUnloadedBefore: true, serverRestarted: false, providerRequests: events.length };
+  await save("cold-start.json", cold);
+  assert.equal(cold.status, 200); assert.equal(cold.response.kind, "answer"); assert.equal(events.length, 1);
+  checks.push("Model-unloaded first app request completed within 30-second model deadline");
+  console.log("PASS cold model request", cold.elapsedMs, "ms");
+  const code = await command("python", ["-X", "utf8", "scripts/evaluate_assistant.py", "--suite", "docs/research/assistant-eval-replacement40/cases.json",
+    "--run", "--base-url", base, "--output", path.join(output, "evaluation40")], "evaluation40.log");
+  run.evaluation40ExitCode = code; assert.equal(code, 0, "Forty-case automatic evaluation failed; preserve raw results for review");
+  checks.push("Frozen forty-question automatic evaluation passed"); console.log("PASS frozen 40-question evaluation");
+  browser = await chromium.launch({ channel: "chrome", headless: true });
+  const browserContext = await browser.newContext({ baseURL: base, storageState: await client.storageState(), viewport: { width: 360, height: 800 } });
+  const page = await browserContext.newPage(); await page.goto("/dashboard");
+  await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+  await page.getByRole("checkbox", { name: "질문과 참고 자료를 AI로 처리하는 데 동의합니다.", exact: true }).check();
+  await page.getByLabel("질문", { exact: true }).fill("무가당 제품이면 당류가 없다는 뜻이야?");
+  const pending = page.waitForResponse(r => r.url().endsWith("/api/assistant") && r.request().method() === "POST");
+  await page.getByRole("button", { name: "질문 전송", exact: true }).click();
+  const displayed = await pending; assert.equal(displayed.status(), 200); const body = await displayed.json();
+  await expect(page.getByRole("region", { name: "도우미 답변" })).toContainText(body.answer);
+  assert.match(body.answer, /100g/u); assert.match(body.answer, /100mL/u); assert.match(body.answer, /0\.5g 미만/u);
+  await save("browser-answer.json", body); await page.screenshot({ path: path.join(output, "sugar-answer-360.png"), fullPage: true });
+  checks.push("Team demo production build shows complete sugar-label answer with citations at 360px");
+  console.log("PASS team demo browser flow");
+  run.runtimeAfter = await metadata(); assert.ok(events.every(event => event.status === 200 && !event.errorType));
+  run.providerRequests = events.length; run.success = true;
+} catch (error) {
+  run.failure = { type: error.name, message: String(error.message).slice(0, 300) };
+  console.error("FAIL", run.failure.type, run.failure.message);
+} finally {
+  if (browser) await browser.close();
+  if (client) await client.dispose();
+  if (app && app.exitCode === null) {
+    try { execFileSync("taskkill", ["/pid", String(app.pid), "/t", "/f"], { windowsHide: true, stdio: "ignore" }); } catch { /* Already exited. */ }
+  }
+  if (proxy?.listening) await new Promise(resolve => proxy.close(resolve));
+  logs.end(); run.finishedAt = new Date().toISOString(); await save("release-run.json", run); await save("provider-audit.json", events);
+  console.log(JSON.stringify({ success: run.success, checks: checks.length, providerRequests: events.length }));
+}
+process.exitCode = run.success ? 0 : 1;

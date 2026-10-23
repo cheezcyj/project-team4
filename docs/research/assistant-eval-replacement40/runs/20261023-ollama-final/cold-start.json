@@ -1,0 +1,28 @@
+{
+  "status": 200,
+  "elapsedMs": 3158,
+  "response": {
+    "kind": "answer",
+    "answer": "당화혈색소는 지난 약 3개월 동안의 평균적인 혈당 상태를 확인하는 검사예요. 반면에 혈당계는 그 순간의 혈당 수치를 보여준답니다.",
+    "sourceSupplemented": false,
+    "draftPreview": true,
+    "citations": [
+      {
+        "id": "B01:R1",
+        "title": "Managing Diabetes",
+        "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+        "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes",
+        "pdfPages": [],
+        "section": "A1C 설명; 자가 혈당계가 보여 주는 현재 값",
+        "evidenceRole": "medical_basis",
+        "reuseLabel": "NIDDK 교육 본문 이용정책",
+        "reuseUrl": "https://www.niddk.nih.gov/copyright",
+        "attribution": "NIDDK, Managing Diabetes. 원문 검토 2023년 10월.",
+        "adaptationNotice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다."
+      }
+    ]
+  },
+  "modelUnloadedBefore": true,
+  "serverRestarted": false,
+  "providerRequests": 1
+}

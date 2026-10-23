@@ -1,0 +1,7 @@
+Read-only Supabase SQL Editor result excerpts. No account identifiers or credentials.
+inspection-result-state.json
+331 행 public_table_count forced_rls_table_count meal_slot_exists account_delete_function meal_save_function latest_meal_conflict_fix
+344 행 10 10 true true true true
+seed-result-state.json
+328 행 foods benefits policies meal_constraints
+337 행 8 3 15 2

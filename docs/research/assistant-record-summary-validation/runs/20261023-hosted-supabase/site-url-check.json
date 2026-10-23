@@ -1,0 +1,13 @@
+{
+  "checkedAtUtc": "2026-10-23T02:10:32.418808+00:00",
+  "method": "Visible Supabase Authentication URL Configuration; save, confirm page reload, read back",
+  "previousSiteUrl": "http://localhost:3000",
+  "siteUrl": "http://127.0.0.1:3005",
+  "saved": true,
+  "readBackAfterPageReload": true,
+  "readBackField": "250 편집 Site URL, Value: http://127.0.0.1:3005, Secondary Actions: SetValue",
+  "emailConfirmationDeliveryTested": false,
+  "selfSignupTested": false,
+  "redirectAllowListChanged": false,
+  "rawDashboardCaptures": "Kept locally; omitted from shared evidence"
+}

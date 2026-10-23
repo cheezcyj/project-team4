@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "D:\yeardreamschool6th\teamproject1\scripts\evaluate_assistant.py", line 357, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "D:\yeardreamschool6th\teamproject1\scripts\evaluate_assistant.py", line 350, in main
+    raise ValueError("Use an existing app build directory inside this workspace.")
+ValueError: Use an existing app build directory inside this workspace.

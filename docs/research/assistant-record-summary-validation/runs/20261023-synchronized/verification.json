@@ -1,0 +1,26 @@
+{
+  "captured_at": "2026-10-23T00:57:26.584883+00:00",
+  "base_commit": "92b8ce0cc181660749ea893d9e16693f21a4698d",
+  "uncommitted_changes": "Shared record-change subscription in client API and both record-loading hooks; tests/docs/evidence",
+  "build_id": "5dDZ3OMQvZd8w29kg0q33",
+  "regression_before_fix": "1 focused test failed on dashboard still showing 130 after saving 140",
+  "e2e_passed": 6,
+  "unit_passed": 69,
+  "lint": "passed",
+  "typecheck": "passed",
+  "build": "passed",
+  "data_backend": "loopback demo file store; dedicated synthetic accounts",
+  "asserted_views": [
+    "fasting-summary final API response",
+    "dashboard recent record rows and empty state",
+    "journal values and measurement context"
+  ],
+  "model_inference_performed": false,
+  "actual_supabase_auth_postgrest_e2e": "not run; team environment is on another PC",
+  "source_sha256": {
+    "src/lib/client/api.ts": "fbe4c8f772c2167b9e1f1cdd402f65a0ef62e109be498d5704cf5fa11607a8b9",
+    "src/components/records/use-records.ts": "6c9e5b02cbde7710e0145301cdc92df8295a12ff5562367af29c2cdf0d502594",
+    "src/components/insights/use-period-data.ts": "814ee13df9ef06835d2026ac7d776e69f591e0dff64a58b4f2bf2fbe856dad21",
+    "tests/e2e/assistant-records.spec.ts": "540f1d3790e823686c2647704cd50e7a5fb3d18bc0fe5a81558a86b6b167fdcc"
+  }
+}

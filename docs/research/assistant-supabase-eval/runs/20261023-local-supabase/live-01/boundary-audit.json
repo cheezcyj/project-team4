@@ -1,0 +1,13 @@
+{
+  "providerHttpRequests": 7,
+  "successfulProviderResponses": 4,
+  "engineConnectionErrors": 3,
+  "finalModelAnswers": 4,
+  "sourceSupplementedAnswers": [
+    "G03"
+  ],
+  "modelPromptShape": "current question plus unchanged public knowledge only",
+  "privateIdentifierBoundary": "no blocked requests; configured account IDs/emails, created record IDs and memo checked by runner",
+  "sourcesAndModelMetadataUnchanged": true,
+  "syntheticRecordsCleaned": 3
+}

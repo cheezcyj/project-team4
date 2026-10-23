@@ -1,0 +1,8 @@
+load_tensors: offloaded 43/43 layers to GPU
+load_tensors:        CUDA0 model buffer size =  2696.06 MiB
+llama_context: n_seq_max             = 4
+llama_context: n_ctx                 = 524288
+slot   load_model: id  0 | task -1 | new slot, n_ctx = 131072
+slot   load_model: id  1 | task -1 | new slot, n_ctx = 131072
+slot   load_model: id  2 | task -1 | new slot, n_ctx = 131072
+slot   load_model: id  3 | task -1 | new slot, n_ctx = 131072

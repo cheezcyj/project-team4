@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-10-23T06:45:15.215643+00:00",
+  "baseCommit": "67f00fca3239a779a91bb8ebe3ba35706bea6523",
+  "localOnlyExcluded": [
+    ".env.local",
+    "backup/",
+    "test account file",
+    "app-server.log",
+    "import.log",
+    "full Ollama server.log",
+    "model weights"
+  ],
+  "userConfirmedPreviousServersManuallyStopped": true,
+  "sharedImagesUseSyntheticAccount": true,
+  "normalAppDraftGatePreserved": true,
+  "userEnvironmentAndServerLifecycleChanged": false,
+  "providerConfigurationIsOneSlot": true,
+  "ggufReuseVerified": true,
+  "readmeAndMigrationsChanged": false,
+  "commitOrPrCreated": false
+}

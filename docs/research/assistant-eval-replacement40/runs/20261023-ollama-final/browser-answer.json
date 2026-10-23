@@ -1,0 +1,21 @@
+{
+  "kind": "answer",
+  "answer": "참고 자료 요약: ‘무가당’은 당류 등을 넣지 않는 제조·원재료 조건에 관한 표시라서, 완제품의 당류가 0이라는 뜻은 아닙니다. ‘무당’은 별도의 함량 기준으로, 식품 100g 또는 100mL당 당류 0.5g 미만이 기준이며 정확히 0을 보장하지는 않습니다. 영양정보에서 당류·탄수화물·열량과 표시 기준량을 보고, 실제 먹는 양도 함께 확인하세요.",
+  "sourceSupplemented": true,
+  "draftPreview": true,
+  "citations": [
+    {
+      "id": "N03:R4",
+      "title": "식품등의 표시기준",
+      "publisher": "식품의약품안전처",
+      "url": "https://www.mfds.go.kr/brd/m_211/view.do?seq=14917",
+      "pdfPages": [],
+      "section": "별지 1, 1. 아. 1), 2)나)(3), 3)가)(2), 3)다)",
+      "evidenceRole": "label_basis",
+      "reuseLabel": "국가 고시 규범 본문: 저작권법 제7조제2호",
+      "reuseUrl": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1029423769",
+      "attribution": "식품의약품안전처, 식품등의 표시기준 제2025-60호(2025-08-29).",
+      "adaptationNotice": "프로젝트가 일반 교육용으로 한국어 요약·재구성했습니다. 원문과 차이가 있으며, 원저자·기관의 서비스 승인을 뜻하지 않습니다."
+    }
+  ]
+}

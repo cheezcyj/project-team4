@@ -1,0 +1,8 @@
+{
+  "status": 200,
+  "model": "team4-gemma4-e4b-qat:comparison",
+  "created_at": "2026-10-23T06:18:32.1729446Z",
+  "response": "",
+  "done": true,
+  "done_reason": "load"
+}

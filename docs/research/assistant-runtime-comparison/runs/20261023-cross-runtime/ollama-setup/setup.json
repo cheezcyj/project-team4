@@ -1,0 +1,64 @@
+{
+  "startedAt": "2026-10-23T06:17:48.793Z",
+  "base": "http://127.0.0.1:11435",
+  "model": "team4-gemma4-e4b-qat:comparison",
+  "gguf": "C:\\Users\\Administrator\\.lmstudio\\models\\google\\gemma-4-E4B-it-qat-q4_0-gguf\\gemma-4-E4B_q4_0-it.gguf",
+  "sourceSize": 5154941280,
+  "sourceSha256": "676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee",
+  "modelStore": "D:\\yeardreamschool6th\\teamproject1\\.local\\assistant-ollama-runtime-20261023-02\\models",
+  "parameters": {
+    "num_ctx": 131072,
+    "temperature": 0.1,
+    "num_predict": 512
+  },
+  "serverSettings": {
+    "OLLAMA_HOST": "127.0.0.1:11435",
+    "OLLAMA_MODELS": "D:\\yeardreamschool6th\\teamproject1\\.local\\assistant-ollama-runtime-20261023-02\\models",
+    "OLLAMA_NUM_PARALLEL": "4",
+    "OLLAMA_CONTEXT_LENGTH": "131072",
+    "OLLAMA_MAX_LOADED_MODELS": "1",
+    "OLLAMA_FLASH_ATTENTION": "1",
+    "OLLAMA_KV_CACHE_TYPE": "f16",
+    "OLLAMA_NO_CLOUD": "1"
+  },
+  "existingServersPreserved": [
+    11480,
+    11434,
+    1234
+  ],
+  "existingAppConfigurationChanged": false,
+  "inferenceQuestionsPlanned": 12,
+  "emptyPromptPreloadsPlanned": 1,
+  "modelDownloaded": false,
+  "success": true,
+  "version": "0.40.9",
+  "importedBlobMatchesSourceHash": true,
+  "loaded": {
+    "name": "team4-gemma4-e4b-qat:comparison",
+    "model": "team4-gemma4-e4b-qat:comparison",
+    "size": 3263252397,
+    "digest": "edccf9a100bae46f416d009b2b55866edd916366b6fc7683817277b46f339a35",
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "gemma4",
+      "families": [
+        "gemma4"
+      ],
+      "parameter_size": "7.5B",
+      "quantization_level": "Q4_0"
+    },
+    "expires_at": "2026-10-23T15:28:32.1729446+09:00",
+    "size_vram": 3263252397,
+    "context_length": 131072,
+    "runner": "llamacpp"
+  },
+  "result": {
+    "attempts": 12,
+    "successfulHttpResponses": 12,
+    "validAnswerEnvelopes": 12,
+    "metadataUnchanged": true
+  },
+  "finishedAt": "2026-10-23T06:19:15.173Z",
+  "temporaryServerStopped": true
+}
