@@ -23,3 +23,6 @@ docs/research/assistant-supabase-eval/runs/** -text -whitespace
 
 # Preserve model-runtime comparison evidence across platforms.
 docs/research/assistant-runtime-comparison/runs/** -text -whitespace
+
+# 음식 자료의 원본 해시가 OS별 줄바꿈 변환으로 달라지지 않게 보존합니다.
+resources/foods/*.csv -text

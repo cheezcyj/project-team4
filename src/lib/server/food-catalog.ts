@@ -16,7 +16,7 @@ export async function localFoodCatalog():Promise<{foods:FoodCatalogItem[];source
   if(info.size>150*1024*1024)throw new Error('Catalog exceeds allowed size');
   const parsed:unknown=JSON.parse(await readFile(/* turbopackIgnore: true */ filename,'utf8'));
   if(!parsed||typeof parsed!=='object')throw new Error('Invalid catalog');
-  const artifact=parsed as {schema_version:number;records_count:number;records_sha256:string;source_sha256:string;records:FoodCatalogItem[]};
+  const artifact=parsed as {schema_version:number;records_count:number;records_sha256:string;source_sha256:string;include_built_in?:boolean;records:FoodCatalogItem[]};
   if(artifact.schema_version!==1||!Array.isArray(artifact.records)||artifact.records.length!==artifact.records_count||artifact.records_count<1||artifact.records_count>100000||!/^[0-9a-f]{64}$/.test(artifact.source_sha256)||createHash('sha256').update(JSON.stringify(artifact.records)).digest('hex')!==artifact.records_sha256)throw new Error('Catalog integrity mismatch');
   const seen=new Set<string>();
   for(const item of artifact.records){
@@ -24,7 +24,9 @@ export async function localFoodCatalog():Promise<{foods:FoodCatalogItem[];source
    for(const key of ['kcal','carbs_g','sugars_g','protein_g','fat_g','fiber_g','sodium_mg'] as const)if(item[key]!==null&&(!Number.isFinite(item[key])||Number(item[key])<0))throw new Error('Invalid catalog nutrient');
    seen.add(item.id);
   }
-  registry.__foodCatalogCache={filename,mtime:info.mtimeMs,size:info.size,records:artifact.records};return {foods:artifact.records,source:'local'};
+  // 팀 공통 발췌본만 기본 8개를 합쳐요. 별도 CSV 가져오기의 기존 동작은 유지해요.
+  const records=artifact.include_built_in===true?[...foodCatalog.filter(food=>!seen.has(food.id)),...artifact.records]:artifact.records;
+  registry.__foodCatalogCache={filename,mtime:info.mtimeMs,size:info.size,records};return {foods:records,source:'local'};
  }catch(error){
   if((error as NodeJS.ErrnoException).code==='ENOENT')return {foods:foodCatalog,source:'built_in'};
   throw new ApiError(503,'FOOD_CATALOG_UNAVAILABLE','음식 자료를 불러오지 못했어요. 직접 이름을 입력하거나 잠시 후 다시 확인해 주세요.');

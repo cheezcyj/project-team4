@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "source_file": "mfds-nutrition.csv",
+  "source_sha256": "f88a0e1dcd4f60751ee1ad5cf9b0f7a9c832316311ee1f1eabac307a3df40670",
+  "source_version": "provided-f88a0e1dcd4f6075",
+  "records_sha256": "69e1b02ecb774be5f687fbb9d5fcde7bf577f652f383e982bc67840c5bdd9978",
+  "records_count": 50000,
+  "normalized_at": "2026-10-21T08:52:57.719Z",
+  "provider": "식품의약품안전처",
+  "dataset": "전국통합식품영양성분정보표준데이터 중 식품의약품안전처 발췌본",
+  "source_url": "https://www.data.go.kr/data/15100064/standard.do",
+  "rights_url": "https://www.data.go.kr/tcs/dss/selectDpkDetailInfo.do?publicDataDetailPk=uddi%3A8afb7f21-b602-48c8-854f-ea48b2d3224e",
+  "rights_statement": "이용허락범위 제한 없음",
+  "rights_checked_at": "2026-10-24",
+  "scope": "동일한 로컬 시연을 위한 고정 발췌본. 공식 최신 전체 DB가 아닙니다."
+}
