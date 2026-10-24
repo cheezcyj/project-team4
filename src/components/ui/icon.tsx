@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export type IconName = "home" | "drop" | "meal" | "book" | "calendar" | "chart" | "gift" | "news" | "upload" | "user" | "menu" | "close" | "bot" | "arrow";
+export type IconName = "home" | "drop" | "meal" | "book" | "calendar" | "chart" | "gift" | "news" | "upload" | "user" | "menu" | "close" | "bot" | "arrow" | "search";
 const paths: Record<IconName, string> = {
   home: "m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z",
   drop: "M12 2C10 6 5 11 5 15a7 7 0 0 0 14 0c0-4-5-9-7-13Z",
@@ -16,6 +16,7 @@ const paths: Record<IconName, string> = {
   close: "m5 5 14 14M19 5 5 19",
   bot: "M12 3v3M6 7h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3ZM8 12v2m8-2v2m-7 3h6",
   arrow: "M4 12h16m-6-6 6 6-6 6",
+  search: "M21 21l-5-5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z",
 };
 export function Icon({ name, size = 22, style }: { name: IconName; size?: number; style?: CSSProperties }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={style}><path d={paths[name]} /></svg>;

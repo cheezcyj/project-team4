@@ -1,0 +1,43 @@
+/* Search above a single reading surface follows the selected design; app tokens own the shell. */
+.toolbar { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 16px; }
+.search { flex: 1; min-width: 0; }
+.search label { display: block; font-weight: 650; font-size: 14px; margin-bottom: 8px; }
+.searchControl { display: flex; align-items: center; gap: 12px; min-height: 48px; background: white; border: 1px solid var(--color-line-strong); border-radius: var(--radius-control); padding: 0 14px; color: var(--color-muted); }
+.searchControl:focus-within { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.searchControl input { width: 100%; min-width: 0; border: 0; outline: 0; padding: 12px 0; color: var(--color-text); background: transparent; font: inherit; }
+.searchControl input:focus-visible { outline: 0; }
+.searchControl input::-webkit-search-cancel-button { appearance: none; }
+.clear { display: grid; place-items: center; border: 0; width: 36px; height: 36px; flex: 0 0 36px; border-radius: 6px; background: transparent; color: var(--color-muted); font-size: 26px; cursor: pointer; }
+.clear:hover { background: var(--color-surface); color: var(--color-text); }
+.refresh { min-width: 156px; min-height: 48px; }
+.resultsInfo { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; min-height: 28px; margin-bottom: 12px; color: var(--color-muted); font-size: 13px; }
+.list { border: 1px solid var(--color-line); border-radius: 18px; background: white; padding: 0 28px; overflow-wrap: anywhere; }
+.article { padding: 28px 0; }
+.article + .article { border-top: 1px solid var(--color-line); }
+.articleHeading { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.articleHeading h2 { margin: 0; font-size: 21px; line-height: 1.55; font-weight: 700; }
+.articleHeading h2 a { color: var(--color-text); text-decoration: none; }
+.articleHeading h2 a:hover { color: var(--color-primary); text-decoration: underline; text-underline-offset: 4px; }
+.original { display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; padding: 4px 0; font-size: 14px; font-weight: 650; color: var(--color-primary); }
+.summary { max-width: 82ch; margin: 12px 0 24px; line-height: 1.85; color: var(--color-muted); }
+.articleFooter { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-top: 20px; font-size: 13px; color: var(--color-muted); }
+.meta { display: flex; gap: 8px 18px; flex-wrap: wrap; }
+.license { color: var(--color-muted); text-decoration: underline; text-underline-offset: 3px; }
+.license:hover { color: var(--color-primary); }
+.empty { min-height: 270px; padding: 48px 16px; display: grid; justify-items: center; align-content: center; text-align: center; gap: 12px; }
+.empty h2 { margin: 0; font-size: 20px; }
+.empty p { margin: 0; color: var(--color-muted); }
+.more { display: flex; justify-content: center; margin-top: 24px; }
+.sourceNote { margin: 20px 0 0; color: var(--color-muted); font-size: 13px; line-height: 1.7; }
+@media (max-width: 600px) {
+  .toolbar { gap: 12px; flex-wrap: wrap; }
+  .search { flex-basis: 100%; }
+  .refresh { margin-left: auto; min-width: 144px; }
+  .list { padding: 0 18px; border-radius: 14px; }
+  .article { padding: 24px 0; }
+  .articleHeading { flex-direction: column; gap: 8px; }
+  .articleHeading h2 { font-size: 19px; }
+  .summary { margin-top: 10px; line-height: 1.8; }
+  .articleFooter { gap: 12px; }
+  .license { font-size: 12px; }
+}

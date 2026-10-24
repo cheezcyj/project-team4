@@ -23,14 +23,15 @@ export function subscribeRecordChanges(onChange: () => void): () => void {
     channel?.close();
   };
 }
-export async function api<T>(url: string, init?: RequestInit): Promise<T> {
+export async function api<T>(url: string, init?: RequestInit, options?: { timeoutMs?: number }): Promise<T> {
   // 응답이 끊겨도 서버에는 저장됐을 수 있어요. 결과를 모르면 자동 재전송하지 않아요.
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 15000);
+  const timer = setTimeout(() => controller.abort(), Math.min(60_000, Math.max(1000, options?.timeoutMs ?? 15000)));
+  const signal = init?.signal ? AbortSignal.any([controller.signal, init.signal]) : controller.signal;
   const changesRecords = /^(?:POST|PUT|PATCH|DELETE)$/i.test(init?.method ?? "GET") && /^\/api\/(?:records|imports|consent)(?:\/|$|\?)/.test(url);
   if (changesRecords) invalidateRecordSummary();
   try {
-    const response = await fetch(url, { ...init, cache: "no-store", credentials: "same-origin", signal: controller.signal, headers: { "Content-Type": "application/json", ...init?.headers } });
+    const response = await fetch(url, { ...init, cache: "no-store", credentials: "same-origin", signal, headers: { "Content-Type": "application/json", ...init?.headers } });
     const body = await response.json().catch(() => null);
     if (!response.ok) {
       if (response.status === 401 && url !== "/api/login")

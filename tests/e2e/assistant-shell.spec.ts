@@ -58,14 +58,15 @@ test('disabled assistant checks availability without sending a question, restore
   await expect(panel.getByLabel('질문',{exact:true})).toBeDisabled();
 });
 
-test('news stays empty and responsive navigation and assistant expose accessible content',async({page},info)=>{
+test('empty news response and responsive navigation and assistant expose accessible content',async({page},info)=>{
   test.setTimeout(90_000);
   await login(page);
   const newsRequests:string[]=[];
+  await page.route('**/api/news',route=>route.fulfill({json:{articles:[],configured:true,provider:'mohw',source_url:'https://www.mohw.go.kr/rss/board.es',refresh:{status:'fresh',last_success_at:'2026-10-24T00:00:00Z',error:null,automatic:true}}}));
   page.on('request',request=>{if(request.url().includes('/api/news'))newsRequests.push(request.url());});
   await page.goto('/news');
   await expect(page.getByText('아직 등록된 소식이 없어요.',{exact:true})).toBeVisible();
-  expect(newsRequests).toEqual([]);
+  expect(newsRequests.length).toBeGreaterThan(0);
   for(const width of [360,768,1280]){
     await page.setViewportSize({width,height:900});
     await page.goto('/records/new');

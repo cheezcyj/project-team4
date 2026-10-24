@@ -175,12 +175,13 @@ test("맞춤 조건은 명시적으로 저장·삭제하고 정책 근거와 뉴
   await expect(page.getByText("맞춤 조건을 삭제했어요. 개인 조건을 이용한 선별도 중지했어요.")).toBeVisible();
   expect((await (await page.request.get("/api/preferences")).json()).preferences).toBeNull();
   let newsRequests = 0;
+  await page.route("**/api/news", route => route.fulfill({ json: { articles: [], configured: true, provider: "mohw", source_url: "https://www.mohw.go.kr/rss/board.es", refresh: { status: "fresh", last_success_at: "2026-10-24T00:00:00Z", error: null, automatic: true } } }));
   page.on("request", request => { if (new URL(request.url()).pathname === "/api/news") newsRequests += 1; });
   await page.goto("/news");
   const news = page.getByRole("region", { name: "건강 뉴스 목록" });
-  await expect(news).toHaveText("아직 등록된 소식이 없어요.");
+  await expect(news.getByRole("heading", { name: "아직 등록된 소식이 없어요." })).toBeVisible();
   await expect(news.getByRole("link")).toHaveCount(0);
-  expect(newsRequests).toBe(0);
+  expect(newsRequests).toBeGreaterThan(0);
 });
 
 test('식사 메모는 이모지도 한 문자로 세고 500자 저장과 501자 오류를 구분한다', async ({ page }) => {
