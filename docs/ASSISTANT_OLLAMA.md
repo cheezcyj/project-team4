@@ -13,7 +13,7 @@
 Ollama가 실행된 상태에서 Git에서 제외되는 `.local/` 아래에 `Modelfile`을 만든다. `FROM` 경로만 각 PC의 실제 GGUF 위치로 바꾼다. 사진 입력과 mmproj는 사용하지 않는다.
 
 ```text
-FROM "C:/path/to/gemma-4-E4B_q4_0-it.gguf"
+FROM "./models/gemma-4-E4B_q4_0-it.gguf"
 PARAMETER num_ctx 131072
 PARAMETER temperature 0.1
 PARAMETER num_predict 512
@@ -49,7 +49,7 @@ ASSISTANT_SUPABASE_EVAL_USER_IDS=
 
 `text`에서도 모델에는 JSON 답변을 요구하고 앱이 JSON·출처 ID를 검증한다. Ollama용 별도 LangChain이나 API 키는 필요하지 않다. 개발 서버는 환경 파일 변경을 다시 읽으며, 프로덕션 서버는 다시 실행해야 한다.
 
-초안 자료의 승인 상태는 그대로다. 기본 Supabase 앱에서는 일반 지식 답변을 차단하고, 별도 동의를 받은 공복 기록 요약은 모델 없이 사용할 수 있다. 일반 답변의 개발 검증은 [가상 계정 전용 평가](ASSISTANT_SUPABASE_EVAL.md)로 실행한다. 모델 연결을 위해 초안 승인을 켜거나 실제 사용자 계정을 평가 허용 목록에 넣지 않는다.
+초안 자료의 승인 상태는 그대로다. 기본 Supabase 앱에서는 공개 건강자료 기반 답변을 사용하고 팀 초안 자료는 차단합니다. 별도 동의를 받은 공복 기록 요약은 모델 없이 사용할 수 있습니다. 일반 답변의 개발 검증은 [가상 계정 전용 평가](ASSISTANT_SUPABASE_EVAL.md)로 실행한다. 모델 연결을 위해 초안 승인을 켜거나 실제 사용자 계정을 평가 허용 목록에 넣지 않는다.
 
 ## 로드와 평가
 
@@ -68,12 +68,13 @@ ollama ps
 ```
 
 ```powershell
+$env:ASSISTANT_PUBLIC_SOURCES_ENABLED="0"
 npm run eval:assistant:supabase -- --run --provider ollama --accounts .local/synthetic-accounts.json --output .local/assistant-ollama-live-01
 ```
 
 계정 파일은 서비스 동의를 마친 전용 가상 계정 2개를 담아야 한다. 출력은 새 경로로 지정한다. 러너는 실제 Supabase Auth·DB, 브라우저 표시, 일반 질문 4개와 모델을 사용하지 않는 범위 제한 질문 4개를 확인한다. 자료의 의료 검토나 서비스 공개 승인은 별도다.
 
-이전 격리 서버 비교에서는 사전 로드 후에도 첫 실제 질문이 24.39초 걸렸다. 앱의 모델 제한 시간은 30초이며 사전 로드가 첫 질문의 속도를 보장하지 않는다. 요청이 끝나면 Ollama의 로드 유지 시간이 갱신될 수 있으므로, 위 사전 로드가 항상 30분 상주를 보장한다고 해석하지 않는다.
+이전 격리 서버 비교에서는 사전 로드 후에도 첫 실제 질문이 24.39초 걸렸다. 앱의 모델 제한 시간은 기본 45초이며 `ASSISTANT_MODEL_TIMEOUT_MS`로 최대 90초까지 조절합니다. 사전 로드가 첫 질문의 속도를 보장하지 않는다. 요청이 끝나면 Ollama의 로드 유지 시간이 갱신될 수 있으므로, 위 사전 로드가 항상 30분 상주를 보장한다고 해석하지 않는다.
 
 ## 현재 실행 설정
 

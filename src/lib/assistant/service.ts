@@ -5,6 +5,7 @@ import { generateAnswer, modelSettings, type AssistantEnvironment, type ModelHis
 import { medicalBoundary } from "./safety";
 import { supplementAnswer } from "./answer-conditions";
 import { draftPreviewAllowed } from "./preview";
+import { findHealthEvidence, healthTopicFor, type EvidenceSearch } from "./health-evidence";
 import { ASSISTANT_MAX_QUESTION_LENGTH, type AssistantAnswer, type AssistantStatus } from "./types";
 
 const activeUsers = new Set<string>();
@@ -15,7 +16,9 @@ function configuration(context: RequestContext, env: AssistantEnvironment, loopb
   const draftPreview = draftPreviewAllowed(context, env, loopbackRequest);
   const candidates = eligibleKnowledge(draftPreview);
   const settings = modelSettings(env);
-  return { draftPreview, candidates, settings, available: env.ASSISTANT_ENABLED === "1" && !!settings && candidates.length > 0 };
+  // 로컬 초안 실험만 팀 자료집을 사용하고, 일반 실행은 기존 공개 건강정보 조회를 유지해요.
+  const sourceAvailable = draftPreview ? candidates.length > 0 : env.ASSISTANT_PUBLIC_SOURCES_ENABLED !== "0";
+  return { draftPreview, candidates, settings, available: env.ASSISTANT_ENABLED === "1" && !!settings && sourceAvailable };
 }
 
 export function assistantStatus(context: RequestContext, env: AssistantEnvironment = process.env,
@@ -29,6 +32,9 @@ export function assistantStatus(context: RequestContext, env: AssistantEnvironme
 }
 
 function unsupportedQuestion(question: string): Pick<AssistantAnswer, "kind" | "answer"> | null {
+  if (/https?:\/\/|(?:기사|뉴스|책|서적|논문).{0,30}(?:전문|전체|원문|그대로|복사)/u.test(question)) {
+    return { kind: "unsupported", answer: "특정 자료의 원문을 가져오거나 그대로 복사하지는 않아요. 궁금한 건강 주제를 질문하면 이용이 허용된 공개 자료로 설명해 드려요." };
+  }
   const medical = medicalBoundary(question);
   if (medical) return medical;
   question = question.normalize("NFKC").toLocaleLowerCase("ko");
@@ -43,7 +49,7 @@ function unsupportedQuestion(question: string): Pick<AssistantAnswer, "kind" | "
 
 export async function answerQuestion(context: RequestContext, body: Record<string, unknown>,
   options: { env?: AssistantEnvironment; signal?: AbortSignal; fetch?: typeof fetch; loopbackRequest?: boolean;
-    history?: ModelHistoryMessage[] } = {}): Promise<AssistantAnswer> {
+    history?: ModelHistoryMessage[]; evidence?: EvidenceSearch } = {}): Promise<AssistantAnswer> {
   const config = configuration(context, options.env ?? process.env, options.loopbackRequest === true);
   if (Object.keys(body).some(key => !["question", "allow_model_processing"].includes(key))
     || typeof body.question !== "string" || !body.question.trim() || [...body.question].length > ASSISTANT_MAX_QUESTION_LENGTH) {
@@ -54,18 +60,24 @@ export async function answerQuestion(context: RequestContext, body: Record<strin
   const question = body.question.trim();
   const unsupported = unsupportedQuestion(question);
   if (unsupported) return { ...unsupported, citations: [], draftPreview: config.draftPreview };
-  let matches = retrieveKnowledge(question, config.candidates);
+  const followsUp = /그건|그거|그것|(?:그|이|해당|앞서|방금|아까|이전)\s*(?:검사|내용|말|방법|정보|기준|운동|식사)|더\s*(?:자세|알려|설명)/u.test(question);
+  let matches = config.draftPreview ? retrieveKnowledge(question, config.candidates) : [];
   // Resolve an explicit follow-up from server-owned questions. Unrelated questions still abstain.
-  if (!matches.length && /그건|그거|그것|(?:그|이|해당|앞서|방금|아까|이전)\s*(?:검사|내용|말|방법|정보|기준|운동|식사)|더\s*(?:자세|알려|설명)/u.test(question)) {
+  if (config.draftPreview && !matches.length && followsUp) {
     const previous = [...(options.history ?? [])].reverse().find(message => message.role === "user"
       && retrieveKnowledge(message.content, config.candidates).length > 0);
     if (previous) matches = retrieveKnowledge(`${previous.content}\n${question}`, config.candidates);
   }
-  if (!matches.length) return { kind: "no_evidence", answer: noEvidence, citations: [], draftPreview: config.draftPreview };
   const user = context.session.user!.id;
   if (activeUsers.has(user) || activeUsers.size >= 4) throw new ApiError(429, "ASSISTANT_BUSY", "진행 중인 답변이 있어요. 잠시 후 다시 질문해 주세요.");
   activeUsers.add(user);
   try {
+    if (!config.draftPreview) {
+      const previous = followsUp ? [...(options.history ?? [])].reverse().find(message => message.role === "user" && healthTopicFor(message.content)) : undefined;
+      const evidenceQuestion = healthTopicFor(question) || !previous ? question : `${previous.content}\n${question}`;
+      matches = await (options.evidence ?? findHealthEvidence)(evidenceQuestion, { signal: options.signal });
+    }
+    if (!matches.length) return { kind: "no_evidence", answer: noEvidence, citations: [], draftPreview: config.draftPreview };
     const result = await generateAnswer(question, matches, config.settings, options);
     if (!result.citationIds.length) return { kind: "no_evidence", answer: noEvidence, citations: [], draftPreview: config.draftPreview };
     return { kind: "answer", ...supplementAnswer(result.answer, result.citationIds, matches), draftPreview: config.draftPreview,
