@@ -23,6 +23,7 @@ import {
 } from "../domain";
 import { ApiError, noConsent, notFound } from "./errors";
 import { materializeMeal } from './service-validation';
+import { isHealthProfile, validateHealthProfile, type HealthProfile, type HealthProfileInput } from "../domain/health-profile";
 
 export const DEMO_USERS = {
   a: { id: "11111111-1111-4111-8111-111111111111", email: "demo-a@example.invalid" },
@@ -31,14 +32,14 @@ export const DEMO_USERS = {
 
 type DemoConsent = { user_id: string; policy_version: string; agreed_at: string };
 type ImportReceipt={user_id:string;request_id:string;batch_id:string;file_sha256:string;content_sha256:string};
-type DemoData = { version: 1; records: GlucoseRecord[]; consents: DemoConsent[]; meals?:MealRecord[];preferences?:UserPreferences[];imports?:ImportBatch[];importRequests?:ImportReceipt[] };
+type DemoData = { version: 1 | 2; records: GlucoseRecord[]; consents: DemoConsent[]; meals?:MealRecord[];preferences?:UserPreferences[];imports?:ImportBatch[];importRequests?:ImportReceipt[];healthProfiles?:HealthProfile[];healthProfileClock?:string };
 const userIds = new Set<string>(Object.values(DEMO_USERS).map((user) => user.id));
 
 // 로컬 파일도 손상되거나 직접 바뀔 수 있어 기록 번호·소유자·동의 형식을 다시 확인해요.
 export function validateDemoData(value: unknown): value is DemoData {
   if (typeof value !== "object" || !value) return false;
   const data = value as DemoData;
-  if (data.version !== 1 || !Array.isArray(data.records) || !Array.isArray(data.consents)) {
+  if (![1, 2].includes(data.version) || !Array.isArray(data.records) || !Array.isArray(data.consents)) {
     return false;
   }
   const ids = new Set<string>();
@@ -59,6 +60,15 @@ export function validateDemoData(value: unknown): value is DemoData {
     ids.add(record.id);
   }
   const consentUsers = new Set<string>();
+  if (data.healthProfileClock !== undefined && !isTimestamp(data.healthProfileClock)) return false;
+  if (data.healthProfiles !== undefined) {
+    if (!Array.isArray(data.healthProfiles)) return false;
+    const profileUsers = new Set<string>();
+    for (const profile of data.healthProfiles) {
+      if (!isHealthProfile(profile) || !userIds.has(profile.user_id) || profileUsers.has(profile.user_id)) return false;
+      profileUsers.add(profile.user_id);
+    }
+  }
   if (data.meals !== undefined && (!Array.isArray(data.meals) || data.meals.some(meal=>!meal || !isUuid(meal.id) || !userIds.has(meal.user_id) || !isTimestamp(meal.meal_at) || !Array.isArray(meal.items) || meal.items.some(item=>item.user_id!==meal.user_id || item.meal_id!==meal.id)))) return false;
   if (data.preferences !== undefined && (!Array.isArray(data.preferences) || data.preferences.some(item=>!item||!userIds.has(item.user_id)||typeof item.matching_enabled!=='boolean'))) return false;
   if (data.imports !== undefined && (!Array.isArray(data.imports) || data.imports.some(item=>!item||!isUuid(item.id)||!isUuid(item.request_id)||!userIds.has(item.user_id)||!isTimestamp(item.imported_at)))) return false;
@@ -91,7 +101,8 @@ function seedData(): DemoData {
     { id: "20000000-0000-4000-8000-000000000001", user_id: DEMO_USERS.b.id, day: -1, value: 105, context: "other", memo: "계정 B의 가상 기록" },
   ] as const;
   return {
-    version: 1,
+    version: 2,
+    healthProfiles: [],
     consents: [],
     records: samples.map((item) => ({
       id: item.id,
@@ -132,6 +143,12 @@ export class DemoStore {
     try {
       const value: unknown = JSON.parse(await readFile(this.filename, "utf8"));
       if (!validateDemoData(value)) throw new Error("Invalid demo data");
+      // 기존 시연 파일은 기록·동의를 유지한 채 다음 저장 때 새 형식으로 옮겨요.
+      value.version = 2;
+      value.healthProfiles ??= [];
+      const latestProfileTime = Math.max(0, ...value.healthProfiles.map(profile => Date.parse(profile.updated_at)),
+        value.healthProfileClock ? Date.parse(value.healthProfileClock) : 0);
+      if (latestProfileTime) value.healthProfileClock = new Date(latestProfileTime).toISOString();
       return value;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") {
@@ -274,6 +291,48 @@ export class DemoStore {
     if(old)data.preferences[data.preferences.indexOf(old)]=preferences;else data.preferences.push(preferences);return preferences;
   });}
   removePreferences(userId:string):Promise<void>{return this.transaction(true,data=>{data.preferences=(data.preferences??[]).filter(item=>item.user_id!==userId);});}
+  getHealthProfile(userId: string): Promise<HealthProfile | null> {
+    return this.transaction(false, data => {
+      if (!userIds.has(userId)) throw new ApiError(401, "UNAUTHORIZED", "다시 로그인해 주세요.");
+      return data.healthProfiles?.find(profile => profile.user_id === userId) ?? null;
+    });
+  }
+  saveHealthProfile(userId: string, input: HealthProfileInput): Promise<HealthProfile> {
+    return this.transaction(true, data => {
+      if (!userIds.has(userId)) throw new ApiError(401, "UNAUTHORIZED", "다시 로그인해 주세요.");
+      this.requireConsent(data, userId);
+      const validation = validateHealthProfile(input);
+      if (!validation.ok) throw new ApiError(422, "INVALID_INPUT", "입력한 내용을 확인해 주세요.", validation.fields);
+      const { expected_updated_at, notice_version, sex, age, height_cm, weight_kg } = validation.value;
+      data.healthProfiles ??= [];
+      const old = data.healthProfiles.find(profile => profile.user_id === userId);
+      if (old ? expected_updated_at !== old.updated_at : expected_updated_at !== null) {
+        throw new ApiError(409, "STALE_PROFILE", "다른 화면에서 개인정보가 바뀌었어요. 최신 정보를 다시 불러와 주세요.");
+      }
+      // 개인정보를 삭제해도 파일 전체의 시계 값만 남겨 같은 밀리초 재생성의 버전 재사용을 막아요.
+      const now = new Date(Math.max(Date.now(), data.healthProfileClock ? Date.parse(data.healthProfileClock) + 1 : 0)).toISOString();
+      data.healthProfileClock = now;
+      const profile: HealthProfile = {
+        user_id: userId, sex, age, height_cm, weight_kg, notice_version,
+        consented_at: now, created_at: old?.created_at ?? now, updated_at: now,
+      };
+      if (old) data.healthProfiles[data.healthProfiles.indexOf(old)] = profile;
+      else data.healthProfiles.push(profile);
+      return profile;
+    });
+  }
+  removeHealthProfile(userId: string, expectedUpdatedAt: string): Promise<void> {
+    return this.transaction(true, data => {
+      if (!userIds.has(userId)) throw new ApiError(401, "UNAUTHORIZED", "다시 로그인해 주세요.");
+      if (!isTimestamp(expectedUpdatedAt)) throw new ApiError(422, "INVALID_INPUT", "최신 정보를 불러온 뒤 삭제해 주세요.");
+      const old = data.healthProfiles?.find(profile => profile.user_id === userId);
+      if (!old) return;
+      if (old.updated_at !== expectedUpdatedAt) {
+        throw new ApiError(409, "STALE_PROFILE", "다른 화면에서 개인정보가 바뀌었어요. 최신 정보를 다시 불러와 주세요.");
+      }
+      data.healthProfiles = data.healthProfiles!.filter(profile => profile.user_id !== userId);
+    });
+  }
   getImport(userId:string,requestId:string):Promise<ImportBatch>{return this.transaction(false,data=>{const receipt=data.importRequests?.find(item=>item.user_id===userId&&item.request_id===requestId);const batch=data.imports?.find(item=>item.user_id===userId&&(item.request_id===requestId||item.id===receipt?.batch_id));if(!batch)notFound();return batch;});}
   importRecords(userId:string,requestId:string,fileHash:string,contentHash:string,records:RecordInput[]):Promise<{batch:ImportBatch;duplicate:boolean}>{return this.transaction(true,data=>{
     this.requireConsent(data,userId);data.imports??=[];data.importRequests??=[];
