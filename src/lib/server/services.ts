@@ -6,6 +6,7 @@ import type {RequestContext} from './session';
 import {databaseError} from './records';
 import {validateMeal,validatePreferences} from './service-validation';
 import {localFoodCatalog} from './food-catalog';
+import {listHealthNews} from './health-news';
 import {FOOD_NAME_EXCLUSION_PATTERN,isSearchableFoodName,randomFoodSample} from '../domain/food-search';
 const owner=(context:RequestContext)=>context.session.user!.id;
 function range(query:RangeQuery){try{return queryRange(query);}catch{throw new ApiError(422,'INVALID_DATE','조회 기간을 확인해 주세요.');}}
@@ -81,9 +82,9 @@ export async function listBenefits(context:RequestContext){
   const now=new Date(),today=seoulDay(now),preferences=await getPreferences(context);
   return {benefits:rules.filter(rule=>rule.status==='approved'&&Date.parse(rule.review_due_at)>now.getTime()&&(!rule.valid_from||rule.valid_from<=today)&&(!rule.valid_until||rule.valid_until>=today)).map(rule=>({rule,match:preferences?.matching_enabled?matchBenefit(rule,preferences):null}))};
 }
-export async function listNews(context:RequestContext){
+export async function listNews(context:RequestContext,options:Parameters<typeof listHealthNews>[0]={}){
   void context;
-  return {articles:[],configured:false,refresh:{status:'unconfigured' as const,last_success_at:null,error:null,automatic:false}};
+  return listHealthNews(options);
 }
 export async function getImport(context:RequestContext,requestId:string):Promise<ImportBatch>{
   if(!isUuid(requestId))notFound();if(context.store)return context.store.getImport(owner(context),requestId);

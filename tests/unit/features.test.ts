@@ -83,7 +83,9 @@ test('demo persists atomic meals, preferences and imports, isolates owners and r
   const reopened=new DemoStore(filename);assert.equal((await reopened.getMeal(DEMO_USERS.a.id,saved.id)).memo,'시연');assert.equal((await reopened.getImport(DEMO_USERS.a.id,requestId)).row_count,1);
   await assert.rejects(importCsv(context,{...body,csv:csv.replace('110','111')}),(error:unknown)=>error instanceof ApiError&&error.code==='IMPORT_CONFLICT');
   const file=await readFile(filename,'utf8');assert.equal(file.includes('value,time,context'),false);assert.equal(file.includes('filename'),false);
-  assert.equal((await searchFoods(context,'없는음식검색')).foods.length,0);assert.deepEqual((await listNews(context)).articles,[]);
+  assert.equal((await searchFoods(context,'없는음식검색')).foods.length,0);
+  const emptyNews=await listNews(context,{fetch:async()=>new Response('<rss><channel><title>가상 건강 소식</title></channel></rss>',{headers:{'Content-Type':'application/rss+xml'}})});
+  assert.equal(emptyNews.configured,true);assert.deepEqual(emptyNews.articles,[]);
   const edited=await store.saveMeal(DEMO_USERS.a.id,saved.id,{meal_at:saved.meal_at,meal_type:'lunch',memo:'바꿈',items:[]},[],saved.updated_at);
   await assert.rejects(store.saveMeal(DEMO_USERS.a.id,saved.id,{meal_at:saved.meal_at,meal_type:'lunch',memo:'오래된 값',items:[]},[],saved.updated_at),(error:unknown)=>error instanceof ApiError&&error.code==='STALE_RECORD');
   assert.equal((await reopened.getMeal(DEMO_USERS.a.id,saved.id)).memo,edited.memo);
