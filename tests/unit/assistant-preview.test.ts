@@ -7,7 +7,7 @@ import type { RequestContext } from "../../src/lib/server/session";
 
 const id = "11111111-1111-4111-8111-111111111111";
 const context: RequestContext = { session: { mode: "supabase", consent: "current", user: { id, email: "synthetic@example.invalid" } } };
-const env = { NODE_ENV: "development", ASSISTANT_ENABLED: "1", ASSISTANT_ALLOW_DRAFT_PREVIEW: "1",
+const env = { NODE_ENV: "development", ASSISTANT_ENABLED: "1", ASSISTANT_ALLOW_DRAFT_PREVIEW: "1", ASSISTANT_PUBLIC_SOURCES_ENABLED: "0",
   ASSISTANT_SUPABASE_EVAL_USER_IDS: id, ASSISTANT_MODEL: "mock-model", ASSISTANT_MODEL_BASE_URL: "http://127.0.0.1:9999/v1" };
 const options = { loopbackRequest: true };
 
@@ -24,7 +24,7 @@ test("Supabase draft evaluation requires every local-development, synthetic-iden
   ];
   for (const item of denied) {
     const status = assistantStatus(item.context ?? context, item.env ?? env, item.options ?? options);
-    assert.equal(status.available, false);
+    assert.equal(status.available, false, "draft-only evaluation must not fall back to public source requests");
     assert.equal(status.draftPreview, false);
   }
   assert.throws(() => assistantStatus({ session: { ...context.session, user: null } }, env, options),

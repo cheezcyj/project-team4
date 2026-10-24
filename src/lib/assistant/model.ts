@@ -7,6 +7,8 @@ export type ModelHistoryMessage = { role: "user" | "assistant"; content: string 
 
 export function modelSettings(env: AssistantEnvironment): ModelSettings | null {
   const name = env.ASSISTANT_MODEL?.trim();
+  const timeoutMs = Number(env.ASSISTANT_MODEL_TIMEOUT_MS ?? 45_000);
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 90_000) return null;
   const responseFormat = env.ASSISTANT_MODEL_RESPONSE_FORMAT ?? "json_object";
   if (!name || name.length > 200 || !env.ASSISTANT_MODEL_BASE_URL || !["json_object", "text"].includes(responseFormat)) return null;
   try {
@@ -14,7 +16,7 @@ export function modelSettings(env: AssistantEnvironment): ModelSettings | null {
     if (!["http:", "https:"].includes(url.protocol) || !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)
       || url.username || url.password || url.search || url.hash || !["/", "/v1", "/v1/"].includes(url.pathname)) return null;
     url.pathname = "/v1/chat/completions";
-    return { endpoint: url.href, model: name, apiKey: env.ASSISTANT_MODEL_API_KEY, timeoutMs: 30_000,
+    return { endpoint: url.href, model: name, apiKey: env.ASSISTANT_MODEL_API_KEY, timeoutMs,
       responseFormat: responseFormat as ModelSettings["responseFormat"] };
   } catch { return null; }
 }
@@ -78,14 +80,23 @@ export async function generateAnswer(question: string, matches: KnowledgeMatch[]
   options: { signal?: AbortSignal; fetch?: typeof fetch; history?: ModelHistoryMessage[] } = {}): Promise<{ answer: string; citationIds: string[] }> {
   const signal = AbortSignal.any([AbortSignal.timeout(settings.timeoutMs), ...(options.signal ? [options.signal] : [])]);
   const citationIds = [...new Set(matches.flatMap(match => match.citations.map(citation => citation.id)))];
+  // Schema constrains format/IDs, not medical truth; keep the independent validation below.
+  const responseFormat = settings.responseFormat === "json_object" ? {
+    type: "json_object", schema: {
+      type: "object", properties: {
+        answer: { type: "string" },
+        citation_ids: { type: "array", items: { type: "string", ...(citationIds.length ? { enum: citationIds } : {}) }, maxItems: citationIds.length },
+      }, required: ["answer", "citation_ids"], additionalProperties: false,
+    },
+  } : { type: "text" };
   let payload: unknown;
   try {
     const request = () => (options.fetch ?? fetch)(settings.endpoint, {
       method: "POST", cache: "no-store", redirect: "error", signal,
       headers: { "Content-Type": "application/json", ...(settings.apiKey ? { Authorization: `Bearer ${settings.apiKey}` } : {}) },
-      body: JSON.stringify({ model: settings.model, stream: false, temperature: 0.1, max_tokens: 512,
+      body: JSON.stringify({ model: settings.model, stream: false, temperature: 0.1, max_tokens: 512, cache_prompt: false,
         chat_template_kwargs: { enable_thinking: false }, reasoning_effort: "none",
-        response_format: { type: settings.responseFormat }, messages: [
+        response_format: responseFormat, messages: [
           { role: "system", content: `${systemPrompt}\n허용한 출처 ID 목록: ${JSON.stringify(citationIds)}\n응답 형식 예시: ${JSON.stringify({ answer: "제공된 요약에 따른 설명", citation_ids: citationIds.slice(0, 1) })}` },
           ...boundedHistory(options.history),
           { role: "user", content: JSON.stringify({ question, knowledge: matches.map(({ entry, citations }) => ({

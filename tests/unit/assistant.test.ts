@@ -16,13 +16,14 @@ function completion(answer = "검사에 관한 일반적인 설명입니다.", c
   return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({ answer, citation_ids: citationIds }) } }] });
 }
 
-test("draft corpus remains blocked by default and in Supabase, with explicit local preview only", () => {
+test("draft corpus stays preview-only while production retains the public health source service", () => {
   assert.equal(eligibleKnowledge(false).length, 0);
   assert.equal(eligibleKnowledge(true).length, 13);
   assert.ok(eligibleKnowledge(true).every(match => !["B05", "N05"].includes(match.entry.id)));
   assert.equal(assistantStatus(context, {}).available, false);
   assert.equal(assistantStatus(context, env).available, true);
-  assert.equal(assistantStatus({ session: { ...context.session, mode: "supabase" } }, env).available, false);
+  assert.equal(assistantStatus({ session: { ...context.session, mode: "supabase" } }, env).available, true);
+  assert.equal(assistantStatus({ session: { ...context.session, mode: "supabase" } }, env).draftPreview, false);
   assert.equal(bundle.policy.runtime_publishable, false);
   assert.throws(() => assistantStatus({ session: { user: null, mode: "demo", consent: null } }, env), hasCode("UNAUTHORIZED"));
 });

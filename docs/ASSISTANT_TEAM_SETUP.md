@@ -1,6 +1,6 @@
 # 팀에서 도우미 실행하기
 
-이 문서는 현재 MVP의 로컬 시연과 Supabase 개발 평가를 구분한다. 모델 서버를 바꿔도 개인 기록을 LLM에 보내는 기능은 추가하지 않는다.
+이 문서는 기존 팀 초안 자료를 사용하는 로컬 실험과 Supabase 개발 평가를 설명합니다. 공개 건강자료 및 Qwen 공통 안내문 재사용은 [로컬 도우미 연결 안내](LOCAL_ASSISTANT.md)를 참고합니다. 모델 서버를 바꿔도 개인 기록을 모델에 보내는 기능은 추가하지 않습니다.
 
 ## 준비할 것
 
@@ -27,11 +27,11 @@ node --env-file-if-exists=.env.local scripts/run-demo.mjs --production
 
 `http://127.0.0.1:3007`에서 가상 계정 A로 로그인한다. 도우미의 개발용 미리보기 표시와 질문별 AI 처리 동의를 확인하고 `당화혈색소가 무엇인가요?`를 전송한다. 답변과 출처가 표시되어야 한다. 공복 요약은 별도 기록 조회 동의를 받으며 최근 7일 공복 기록만 계산한다. 두 기능의 동의는 서로 대신하지 않는다.
 
-첫 요청에는 모델 로드 시간이 포함될 수 있다. [사전 로드 명령](ASSISTANT_OLLAMA.md#로드와-평가)으로 준비할 수 있으며, 모델이 내려가면 이후 요청에 로드 시간이 다시 발생할 수 있다. 앱의 제한 시간은 30초다.
+첫 요청에는 모델 로드 시간이 포함될 수 있다. [사전 로드 명령](ASSISTANT_OLLAMA.md#로드와-평가)으로 준비할 수 있으며, 모델이 내려가면 이후 요청에 로드 시간이 다시 발생할 수 있다. 앱의 모델 제한 시간은 기본 45초이며 `ASSISTANT_MODEL_TIMEOUT_MS`로 1~90초 범위에서 조절합니다.
 
 ## 실제 Supabase로 연결 확인
 
-일반 개발 설정은 `APP_MODE=supabase`, `ASSISTANT_ALLOW_DRAFT_PREVIEW=0`, 빈 `ASSISTANT_SUPABASE_EVAL_USER_IDS`로 유지한다. 이 상태에서 초안 일반 답변은 차단하고, 본인 공복 기록 요약은 별도 동의 후 사용할 수 있다.
+일반 개발 설정은 `APP_MODE=supabase`, `ASSISTANT_ALLOW_DRAFT_PREVIEW=0`, 빈 `ASSISTANT_SUPABASE_EVAL_USER_IDS`로 유지한다. 이 상태에서는 공개 건강자료 기반 답변을 사용하고 팀 초안 자료는 차단합니다. 본인 공복 기록 요약은 별도 동의 후 사용할 수 있습니다. 기존 초안 평가 도구를 실행할 때는 제어 앱과 평가 터미널에 `ASSISTANT_PUBLIC_SOURCES_ENABLED=0`을 지정해 공개 자료 요청을 끕니다.
 
 일반 답변까지 확인하려면 [Supabase 평가 안내](ASSISTANT_SUPABASE_EVAL.md)의 전용 `.invalid` 가상 계정 2개를 준비하고 `--provider ollama`로 평가한다. 러너가 임시 개발 서버의 계정 A만 허용하고, 종료 시 자신이 만든 기록과 서버만 정리한다. 실제 사용자 계정이나 건강정보를 평가에 사용하지 않는다.
 
