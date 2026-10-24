@@ -20,15 +20,17 @@ export function FoodPicker({ selectedIds, onSelect, onDirect, disabled }: { sele
   const [directError, setDirectError] = useState("");
   const [total, setTotal] = useState(0);
   const [truncated, setTruncated] = useState(false);
+  const [randomized, setRandomized] = useState(false);
   const queryInput = useRef<HTMLInputElement>(null);
   const version = useRef(0);
   const search = async (text: string) => {
     const request = ++version.current;
     setLoading(true); setError("");
     try {
-      const result = await api<{ foods: FoodCatalogItem[]; total?: number; matched_count?: number; truncated?: boolean }>(`/api/foods?q=${encodeURIComponent(text.trim())}`);
+      const result = await api<{ foods: FoodCatalogItem[]; total?: number; matched_count?: number; truncated?: boolean; randomized?: boolean }>(`/api/foods?q=${encodeURIComponent(text.trim())}`);
       if (request !== version.current) return;
       setFoods(result.foods); setSearched(text.trim()); setTotal(result.matched_count ?? result.total ?? result.foods.length); setTruncated(result.truncated ?? false);
+      setRandomized(result.randomized ?? false);
     } catch (cause) { if (request === version.current) setError(errorMessage(cause)); }
     finally { if (request === version.current) setLoading(false); }
   };
@@ -43,7 +45,7 @@ export function FoodPicker({ selectedIds, onSelect, onDirect, disabled }: { sele
     </form>
     <p className={styles.hint}>이름의 일부로 검색할 수 있어요. 같은 음식도 재료와 조리법에 따라 영양값이 달라요.</p>
     {error && <InlineError>{error} 이름을 직접 입력해 식사에 추가할 수 있어요.</InlineError>}
-    <p className={styles.hint} role="status">{loading ? "음식 정보를 불러오는 중이에요." : error ? "검색 결과를 확인하지 못했어요." : `${searched ? `‘${searched}’ 검색 결과` : "등록된 음식"} ${total.toLocaleString("ko-KR")}개${truncated ? ` 중 ${foods.length}개를 보여드려요. 이름을 더 입력하면 범위를 좁힐 수 있어요.` : ""}`}</p>
+    <p className={styles.hint} role="status">{loading ? "음식 정보를 불러오는 중이에요." : error ? "검색 결과를 확인하지 못했어요." : `${searched ? `‘${searched}’ 검색 결과` : "등록된 음식"} ${total.toLocaleString("ko-KR")}개${truncated ? ` 중 ${randomized ? "무작위로 고른 " : ""}${foods.length}개를 보여드려요. 이름을 더 입력하면 범위를 좁힐 수 있어요.` : ""}`}</p>
     {!loading && !error && foods.length === 0 && <p className={styles.empty}>검색된 음식이 없어요. 다른 이름을 검색하거나 아래에 직접 입력해 주세요.</p>}
     <ul className={styles.results} tabIndex={0} aria-label="음식 검색 결과">{!error && foods.map(food => <li className={styles.food} key={food.id}>
       <div className={styles.foodTop}><div><strong>{food.food_name}</strong><span>{food.basis_value}{food.basis_unit} 기준 · {food.kcal === null ? "열량 정보 없음" : `${food.kcal} kcal`}</span></div><button className="button secondary small" disabled={disabled || selectedIds.includes(food.id)} onClick={() => onSelect(food)} type="button" aria-label={`${food.food_name} ${selectedIds.includes(food.id) ? "추가됨" : "추가"}`}>{selectedIds.includes(food.id) ? "추가됨" : "+ 추가"}</button></div>

@@ -19,6 +19,25 @@ async function findMeal(page: Page, memo: string) {
 }
 test.beforeEach(async ({ page }, info) => { await login(page, info); });
 
+test("공통 음식 50,002개에서 무작위 100개를 표시하고 검색에는 제외 규칙을 유지한다", async ({ page }) => {
+  const first = await (await page.request.get("/api/foods")).json();
+  const second = await (await page.request.get("/api/foods")).json();
+  for (const result of [first, second]) {
+    expect(result.matched_count).toBe(50002);
+    expect(result.randomized).toBe(true);
+    expect(result.foods).toHaveLength(100);
+    expect(new Set(result.foods.map((food: FoodCatalogItem) => food.id)).size).toBe(100);
+    expect(result.foods.every((food: FoodCatalogItem) => !/^\s*[?？]/u.test(food.food_name))).toBe(true);
+  }
+  expect(first.foods.map((food: FoodCatalogItem) => food.id)).not.toEqual(second.foods.map((food: FoodCatalogItem) => food.id));
+  const search = await (await page.request.get(`/api/foods?q=${encodeURIComponent("가래떡")}`)).json();
+  expect(search.randomized).toBe(false);
+  expect(search.foods.every((food: FoodCatalogItem) => food.food_name.includes("가래떡"))).toBe(true);
+  await page.goto("/meals/new");
+  await expect(page.getByRole("status").filter({ hasText: "등록된 음식" })).toContainText("50,002개 중 무작위로 고른 100개");
+  await expect(page.getByRole("list", { name: "음식 검색 결과" }).getByRole("listitem")).toHaveCount(100);
+});
+
 test("식사 메모만 저장하고 재조회·삭제할 수 있다", async ({ page }, info) => {
   const memo = `식사 단독 검사 ${randomUUID()}`;
   await page.goto("/meals/new");

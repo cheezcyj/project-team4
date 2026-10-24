@@ -1,11 +1,12 @@
 import {createHash} from 'node:crypto';
 import {benefitRules} from '../content/catalog';
-import {isUuid,isTimestamp,queryRange,parseCsv,validateCsvRows,matchBenefit,CSV_MAX_BYTES,seoulDay,type RangeQuery,type MealRecord,type ImportBatch,type CsvMapping,type UserPreferences} from '../domain';
+import {isUuid,isTimestamp,queryRange,parseCsv,validateCsvRows,matchBenefit,CSV_MAX_BYTES,seoulDay,type RangeQuery,type MealRecord,type ImportBatch,type CsvMapping,type UserPreferences,type FoodCatalogItem} from '../domain';
 import {ApiError,noConsent,notFound} from './errors';
 import type {RequestContext} from './session';
 import {databaseError} from './records';
 import {validateMeal,validatePreferences} from './service-validation';
 import {localFoodCatalog} from './food-catalog';
+import {FOOD_NAME_EXCLUSION_PATTERN,isSearchableFoodName,randomFoodSample} from '../domain/food-search';
 const owner=(context:RequestContext)=>context.session.user!.id;
 function range(query:RangeQuery){try{return queryRange(query);}catch{throw new ApiError(422,'INVALID_DATE','조회 기간을 확인해 주세요.');}}
 function normalizeMeal(value:unknown,userId:string):MealRecord {
@@ -52,12 +53,27 @@ export async function savePreferences(context:RequestContext,body:Record<string,
 export async function removePreferences(context:RequestContext){
   if(context.store)return context.store.removePreferences(owner(context));const result=await context.supabase!.from('user_preferences').delete().eq('user_id',owner(context));if(result.error)databaseError(result.error,true);
 }
-export async function searchFoods(context:RequestContext,query:string){
+type FoodSearchResult={foods:FoodCatalogItem[];total?:number;matched_count:number;truncated:boolean;limit:number;source:'local'|'built_in'|'database';randomized:boolean};
+export async function searchFoods(context:RequestContext,query:string):Promise<FoodSearchResult>{
   const q=query.trim();if([...q].length>100)throw new ApiError(422,'INVALID_INPUT','검색어는 100자까지 입력해 주세요.');
-  if(context.store){const catalog=await localFoodCatalog();const found=catalog.foods.filter(food=>food.status==='approved'&&food.food_name.toLocaleLowerCase('ko').includes(q.toLocaleLowerCase('ko')));return {foods:found.slice(0,100),total:catalog.foods.length,matched_count:found.length,truncated:found.length>100,limit:100,source:catalog.source};}
-  let builder=context.supabase!.from('food_catalog').select('*',{count:'exact'}).eq('status','approved').order('food_name').limit(100);
+  if(context.store){
+    const catalog=await localFoodCatalog();
+    const searchable=catalog.foods.filter(food=>food.status==='approved'&&isSearchableFoodName(food.food_name));
+    // 검색은 이름순, 첫 목록은 전체 후보 중 무작위 100개를 표시해요.
+    const found=searchable.filter(food=>food.food_name.toLocaleLowerCase('ko').includes(q.toLocaleLowerCase('ko')));
+    if(q)found.sort((a,b)=>a.food_name<b.food_name?-1:a.food_name>b.food_name?1:0);
+    return {foods:q?found.slice(0,100):randomFoodSample(found),total:searchable.length,matched_count:found.length,truncated:found.length>100,limit:100,source:catalog.source,randomized:!q};
+  }
+  if(!q){
+    const result=await context.supabase!.rpc('random_food_catalog');
+    if(result.error)databaseError(result.error,false);
+    const data=result.data as {foods:FoodCatalogItem[];matched_count:number}|null;
+    if(!data||!Array.isArray(data.foods)||data.foods.length>100||!Number.isSafeInteger(data.matched_count)||data.matched_count<data.foods.length)throw new ApiError(503,'INVALID_DATA','음식 목록을 불러오지 못했어요. 다시 확인해 주세요.');
+    return {foods:data.foods,matched_count:data.matched_count,truncated:data.matched_count>100,limit:100,source:'database',randomized:true};
+  }
+  let builder=context.supabase!.from('food_catalog').select('*',{count:'exact'}).eq('status','approved').not('food_name','match',FOOD_NAME_EXCLUSION_PATTERN).order('food_name').limit(100);
   if(q)builder=builder.ilike('food_name',`%${q.replace(/[\\%_]/g,'\\$&')}%`);
-  const result=await builder;if(result.error)databaseError(result.error,false);return {foods:result.data??[],matched_count:result.count,truncated:(result.count??0)>100,limit:100,source:'database'};
+  const result=await builder;if(result.error)databaseError(result.error,false);return {foods:result.data??[],matched_count:result.count??0,truncated:(result.count??0)>100,limit:100,source:'database',randomized:false};
 }
 export async function listBenefits(context:RequestContext){
   let rules=benefitRules;
