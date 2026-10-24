@@ -10,6 +10,10 @@ export type AssistantCitation = {
   reuseUrl?: string;
   attribution?: string;
   adaptationNotice?: string;
+  // Earlier saved conversations can retain these citation fields.
+  licenseLabel?: string;
+  licenseUrl?: string;
+  retrievedAt?: string;
 };
 
 export type AssistantStatus = {

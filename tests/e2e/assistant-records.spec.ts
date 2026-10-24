@@ -5,18 +5,36 @@ import { recentRange, seoulDay } from "../../src/lib/domain";
 
 const origin = "http://127.0.0.1:3100";
 const endpoint = "/api/assistant/records-summary";
-const recordLabel = "이번 요약을 위해 본인의 최근 7일 공복 기록 조회에 동의합니다.";
+const roomsEndpoint = "/api/assistant/conversations";
+const recordLabel = "이번 요약을 위해 본인의 최근 7일 공복 기록을 조회하고 요약 결과를 이 대화방에 저장하는 데 동의합니다.";
 const headers = { Origin: origin };
+const isSavedSummary = (url: string) => /\/api\/assistant\/conversations\/[^/]+\/summaries$/.test(new URL(url).pathname);
 async function apiLogin(request: APIRequestContext, account = "a") {
   expect((await request.post("/api/login", { data: { demoAccount: account }, headers })).status()).toBe(200);
 }
 async function agree(request: APIRequestContext) {
   expect((await request.post("/api/consent", { data: { agreed: true }, headers })).status()).toBe(200);
 }
+async function clearRooms(request: APIRequestContext) {
+  // The summary configuration owns a new, isolated synthetic file for this run.
+  const list = await (await request.get(roomsEndpoint)).json();
+  for (const room of list.rooms) expect((await request.delete(`${roomsEndpoint}/${room.id}`, { headers })).status()).toBe(200);
+}
 async function login(page: Page) {
-  await apiLogin(page.request); await agree(page.request); await page.goto("/dashboard");
+  await apiLogin(page.request); await agree(page.request); await clearRooms(page.request); await page.goto("/dashboard");
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   await expect(page.getByRole("checkbox", { name: recordLabel, exact: true })).toBeVisible();
+}
+async function saveSummary(page: Page) {
+  const check = page.getByRole("checkbox", { name: recordLabel, exact: true });
+  await expect(check).not.toBeChecked(); await check.check();
+  const received = page.waitForResponse(response => isSavedSummary(response.url()) && response.request().method() === "POST");
+  await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click();
+  const response = await received;
+  expect(response.status()).toBe(200);
+  const result = await response.json();
+  await expect(check).not.toBeChecked();
+  return result.room;
 }
 async function add(request: APIRequestContext, value: number, measured_at: string, measurement_context = "fasting") {
   const id = randomUUID();
@@ -47,8 +65,8 @@ test("real summary API enforces authentication, same origin, service consent, ex
   await add(request, 903, new Date(Date.now() - 60_000).toISOString());
 });
 
-test("real storage and screen show only own fasting measurements, exact statistics and record provenance without a model", async ({ page }, info) => {
-  await apiLogin(page.request); await agree(page.request);
+test("real saved summaries preserve own statistics and provenance across closing, reload and new authenticated sessions", async ({ page, playwright }, info) => {
+  await apiLogin(page.request); await agree(page.request); await clearRooms(page.request);
   // This server has a fresh synthetic test file. Remove only that fixture's A records.
   const range = recentRange();
   const rows = await (await page.request.get(`/api/records?start=${seoulDay(range.start)}&end=${seoulDay()}`)).json();
@@ -67,28 +85,58 @@ test("real storage and screen show only own fasting measurements, exact statisti
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   const send = page.getByRole("button", { name: "공복 기록 요약", exact: true });
   await expect(send).toBeDisabled();
-  await page.getByRole("checkbox", { name: recordLabel, exact: true }).check(); await send.click();
+  const saved = await saveSummary(page);
+  expect(saved.turns).toHaveLength(1);
+  expect(saved.turns[0].answer.recordSummary).toMatchObject({ count: 2, average: 110.5, min: 110, max: 111 });
   const answer = page.getByRole("region", { name: "도우미 답변" });
   await expect(answer).toContainText("평균 110.5");
   await expect(answer).toContainText("출처: 본인 혈당 기록");
   await expect(answer).toContainText("기록은 AI에 전송하지 않았어요");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({ path: info.outputPath("fasting-summary-360.png"), fullPage: true });
-  await page.getByRole("checkbox", { name: recordLabel, exact: true }).uncheck();
-  await expect(answer).toHaveCount(0); await expect(send).toBeDisabled();
+  await expect(send).toBeDisabled();
+  await expect(answer).toHaveCount(1);
+  await page.getByRole("button", { name: "도우미 닫기", exact: true }).click();
+  await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+  await expect(answer).toContainText("평균 110.5");
+  await page.reload(); await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+  await expect(answer).toContainText("평균 110.5");
+  const returning = await playwright.request.newContext({ baseURL: origin });
+  const other = await playwright.request.newContext({ baseURL: origin });
+  try {
+    await apiLogin(returning);
+    const restored = await (await returning.get(`${roomsEndpoint}/${saved.id}`)).json();
+    expect(restored.room).toEqual(saved);
+    await apiLogin(other, "b");
+    expect((await other.get(`${roomsEndpoint}/${saved.id}`)).status()).toBe(404);
+    expect((await other.delete(`${roomsEndpoint}/${saved.id}`, { headers })).status()).toBe(200);
+    expect((await (await returning.get(`${roomsEndpoint}/${saved.id}`)).json()).room).toEqual(saved);
+  } finally { await returning.dispose(); await other.dispose(); }
+  const recordsBeforeDeletion = await (await page.request.get("/api/records")).json();
+  await page.getByRole("button", { name: `${saved.title} 대화 삭제`, exact: true }).click();
+  await page.getByRole("dialog", { name: "대화를 삭제할까요?", exact: true }).getByRole("button", { name: "대화 삭제", exact: true }).click();
+  await expect(answer).toHaveCount(0);
+  expect((await page.request.get(`${roomsEndpoint}/${saved.id}`)).status()).toBe(404);
+  expect(await (await page.request.get("/api/records")).json()).toEqual(recordsBeforeDeletion);
 });
 
 test("withdrawing record permission aborts a pending request and discards a late result", async ({ page }) => {
   await login(page);
   let release: () => void = () => undefined;
   const wait = new Promise<void>(resolve => { release = resolve; });
-  await page.route(`**${endpoint}`, async route => {
+  await page.route("**/api/assistant/conversations/*/summaries", async route => {
     await wait;
-    await route.fulfill({ json: { kind: "record_summary", answer: "LATE_PRIVATE_RESULT", citations: [], draftPreview: false } }).catch(() => undefined);
+    const roomUrl = new URL(route.request().url()).pathname.replace(/\/summaries$/, "");
+    const restored = await (await page.request.get(roomUrl)).json();
+    const input = route.request().postDataJSON();
+    const stamp = new Date().toISOString();
+    await route.fulfill({ json: { room: { ...restored.room, turns: [{ id: input.id, question: "최근 7일 공복 혈당 기록 요약",
+      answer: { kind: "record_summary", answer: "LATE_PRIVATE_RESULT", citations: [], draftPreview: false },
+      status: "completed", error: null, created_at: stamp, updated_at: stamp }] } } }).catch(() => undefined);
   });
   const check = page.getByRole("checkbox", { name: recordLabel, exact: true });
   await check.check();
-  const sent = page.waitForRequest(r => r.url().endsWith(endpoint));
+  const sent = page.waitForRequest(r => isSavedSummary(r.url()));
   await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click(); await sent;
   await expect(check).toBeEnabled(); await check.uncheck(); release();
   await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(0);
@@ -96,12 +144,13 @@ test("withdrawing record permission aborts a pending request and discards a late
   await page.getByRole("button", { name: "도우미 닫기", exact: true }).click();
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   await expect(check).not.toBeChecked(); await expect(page.getByText("LATE_PRIVATE_RESULT", { exact: true })).toHaveCount(0);
+  const list = await (await page.request.get(roomsEndpoint)).json();
+  for (const room of list.rooms) expect((await (await page.request.get(`${roomsEndpoint}/${room.id}`)).json()).room.turns).toEqual([]);
 });
 
-test("a record change in another tab invalidates the displayed summary and clears permission", async ({ page, context }) => {
+test("a record change closes the panel and resets permission while keeping the earlier saved snapshot", async ({ page, context }) => {
   await login(page);
-  await page.getByRole("checkbox", { name: recordLabel, exact: true }).check();
-  await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click();
+  const saved = await saveSummary(page);
   await expect(page.getByRole("region", { name: "도우미 답변" })).toBeVisible();
   const other = await context.newPage(); await other.goto("/records/new");
   await other.getByLabel("혈당값", { exact: false }).fill("112");
@@ -111,13 +160,13 @@ test("a record change in another tab invalidates the displayed summary and clear
   await expect(page.getByRole("dialog", { name: "이어드림 도우미", exact: true })).not.toBeVisible();
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   await expect(page.getByRole("checkbox", { name: recordLabel, exact: true })).not.toBeChecked();
-  await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(1);
+  expect((await (await page.request.get(`${roomsEndpoint}/${saved.id}`)).json()).room.turns).toEqual(saved.turns);
 });
 
-test("logout in another tab removes a personal summary and record permission", async ({ page, context }) => {
+test("logout clears visible summaries, another account sees none, and signing back in restores the owner history", async ({ page, context }) => {
   await login(page);
-  await page.getByRole("checkbox", { name: recordLabel, exact: true }).check();
-  await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click();
+  const saved = await saveSummary(page);
   await expect(page.getByRole("region", { name: "도우미 답변" })).toBeVisible();
   const other = await context.newPage(); await other.goto("/dashboard");
   await other.getByRole("button", { name: "로그아웃", exact: true }).click();
@@ -125,11 +174,21 @@ test("logout in another tab removes a personal summary and record permission", a
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(0);
   await expect(page.getByRole("checkbox", { name: recordLabel, exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "도우미 닫기", exact: true }).click();
+  await apiLogin(page.request, "b"); await agree(page.request); await page.goto("/dashboard");
+  await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+  await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(0);
+  expect((await page.request.get(`${roomsEndpoint}/${saved.id}`)).status()).toBe(404);
+  await page.getByRole("button", { name: "도우미 닫기", exact: true }).click();
+  await apiLogin(page.request); await page.goto("/dashboard");
+  await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
+  await expect(page.getByRole("region", { name: "도우미 답변" })).toHaveCount(1);
+  expect((await (await page.request.get(`${roomsEndpoint}/${saved.id}`)).json()).room).toEqual(saved);
 });
 
-test("editing, reclassifying and deleting records invalidate summaries and recompute exact results", async ({ page, context }, info) => {
+test("record edits append fresh summaries while retaining every earlier snapshot and refreshing other tabs", async ({ page, context }, info) => {
   test.setTimeout(60_000);
-  await apiLogin(page.request); await agree(page.request);
+  await apiLogin(page.request); await agree(page.request); await clearRooms(page.request);
   // The configuration starts a new synthetic file, so only this fixture's A records are removed.
   const range = recentRange();
   const rows = await (await page.request.get(`/api/records?start=${seoulDay(range.start)}&end=${seoulDay()}`)).json();
@@ -141,25 +200,24 @@ test("editing, reclassifying and deleting records invalidate summaries and recom
   const panel = page.getByRole("dialog", { name: "이어드림 도우미", exact: true });
   const answer = page.getByRole("region", { name: "도우미 답변" });
   const evidence: unknown[] = [];
+  const savedAnswers: unknown[] = [];
   async function refresh(step: string, expected: { count: number; average: number | null; min: number | null; max: number | null }) {
     await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
     const permission = page.getByRole("checkbox", { name: recordLabel, exact: true });
     await expect(permission).not.toBeChecked();
-    await expect(answer).toHaveCount(0);
-    await permission.check();
-    const received = page.waitForResponse(r => r.url().endsWith(endpoint) && r.request().method() === "POST");
-    await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click();
-    const response = await received;
-    expect(response.status()).toBe(200);
-    const result = await response.json();
-    expect(result.recordSummary).toMatchObject(expected);
-    expect(JSON.stringify(result)).not.toContain("PRIVATE_SYNTHETIC_MEMO");
-    await expect(answer).toContainText(expected.average === null ? "계산하지 않았어요" : `평균 ${expected.average}`);
-    evidence.push({ step, expected, actual: result.recordSummary });
+    await expect(answer).toHaveCount(savedAnswers.length);
+    const room = await saveSummary(page);
+    const newest = room.turns.at(-1).answer;
+    expect(newest.recordSummary).toMatchObject(expected);
+    expect(room.turns.slice(0, -1).map((turn: { answer: unknown }) => turn.answer)).toEqual(savedAnswers);
+    savedAnswers.push(newest);
+    expect(JSON.stringify(room)).not.toContain("PRIVATE_SYNTHETIC_MEMO");
+    await expect(answer).toHaveCount(savedAnswers.length);
+    await expect(answer.last()).toContainText(expected.average === null ? "계산하지 않았어요" : `평균 ${expected.average}`);
+    evidence.push({ step, expected, actual: newest.recordSummary });
   }
   async function invalidated() {
     await expect(panel).not.toBeVisible();
-    await expect(answer).toHaveCount(0);
   }
   const other = await context.newPage();
   const journal = await context.newPage(); await journal.goto("/records");
@@ -199,7 +257,8 @@ test("editing, reclassifying and deleting records invalidate summaries and recom
     await refresh(step, expected);
   }
   await expect(page.getByRole("heading", { name: "최근 7일에 남긴 기록이 없어요.", exact: true })).toBeVisible();
-  await expect(answer).toContainText("미기록일을 혈당 0으로 처리하지 않아요");
+  await expect(answer.last()).toContainText("미기록일을 혈당 0으로 처리하지 않아요");
+  await expect(answer.first()).toContainText("평균 120");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({ path: info.outputPath("summary-after-final-delete-360.png"), fullPage: true });
   const evidencePath = info.outputPath("summary-mutations.json");

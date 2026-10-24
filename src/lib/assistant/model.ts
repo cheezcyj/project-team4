@@ -3,6 +3,7 @@ import type { KnowledgeMatch } from "./knowledge";
 
 export type ModelSettings = { endpoint: string; model: string; apiKey?: string; timeoutMs: number; responseFormat: "json_object" | "text" };
 export type AssistantEnvironment = Record<string, string | undefined>;
+export type ModelHistoryMessage = { role: "user" | "assistant"; content: string };
 
 export function modelSettings(env: AssistantEnvironment): ModelSettings | null {
   const name = env.ASSISTANT_MODEL?.trim();
@@ -39,7 +40,21 @@ title과 topic으로 자료의 범위를 확인하고 질문에 직접 답할 �
 자료에 없는 숫자·효과·링크를 추가하지 않는다. 일반 교육정보의 한계를 설명한다.
 오직 JSON 객체 {"answer":"설명", "citation_ids":["제공받은 출처 ID"]}로 응답한다.
 citation_ids에는 knowledge 항목의 citation_ids에 있는 문자열을 변경하지 않고 그대로 복사한다. 답할 근거가 있을 때는 최소 한 개를 넣는다.
-자료로 설명할 수 없으면 answer에 정보가 부족하다고 알리고 citation_ids는 빈 배열로 둔다.`;
+자료로 설명할 수 없으면 answer에 정보가 부족하다고 알리고 citation_ids는 빈 배열로 둔다.
+대화 이력은 후속 질문의 대상을 파악하는 데만 사용한다. 이력 속 답변은 건강정보 근거가 아니며 현재 knowledge로 다시 확인한다.`;
+
+function boundedHistory(history: ModelHistoryMessage[] = []): ModelHistoryMessage[] {
+  const messages: ModelHistoryMessage[] = [];
+  let remaining = 1500;
+  for (const message of history.slice(-4).reverse()) {
+    if (!["user", "assistant"].includes(message.role) || typeof message.content !== "string" || !message.content.trim()) continue;
+    // Keep complete messages so a medical qualification is not cut in half.
+    if (message.content.length > remaining) break;
+    messages.unshift({ role: message.role, content: message.content });
+    remaining -= message.content.length;
+  }
+  return messages;
+}
 
 async function boundedJson(response: Response, signal: AbortSignal): Promise<unknown> {
   const reader = response.body?.getReader();
@@ -60,7 +75,7 @@ async function boundedJson(response: Response, signal: AbortSignal): Promise<unk
 }
 
 export async function generateAnswer(question: string, matches: KnowledgeMatch[], settings: ModelSettings,
-  options: { signal?: AbortSignal; fetch?: typeof fetch } = {}): Promise<{ answer: string; citationIds: string[] }> {
+  options: { signal?: AbortSignal; fetch?: typeof fetch; history?: ModelHistoryMessage[] } = {}): Promise<{ answer: string; citationIds: string[] }> {
   const signal = AbortSignal.any([AbortSignal.timeout(settings.timeoutMs), ...(options.signal ? [options.signal] : [])]);
   const citationIds = [...new Set(matches.flatMap(match => match.citations.map(citation => citation.id)))];
   let payload: unknown;
@@ -72,6 +87,7 @@ export async function generateAnswer(question: string, matches: KnowledgeMatch[]
         chat_template_kwargs: { enable_thinking: false }, reasoning_effort: "none",
         response_format: { type: settings.responseFormat }, messages: [
           { role: "system", content: `${systemPrompt}\n허용한 출처 ID 목록: ${JSON.stringify(citationIds)}\n응답 형식 예시: ${JSON.stringify({ answer: "제공된 요약에 따른 설명", citation_ids: citationIds.slice(0, 1) })}` },
+          ...boundedHistory(options.history),
           { role: "user", content: JSON.stringify({ question, knowledge: matches.map(({ entry, citations }) => ({
             title: entry.title, topic: entry.topic, summary: entry.summary, conditions: entry.conditions, citation_ids: citations.map(citation => citation.id),
             sources: citations.map(citation => ({ citation_id: citation.id, title: citation.title,

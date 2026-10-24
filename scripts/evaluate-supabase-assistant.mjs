@@ -42,7 +42,7 @@ modelBase.pathname = "/v1/chat/completions";
 const baseURL = "http://127.0.0.1:3006";
 const proxyURL = "http://127.0.0.1:11481";
 const headers = { Origin: baseURL };
-const created = [], clients = [], provider = [], questions = [], checks = [], cleanup = [];
+const created = [], clients = [], provider = [], questions = [], checks = [], cleanup = [], createdRooms = new Set(), roomCleanup = [];
 const forbidden = ["PRIVATE_SYNTHETIC_ASSISTANT_MEMO", ...accounts.map(account => account.email)];
 const plan = [
   { id: "G01", question: "당화혈색소가 무엇인가요?", kind: "answer", citation: /^B01:/, browser: true },
@@ -62,9 +62,9 @@ const sourcePaths = ["src/app/api/assistant/route.ts", "src/lib/assistant/previe
 const hashes = async () => Object.fromEntries(await Promise.all(sourcePaths.map(async name => [name, createHash("sha256").update(await readFile(path.join(root, name))).digest("hex")])));
 const run = { startedAt: new Date().toISOString(), baseCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
   appMode: "supabase", authAndDatabase: "actual hosted Supabase; two pre-existing synthetic accounts", modelMode: values["mock-model"] ? "mock" : "actual loaded local model",
-  provider: values.provider, approvalChanged: false, retriesByRunner: 0, sourceHashesBefore: await hashes(), checks, questions, cleanup, success: false };
+  provider: values.provider, approvalChanged: false, retriesByRunner: 0, sourceHashesBefore: await hashes(), checks, questions, cleanup, roomCleanup, success: false };
 await save("plan.json", { ...run, questions: plan.map(({ citation, ...item }) => ({ ...item, citationPattern: citation?.source ?? null })) });
-let app, browser, proxy;
+let app, browser, proxy, cleanupAccountClient;
 const serverLog = createWriteStream(path.join(output, "app-server.log"));
 async function api(client, method, url, data, expected = 200, origin = baseURL) {
   const response = await client.fetch(url, { method, headers: { Origin: origin }, ...(data === undefined ? {} : { data }) });
@@ -108,6 +108,7 @@ async function loadedModelSnapshot() {
 }
 try {
   const controlClients = await Promise.all(accounts.map(() => context(control.origin)));
+  cleanupAccountClient = controlClients[0];
   const sessions = [];
   for (let index = 0; index < 2; index++) {
     const session = await api(controlClients[index], "POST", "/api/login", { email: accounts[index].email, password: accounts[index].password }, 200, control.origin);
@@ -127,7 +128,7 @@ try {
       let raw = "";
       for await (const chunk of incoming) { raw += chunk; assert.ok(raw.length < 100_000); }
       const body = JSON.parse(raw);
-      const prompt = JSON.parse(body.messages[1].content);
+      const prompt = JSON.parse(body.messages.at(-1).content);
       assert.deepEqual(Object.keys(prompt).sort(), ["knowledge", "question"]);
       assert.equal(body.model, process.env.ASSISTANT_MODEL);
       assert.ok(!forbidden.some(value => raw.includes(value)), "Private synthetic identifiers reached model boundary");
@@ -187,12 +188,20 @@ try {
   browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_BROWSER_CHANNEL || "chrome", headless: true });
   const browserContext = await browser.newContext({ baseURL, storageState: await a.storageState(), viewport: { width: 360, height: 800 } });
   const page = await browserContext.newPage(); await page.goto("/dashboard");
+  page.on("request", outgoing => {
+    if (outgoing.method() === "POST" && outgoing.url() === baseURL + "/api/assistant/conversations") {
+      const body = outgoing.postDataJSON();
+      if (typeof body?.id === "string") createdRooms.add(body.id);
+    }
+  });
   await page.getByRole("button", { name: "도우미 열기", exact: true }).click();
   await expect(page.getByText("검토 중인 자료로 동작하는 개발용 미리보기입니다.", { exact: true })).toBeVisible();
-  await page.getByRole("checkbox", { name: "이번 요약을 위해 본인의 최근 7일 공복 기록 조회에 동의합니다.", exact: true }).check();
-  let received = page.waitForResponse(response => response.url().endsWith("/api/assistant/records-summary") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "새 채팅", exact: true }).click();
+  await page.getByRole("checkbox", { name: "이번 요약을 위해 본인의 최근 7일 공복 기록을 조회하고 요약 결과를 이 대화방에 저장하는 데 동의합니다.", exact: true }).check();
+  let received = page.waitForResponse(response => /\/api\/assistant\/conversations\/[^/]+\/summaries$/.test(response.url()) && response.request().method() === "POST");
   await page.getByRole("button", { name: "공복 기록 요약", exact: true }).click();
-  const summary = await (await received).json();
+  const summaryRoom = (await (await received).json()).room;
+  const summary = summaryRoom.turns.at(-1).answer;
   assert.equal(summary.recordSummary.count, 2); assert.equal(summary.recordSummary.average, 120);
   assert.equal(summary.recordSummary.min, 110); assert.equal(summary.recordSummary.max, 130);
   await expect(page.getByRole("region", { name: "도우미 답변" })).toContainText("평균 120");
@@ -204,12 +213,12 @@ try {
     const before = provider.length, started = performance.now();
     let answer;
     if (item.browser) {
-      await page.getByRole("checkbox", { name: "질문과 참고 자료를 AI로 처리하는 데 동의합니다.", exact: true }).check();
+      await page.getByRole("checkbox", { name: "대화를 계정에 저장하고 이 대화 내용을 AI로 처리하는 데 동의합니다.", exact: true }).check();
       await page.getByLabel("질문", { exact: true }).fill(item.question);
-      received = page.waitForResponse(response => response.url().endsWith("/api/assistant") && response.request().method() === "POST");
+      received = page.waitForResponse(response => /\/api\/assistant\/conversations\/[^/]+\/turns$/.test(response.url()) && response.request().method() === "POST");
       await page.getByRole("button", { name: "질문 전송", exact: true }).click();
-      const response = await received; assert.equal(response.status(), 200); answer = await response.json();
-      await expect(page.getByRole("region", { name: "도우미 답변" })).toContainText(answer.answer);
+      const response = await received; assert.equal(response.status(), 200); answer = (await response.json()).room.turns.at(-1).answer;
+      await expect(page.getByRole("region", { name: "도우미 답변" }).last()).toContainText(answer.answer);
       await page.screenshot({ path: path.join(output, "general-answer-360.png"), fullPage: true });
     } else answer = await api(a, "POST", "/api/assistant", { question: item.question, allow_model_processing: true });
     questions.push({ id: item.id, question: item.question, response: answer, appElapsedMs: Math.round(performance.now() - started), providerRequests: provider.length - before });
@@ -238,6 +247,15 @@ try {
   run.failure = { type: error.name, message: String(error.message).slice(0, 300) };
   console.error("FAIL", run.failure.type, run.failure.message);
 } finally {
+  // Only rooms created by this run are removed; existing synthetic account history is retained.
+  for (const id of createdRooms) {
+    try {
+      // The first control client is authenticated as the same account on the control origin.
+      const response = await cleanupAccountClient.delete(`/api/assistant/conversations/${id}`, { headers: { Origin: control.origin } });
+      roomCleanup.push({ status: response.status(), removed: [200, 404].includes(response.status()) });
+    } catch { roomCleanup.push({ removed: false }); }
+  }
+  if (roomCleanup.some(item => !item.removed)) run.success = false;
   for (const { client, id } of created) {
     try {
       const response = await client.delete(`/api/records/${id}`, { headers });

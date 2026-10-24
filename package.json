@@ -14,8 +14,8 @@
     "lint": "eslint src tests scripts next.config.ts",
     "typecheck": "tsc --noEmit",
     "test:unit": "tsx --test tests/unit/*.test.ts",
-    "test:db": "node supabase/tests/run-db-tests.mjs && node supabase/tests/account-deletion.mjs",
-    "test:e2e": "npm run build && playwright test",
+    "test:db": "node supabase/tests/run-db-tests.mjs && node supabase/tests/account-deletion.mjs && node supabase/tests/assistant-conversations.mjs",
+    "test:e2e": "npm run build && playwright test && playwright test --config=playwright.summary.config.ts",
     "eval:assistant:supabase": "node --env-file-if-exists=.env.local scripts/evaluate-supabase-assistant.mjs",
     "test": "npm run test:unit && npm run test:db",
     "check": "npm run lint && npm run typecheck && npm test && npm run build"

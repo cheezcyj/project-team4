@@ -88,7 +88,7 @@ export function MyPageScreen() {
       </section>
       <section className="account-section withdrawal-section" aria-labelledby="withdrawal-title">
         <h2 id="withdrawal-title">회원 탈퇴</h2>
-        <p>탈퇴하면 계정, 혈당·식사 기록, 가져오기 이력, 맞춤 조건과 동의 내역이 모두 삭제돼요. 삭제 후에는 복구할 수 없어요.</p>
+        <p>탈퇴하면 계정, 혈당·식사 기록, 가져오기 이력, 맞춤 조건과 동의 내역, 도우미봇의 모든 대화방·채팅 내역·저장한 공복 기록 요약이 모두 삭제돼요. 삭제 후에는 복구할 수 없어요.</p>
         {session.mode === "demo" ? <p className="fine-print">가상 계정은 탈퇴할 수 없어요.</p> : !expanded ? <button className="text-button danger-text" onClick={() => setExpanded(true)}>회원 탈퇴하기</button> : <form onSubmit={prepare} noValidate>
           <div className="field">
             <label htmlFor="delete-password">현재 비밀번호</label>
@@ -134,7 +134,7 @@ export function MyPageScreen() {
         pending={pending}
         onCancel={() => setDialog(false)}
         onConfirm={() => void remove()}>
-        <p>내 계정과 혈당·식사 기록, 가져오기 이력, 맞춤 조건과 동의 내역을 영구 삭제해요. 다른 팀원의 계정과 공통 자료는 남아요.</p>
+        <p>내 계정과 혈당·식사 기록, 가져오기 이력, 맞춤 조건과 동의 내역, 도우미봇의 모든 대화방·채팅 내역·저장한 공복 기록 요약을 영구 삭제해요. 다른 팀원의 계정과 공통 자료는 남아요.</p>
       </ConfirmDialog>
     </div>
   </AppShell>;

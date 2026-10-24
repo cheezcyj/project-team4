@@ -1,7 +1,7 @@
 import type { RequestContext } from "../server/session";
 import { ApiError, unauthorized } from "../server/errors";
 import { eligibleKnowledge, retrieveKnowledge } from "./knowledge";
-import { generateAnswer, modelSettings, type AssistantEnvironment } from "./model";
+import { generateAnswer, modelSettings, type AssistantEnvironment, type ModelHistoryMessage } from "./model";
 import { medicalBoundary } from "./safety";
 import { supplementAnswer } from "./answer-conditions";
 import { draftPreviewAllowed } from "./preview";
@@ -42,7 +42,8 @@ function unsupportedQuestion(question: string): Pick<AssistantAnswer, "kind" | "
 }
 
 export async function answerQuestion(context: RequestContext, body: Record<string, unknown>,
-  options: { env?: AssistantEnvironment; signal?: AbortSignal; fetch?: typeof fetch; loopbackRequest?: boolean } = {}): Promise<AssistantAnswer> {
+  options: { env?: AssistantEnvironment; signal?: AbortSignal; fetch?: typeof fetch; loopbackRequest?: boolean;
+    history?: ModelHistoryMessage[] } = {}): Promise<AssistantAnswer> {
   const config = configuration(context, options.env ?? process.env, options.loopbackRequest === true);
   if (Object.keys(body).some(key => !["question", "allow_model_processing"].includes(key))
     || typeof body.question !== "string" || !body.question.trim() || [...body.question].length > ASSISTANT_MAX_QUESTION_LENGTH) {
@@ -53,7 +54,13 @@ export async function answerQuestion(context: RequestContext, body: Record<strin
   const question = body.question.trim();
   const unsupported = unsupportedQuestion(question);
   if (unsupported) return { ...unsupported, citations: [], draftPreview: config.draftPreview };
-  const matches = retrieveKnowledge(question, config.candidates);
+  let matches = retrieveKnowledge(question, config.candidates);
+  // Resolve an explicit follow-up from server-owned questions. Unrelated questions still abstain.
+  if (!matches.length && /그건|그거|그것|(?:그|이|해당|앞서|방금|아까|이전)\s*(?:검사|내용|말|방법|정보|기준|운동|식사)|더\s*(?:자세|알려|설명)/u.test(question)) {
+    const previous = [...(options.history ?? [])].reverse().find(message => message.role === "user"
+      && retrieveKnowledge(message.content, config.candidates).length > 0);
+    if (previous) matches = retrieveKnowledge(`${previous.content}\n${question}`, config.candidates);
+  }
   if (!matches.length) return { kind: "no_evidence", answer: noEvidence, citations: [], draftPreview: config.draftPreview };
   const user = context.session.user!.id;
   if (activeUsers.has(user) || activeUsers.size >= 4) throw new ApiError(429, "ASSISTANT_BUSY", "진행 중인 답변이 있어요. 잠시 후 다시 질문해 주세요.");
