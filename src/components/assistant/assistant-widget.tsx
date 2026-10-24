@@ -38,6 +38,7 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
   const [allowed, setAllowed] = useState(false);
   const [recordAllowed, setRecordAllowed] = useState(false);
   const [pending, setPending] = useState(false);
+  const [pendingLabel, setPendingLabel] = useState("답변 생성 중");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -55,10 +56,10 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
   };
 
   useEffect(() => {
-    if (answer && body.current && response.current) {
+    if ((answer || pending) && body.current && response.current) {
       body.current.scrollTop = response.current.offsetTop - body.current.offsetTop;
     }
-  }, [answer]);
+  }, [answer, pending]);
 
   useEffect(() => {
     const reset = () => { clear(); panel.current?.close(); };
@@ -105,6 +106,7 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
     const controller = new AbortController();
     request.current = controller;
     const current = ++generation.current;
+    setPendingLabel("답변 생성 중");
     setPending(true); setError(""); setAnswer(null); setSubmittedQuestion(text);
     try {
       const result = await assistantRequest<AssistantAnswer>(controller, { question: text, allow_model_processing: allowed });
@@ -121,6 +123,7 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
     const controller = new AbortController();
     request.current = controller;
     const current = ++generation.current;
+    setPendingLabel("기록 요약 중");
     setPending(true); setError(""); setAnswer(null); setSubmittedQuestion("최근 7일 공복 혈당 기록 요약");
     try {
       const result = await assistantRequest<AssistantAnswer>(controller, { allow_record_access: true }, "/api/assistant/records-summary");
@@ -143,7 +146,7 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
           <h3>{status?.available ? "건강정보를 물어보세요." : status?.recordSummaryAvailable ? "공복 기록을 확인해 보세요." : "도우미를 준비하고 있어요."}</h3>
           <p id="assistant-description">공개 자료로 일반 건강정보를 안내해요. 별도로 동의하면 최근 7일 공복 기록을 요약해요. 진단이나 치료 판단은 하지 않아요.</p></div>
         {status?.draftPreview && <p className="assistant-preview">검토 중인 자료로 동작하는 개발용 미리보기입니다.</p>}
-        <p role="status">{loading ? "도우미 연결을 확인하고 있어요." : pending ? "자료를 확인하고 답변을 만들고 있어요." : status?.message}</p>
+        {!pending && <p role="status">{loading ? "도우미 연결을 확인하고 있어요." : status?.message}</p>}
         {error && <p role="alert" className="assistant-error">{error}</p>}
         {status?.recordSummaryAvailable && <div className="assistant-record-tool">
           <label className="assistant-consent"><input type="checkbox" checked={recordAllowed}
@@ -151,8 +154,15 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
           <p>오늘 포함 7일, 한국시간 기준이에요. 기록은 서버에서 계산하며 AI에 보내지 않아요. 체크를 해제하면 진행 중 요약과 화면의 답변을 지워요.</p>
           <button type="button" className="button small" disabled={!recordAllowed || pending} onClick={() => void summarize()}>공복 기록 요약</button>
         </div>}
-        {answer && <section ref={response} className="assistant-answer" aria-label="도우미 답변" aria-live="polite">
-          <h3>질문</h3><p>{submittedQuestion}</p><h3>답변</h3><p>{answer.answer}</p>
+        {submittedQuestion && <div className="assistant-conversation" aria-label="대화 내용">
+          <section className="assistant-message assistant-message-user" aria-label="내 질문">
+            <p className="assistant-speaker">나</p><div className="assistant-bubble"><p>{submittedQuestion}</p></div>
+          </section>
+          {pending ? <section ref={response} className="assistant-message assistant-message-bot" aria-label="도우미 처리 상태">
+            <p className="assistant-speaker">이어드림</p>
+            <div className="assistant-bubble assistant-pending" role="status"><span className="assistant-spinner" aria-hidden="true" />{pendingLabel}</div>
+          </section> : answer && <section ref={response} className="assistant-message assistant-message-bot assistant-answer" aria-label="도우미 답변" aria-live="polite">
+          <p className="assistant-speaker">이어드림</p><div className="assistant-bubble"><p>{answer.answer}</p></div>
           {answer.kind === "record_summary" && answer.recordSummary && <p className="assistant-helper">출처: 본인 혈당 기록 · 측정 상황 ‘공복’만 포함 · 조회 시각 {new Date(answer.recordSummary.asOf).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })} (한국시간). 기록은 AI에 전송하지 않았어요.</p>}
           {answer.citations.length > 0 && <><h3>참고 자료</h3><ul>{answer.citations.map(citation => <li key={citation.id}>
             <a href={citation.url} target="_blank" rel="noreferrer noopener">{citation.publisher} · {citation.title}</a>
@@ -164,6 +174,7 @@ function AssistantPanel({ publicPage }: { publicPage: boolean }) {
             {citation.adaptationNotice && <p>{citation.adaptationNotice}</p>}
           </li>)}</ul></>}
         </section>}
+        </div>}
         {publicPage ? <p className="assistant-helper">로그인 후 도우미를 이용할 수 있어요.</p> : <nav className="assistant-shortcuts" aria-label="기록 바로가기">
           <Link href="/records/new" onClick={close}>혈당 기록하기 <Icon name="arrow" size={18} /></Link>
           <Link href="/meals/new" onClick={close}>식사 기록하기 <Icon name="arrow" size={18} /></Link>

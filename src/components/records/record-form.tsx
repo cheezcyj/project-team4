@@ -310,8 +310,6 @@ export function RecordFormScreen({ recordId }: {
     {fields[name]}
   </p> : null;
   return <AppShell guard={guard} busy={busy}>
-    <div className="record-layout">
-    <div className="form-content">
       <Link
         href="/records"
         className="back-link"
@@ -320,6 +318,8 @@ export function RecordFormScreen({ recordId }: {
         title={recordId ? (canWrite ? "기록 상세·수정" : "기록 상세") : "혈당 기록하기"}
         description={recordId ? "저장한 내용을 확인하고 필요한 부분을 바꿀 수 있어요." : "측정한 값을 그대로 입력해 주세요."} />
       <ConsentNotice />
+    <div className="record-layout">
+    <div className="form-content">
       {!ready ? <LoadingState label={recordId ? "기록을 불러오는 중이에요." : "입력 화면을 준비하는 중이에요."} /> : loadError ? <ErrorState message={loadError} retry={() => setReloadVersion(value => value + 1)} /> : !recordId && !canWrite ? <div className="state-box">
         <h2>이용 안내를 먼저 확인해 주세요.</h2>
         <p>동의 후 새 기록을 저장할 수 있어요.</p>
