@@ -3,6 +3,7 @@
 혈당과 식사를 기록하고 일지·캘린더·리포트로 살펴보는 웹 앱입니다. 팀원이 **각자 PC에서 화면을 수정하고 기능을 실험할 수 있도록** 로컬 실행 환경을 제공합니다.
 
 - 혈당·식사 기록의 추가, 수정, 삭제와 계정별 기록 분리
+- 마이페이지에서 성별·만 나이·키·몸무게 선택 입력과 저장·수정·삭제
 - 공통 음식 50,002개 검색, 기본 목록 무작위 100개 표시와 음식 직접 입력
 - 통합 일지, 캘린더, 기간별 리포트와 실제 측정값 그래프
 - CSV 빈 양식 다운로드, 미리보기, 일괄 저장과 중복 방지
@@ -79,6 +80,7 @@ npm run start:demo
 | 요약 이후 원래 혈당 기록을 수정하고 새 요약 요청 | 이전 요약은 조회 당시 값으로 유지되고, 새 요약이 추가됨 |
 | 새 채팅을 만들고 대화방을 전환하거나 삭제 | 방별 이력이 분리되고, 삭제한 방의 이력만 제거됨 |
 | 대화방 삭제 후 혈당 일지 확인 | 원래 혈당 기록은 유지됨 |
+| 마이페이지에서 기본 정보를 입력하고 저장 동의 후 저장·수정·삭제 | 새로고침 후 저장값을 확인하고, 기본 정보만 삭제해도 다른 기록은 유지됨 |
 | CSV 빈 양식에 예시 데이터를 넣고 가져오기 | 열 연결·오류 미리보기·저장·중복 방지 확인 |
 
 같은 브라우저의 탭은 로그인 쿠키를 공유합니다. A와 B를 동시에 비교할 때는 일반 창과 시크릿 창 또는 서로 다른 브라우저를 사용합니다.
@@ -114,13 +116,21 @@ npm run start:demo
 
 양식은 측정 시각·혈당·측정 상황·식사 시간대·식사 메모·혈당 단위의 6개 열입니다. 단위는 `mg/dL`, 파일 한도는 2MiB, 데이터 한도는 1,000행입니다. 미리보기에서 오류를 확인한 뒤 저장합니다. 파일 원본과 파일명은 보관하지 않습니다.
 
+### 마이페이지 기본 정보
+
+마이페이지의 **내 기본 정보**에서 성별·만 나이·키·몸무게 중 원하는 항목만 입력합니다. 한 가지 이상 입력하고 별도의 저장 동의에 체크해야 저장합니다. 수정할 때도 다시 동의하며, 입력값 오류나 다른 화면의 변경과 충돌하면 작성한 내용을 유지합니다. 저장·삭제 응답이 끊긴 경우에는 **저장된 정보 확인**으로 결과를 확인합니다.
+
+프로필은 본인 계정에서만 확인·수정·삭제할 수 있고 회원 탈퇴 시 함께 삭제됩니다. 가상 계정 모드에서는 테스트용 값만 입력합니다. **현재 프로필을 도우미 답변에 사용하거나 AI·뉴스 제공처로 전송하지 않습니다.** 작성 중인 폼은 현재 탭의 메모리만 사용하며 로그아웃하면 지웁니다.
+
+프로필 저장은 AI 모델 없이 사용할 수 있습니다.
+
 ## 3. 실험 데이터 보관과 새 실험 시작
 
 가상 계정 데이터는 PC의 프로젝트 폴더 안에 저장됩니다.
 
 | 파일 | 내용 |
 |---|---|
-| `.local/demo-data.json` | 가상 계정의 기록과 설정 |
+| `.local/demo-data.json` | 가상 계정의 기록·설정·선택 입력한 프로필 |
 | `.local/demo-data.json.assistant-conversations.json` | 가상 계정의 대화방, 질문·답변, 공복 요약 |
 | `.local/food-catalog/team-f88a0e1dcd4f6075.json` | 공개 CSV에서 자동 생성한 공통 음식 캐시 |
 
@@ -207,10 +217,11 @@ node --env-file-if-exists=.env.local scripts/run-demo.mjs --production
    | 3 | [20261021000200_non_ai_features.sql](supabase/migrations/20261021000200_non_ai_features.sql) | 식사, 음식, 설정, CSV 저장 |
    | 4 | [20261021000300_reviewed_catalog.sql](supabase/migrations/20261021000300_reviewed_catalog.sql) | 공개 기본 음식·정책 자료 |
    | 5 | [20261021000400_meal_stale_conflict.sql](supabase/migrations/20261021000400_meal_stale_conflict.sql) | 식사 수정 충돌 처리 |
-   | 6 | [20261023000200_assistant_conversations.sql](supabase/migrations/20261023000200_assistant_conversations.sql) | 계정별 대화방·질문·답변 저장과 삭제 |
-   | 7 | [20261024000100_assistant_citation_metadata.sql](supabase/migrations/20261024000100_assistant_citation_metadata.sql) | 출처와 이용조건 형식 호환 |
-   | 8 | [20261024000200_assistant_summary_history.sql](supabase/migrations/20261024000200_assistant_summary_history.sql) | 공복 요약 저장과 값 검증 |
-   | 9 | [20261024000300_random_food_catalog.sql](supabase/migrations/20261024000300_random_food_catalog.sql) | 기본 음식 목록 무작위 100개 선택 |
+   | 6 | [20261023000100_health_profiles.sql](supabase/migrations/20261023000100_health_profiles.sql) | 선택 프로필 저장·삭제 동의와 본인 접근 권한 |
+   | 7 | [20261023000200_assistant_conversations.sql](supabase/migrations/20261023000200_assistant_conversations.sql) | 계정별 대화방·질문·답변 저장과 삭제 |
+   | 8 | [20261024000100_assistant_citation_metadata.sql](supabase/migrations/20261024000100_assistant_citation_metadata.sql) | 출처와 이용조건 형식 호환 |
+   | 9 | [20261024000200_assistant_summary_history.sql](supabase/migrations/20261024000200_assistant_summary_history.sql) | 공복 요약 저장과 값 검증 |
+   | 10 | [20261024000300_random_food_catalog.sql](supabase/migrations/20261024000300_random_food_catalog.sql) | 기본 음식 목록 무작위 100개 선택 |
 
 2. `.env.local`이 없는 환경에서 `.env.example`을 복사합니다. 기존 설정은 덮어쓰지 않습니다.
 3. `APP_MODE=supabase`를 유지하고 본인의 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`를 채웁니다. **publishable key**를 사용하며 `service_role`이나 관리자 비밀키는 사용하지 않습니다.
@@ -267,7 +278,7 @@ npm run test:e2e
 | 공복 요약 버튼을 누를 수 없음 | 이번 조회·저장 동의에 체크합니다. 요약 요청 후에는 다시 동의해야 합니다. |
 | 일반 AI 질문을 보낼 수 없음 | 모델 서버·모델 이름·개발 미리보기 설정과 대화 저장·AI 처리 동의를 확인합니다. |
 | 새 환경설정이 적용되지 않음 | 실행 중 서버를 재시작하고, 터미널 환경변수가 `.env.local` 값을 덮어쓰는지 확인합니다. |
-| Supabase에서 대화 목록·저장·음식 목록이 실패함 | 테스트 프로젝트에 위의 SQL 9개를 순서대로 적용했는지 확인합니다. |
+| Supabase에서 대화 목록·프로필·음식 목록이 실패함 | 테스트 프로젝트에 위의 SQL 10개 중 빠진 변경이 없는지 확인합니다. 이미 적용한 SQL은 반복 실행하지 않습니다. |
 | 브라우저 검사에서 실행 파일이 없다고 나옴 | `npx playwright install chromium`을 실행합니다. |
 
 다른 포트로 실행하는 예시입니다. 나머지 설정은 현재 터미널 값을 그대로 사용합니다.

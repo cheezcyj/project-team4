@@ -18,7 +18,7 @@ try {
     grant usage on schema auth to authenticated, anon;
     grant execute on function auth.jwt(), auth.uid() to authenticated, anon;
   `);
-  for (const file of ["20261020000100_glucose_records.sql", "20261021000100_self_service_account.sql", "20261021000200_non_ai_features.sql", "20261021000300_reviewed_catalog.sql", "20261021000400_meal_stale_conflict.sql"]) {
+  for (const file of ["20261020000100_glucose_records.sql", "20261021000100_self_service_account.sql", "20261021000200_non_ai_features.sql", "20261021000300_reviewed_catalog.sql", "20261021000400_meal_stale_conflict.sql", "20261023000100_health_profiles.sql"]) {
     await db.exec(await readFile(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   }
   await db.query("insert into auth.users values ($1, 'a@example.invalid'), ($2, 'b@example.invalid')", [a, b]);
@@ -35,6 +35,7 @@ try {
   }
   await claims();
   await db.exec('set role authenticated');
+  await db.query("select public.save_health_profile($1::jsonb,null)", [JSON.stringify({ sex: null, age: 30, height_cm: null, weight_kg: null, allow_storage: true, notice_version: "health-profile-v1" })]);
   await db.query("select public.save_meal_record(gen_random_uuid(),$1::jsonb,null)",[JSON.stringify({meal_at:'2026-10-21T03:00:00Z',meal_type:'lunch',memo:null,items:[{free_text:'가상 식사',amount_value:1,amount_unit:'개'}]})]);
   await db.query("insert into public.user_preferences(user_id,matching_enabled,notice_version) values($1,false,'matching-v1')",[a]);
   await db.query("select public.import_glucose_csv(gen_random_uuid(),$1,$2::jsonb)",['a'.repeat(64),JSON.stringify([{glucose_mg_dl:110,measured_at:'2026-10-21T03:00:00.000Z',measurement_context:'after_meal',meal_slot:'lunch',meal_memo:null}])]);
@@ -61,7 +62,7 @@ try {
     assert.deepEqual(rows.map(r => r.id), [b]); count++;
   }
   assert.equal((await db.query("select count(*)::int n from auth.sessions")).rows[0].n, 0); count++;
-  for(const table of ['meal_records','meal_items','user_preferences','import_batches','import_requests']) {
+  for(const table of ['meal_records','meal_items','user_preferences','import_batches','import_requests','health_profiles']) {
     assert.equal((await db.query(`select count(*)::int n from public.${table} where user_id=$1`,[a])).rows[0].n,0); count++;
   }
   assert.ok((await db.query('select count(*)::int n from public.food_catalog')).rows[0].n>0); count++;
