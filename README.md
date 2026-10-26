@@ -135,3 +135,7 @@ scripts/          로컬 실행과 자료 처리 도구
 supabase/         DB 마이그레이션과 SQL 검사
 tests/            단위 검사와 브라우저 검사
 ```
+
+## 배포 사이트 보러가기
+
+[배포 사이트 바로가기](https://team4.35-216-79-221.sslip.io/dashboard)
